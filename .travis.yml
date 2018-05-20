@@ -22,6 +22,9 @@ notifications:
 
 sudo: false
 
+script:
+  - ./gradlew lintDebug testDebug assembleDebug
+
 cache:
   directories:
     - $HOME/.gradle
