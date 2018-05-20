@@ -22,6 +22,13 @@ android {
     versionCode = 1
     versionName = "1.0"
   }
+
+  buildTypes {
+    getByName("debug") {
+      applicationIdSuffix = ".dev"
+      versionNameSuffix = "-dev"
+    }
+  }
 }
 
 dependencies {
