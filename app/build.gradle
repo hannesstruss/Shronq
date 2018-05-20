@@ -1,0 +1,32 @@
+apply plugin: "com.android.application"
+apply plugin: "kotlin-android"
+apply plugin: "kotlin-kapt"
+
+android {
+  compileSdkVersion buildConfig.compileSdk
+
+  defaultConfig {
+    applicationId = "de.hannesstruss.shronq"
+    minSdkVersion buildConfig.minSdk
+    targetSdkVersion buildConfig.targetSdk
+    versionCode = 1
+    versionName = "1.0"
+
+    resValue "string", "bugsnag_key", getProperty('shronq.bugsnag_key')
+  }
+
+  buildTypes {
+    getByName("debug") {
+      applicationIdSuffix = ".dev"
+      versionNameSuffix = "-dev"
+    }
+  }
+}
+
+dependencies {
+  implementation deps.kotlin.stdlib
+  implementation deps.android.support.appCompat
+  implementation deps.android.support.constraintLayout
+
+  implementation deps.bugsnag.sdk
+}
