@@ -10,7 +10,11 @@ buildscript {
 
   ext.versions = [
       'supportLibrary': '27.1.1',
-      'kotlin': '1.2.41'
+      'kotlin': '1.2.41',
+      'arch': [
+          'navigation': '1.0.0-alpha01',
+          'lifecycle': '2.0.0-alpha1'
+      ]
   ]
 
   ext.deps = [
@@ -21,8 +25,24 @@ buildscript {
           'support': [
               'appCompat': "com.android.support:appcompat-v7:${versions.supportLibrary}",
               'constraintLayout': 'com.android.support.constraint:constraint-layout:1.1.0'
+          ],
+          'arch': [
+              'navigation': [
+                  'fragment': "android.arch.navigation:navigation-fragment-ktx:${versions.arch.navigation}",
+                  'ui': "android.arch.navigation:navigation-ui-ktx:${versions.arch.navigation}",
+              ],
+              'viewmodel': "androidx.lifecycle:lifecycle-viewmodel:${versions.arch.lifecycle}"
           ]
       ],
+      'firebase': [
+          'core': 'com.google.firebase:firebase-core:15.0.2',
+          'firestore': 'com.google.firebase:firebase-firestore:16.0.0'
+      ],
+      'rx': [
+          'java': 'io.reactivex.rxjava2:rxjava:2.1.13',
+          'android': 'io.reactivex.rxjava2:rxandroid:2.0.2'
+      ],
+      'threetenabp': 'com.jakewharton.threetenabp:threetenabp:1.1.0',
       'bugsnag': [
           'sdk': 'com.bugsnag:bugsnag-android:4.4.0'
       ]
@@ -44,4 +64,8 @@ allprojects {
     google()
     jcenter()
   }
+}
+
+task clean(type: Delete) {
+  delete rootProject.buildDir
 }

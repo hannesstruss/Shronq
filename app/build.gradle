@@ -12,21 +12,66 @@ android {
     versionCode = 1
     versionName = "1.0"
 
+    resValue "string", "firebase_database_url", "\"${getProperty('shronq.firebase_database_url')}\""
+    resValue "string", "google_api_key", "\"${getProperty('shronq.firebase_api_key')}\""
+    resValue "string", "google_app_id", "\"${getProperty('shronq.firebase_application_id')}\""
+    resValue "string", "google_storage_bucket", "\"${getProperty('shronq.firebase_storage_bucket')}\""
+    resValue "string", "project_id", "\"${getProperty('shronq.firebase_project_id')}\""
+
     resValue "string", "bugsnag_key", getProperty('shronq.bugsnag_key')
   }
 
+  signingConfigs {
+    debug {
+      storeFile file('debug.keystore')
+      storePassword 'hunter2'
+      keyAlias 'key0'
+      keyPassword 'hunter2'
+    }
+
+    if (file('upload.keystore').exists()) {
+      upload {
+        storeFile file('upload.keystore')
+        storePassword getProperty('shronq.upload_store_password')
+        keyAlias 'key0'
+        keyPassword getProperty('shronq.upload_key_password')
+      }
+    }
+  }
+
   buildTypes {
-    getByName("debug") {
+    debug {
       applicationIdSuffix = ".dev"
       versionNameSuffix = "-dev"
+      signingConfig signingConfigs.debug
+    }
+
+    release {
+      if (file('upload.keystore').exists()) {
+        signingConfig signingConfigs.upload
+      } else {
+        signingConfig signingConfigs.debug
+      }
     }
   }
 }
 
 dependencies {
   implementation deps.kotlin.stdlib
+
   implementation deps.android.support.appCompat
   implementation deps.android.support.constraintLayout
+  implementation deps.android.arch.navigation.fragment
+  implementation deps.android.arch.navigation.ui
+  implementation deps.android.arch.viewmodel
+
+  implementation deps.firebase.core
+  implementation deps.firebase.firestore
+
+  implementation deps.rx.java
+  implementation deps.rx.android
+
+  implementation deps.threetenabp
 
   implementation deps.bugsnag.sdk
 }

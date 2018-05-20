@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            app:startDestination="@id/homeFragment">
+
+  <fragment android:id="@+id/homeFragment"
+            android:name="de.hannesstruss.shronq.ui.logweight.LogWeightFragment"
+            android:label="HomeFragment"
+            tools:layout="@layout/log_weight_fragment"/>
+</navigation>
