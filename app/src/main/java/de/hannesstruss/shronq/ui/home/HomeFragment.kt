@@ -22,5 +22,10 @@ class HomeFragment : BaseFragment() {
     measurementRepository.getLatestMeasurement().subscribe { measurement ->
       view.findViewById<TextView>(R.id.txt_latest).text = String.format("%.1f", measurement.weight)
     }
+
+    val chart = view.findViewById<HomeChart>(R.id.chart)
+    measurementRepository.getMeasurements().subscribe {
+      chart.measurements = it
+    }
   }
 }
