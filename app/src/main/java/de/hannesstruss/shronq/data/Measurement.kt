@@ -1,5 +1,5 @@
 package de.hannesstruss.shronq.data
 
-import org.threeten.bp.OffsetDateTime
+import org.threeten.bp.ZonedDateTime
 
-data class Measurement(val weight: Double, val measuredOn: OffsetDateTime)
+data class Measurement(val weight: Double, val measuredOn: ZonedDateTime)

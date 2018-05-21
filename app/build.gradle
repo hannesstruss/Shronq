@@ -65,6 +65,8 @@ dependencies {
   implementation deps.android.arch.navigation.ui
   implementation deps.android.arch.viewmodel
 
+  implementation deps.gson
+
   implementation deps.firebase.core
   implementation deps.firebase.firestore
 
@@ -73,5 +75,6 @@ dependencies {
 
   implementation deps.threetenabp
 
+  implementation deps.timber
   implementation deps.bugsnag.sdk
 }

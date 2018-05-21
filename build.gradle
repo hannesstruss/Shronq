@@ -45,7 +45,9 @@ buildscript {
       'threetenabp': 'com.jakewharton.threetenabp:threetenabp:1.1.0',
       'bugsnag': [
           'sdk': 'com.bugsnag:bugsnag-android:4.4.0'
-      ]
+      ],
+      'gson': 'com.google.code.gson:gson:2.8.4',
+      'timber': 'com.jakewharton.timber:timber:4.7.0'
   ]
 
   repositories {
