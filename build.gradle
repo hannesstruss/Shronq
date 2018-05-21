@@ -11,6 +11,7 @@ buildscript {
   ext.versions = [
       'supportLibrary': '27.1.1',
       'kotlin': '1.2.41',
+      'dagger': '2.16',
       'arch': [
           'navigation': '1.0.0-alpha01',
           'lifecycle': '2.0.0-alpha1'
@@ -47,7 +48,11 @@ buildscript {
           'sdk': 'com.bugsnag:bugsnag-android:4.4.0'
       ],
       'gson': 'com.google.code.gson:gson:2.8.4',
-      'timber': 'com.jakewharton.timber:timber:4.7.0'
+      'timber': 'com.jakewharton.timber:timber:4.7.0',
+      'dagger': [
+          'runtime': "com.google.dagger:dagger:${versions.dagger}",
+          'compiler': "com.google.dagger:dagger-compiler:${versions.dagger}"
+      ]
   ]
 
   repositories {

@@ -59,6 +59,9 @@ android {
 dependencies {
   implementation deps.kotlin.stdlib
 
+  implementation deps.dagger.runtime
+  kapt deps.dagger.compiler
+
   implementation deps.android.support.appCompat
   implementation deps.android.support.constraintLayout
   implementation deps.android.arch.navigation.fragment

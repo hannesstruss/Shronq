@@ -3,30 +3,23 @@ package de.hannesstruss.shronq.data
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.google.firebase.firestore.Query
-import io.reactivex.Maybe
 import io.reactivex.Observable
 import org.threeten.bp.Instant
 import org.threeten.bp.ZoneId
-import org.threeten.bp.ZonedDateTime
+import javax.inject.Inject
 
-class MeasurementRepository {
+class MeasurementRepository @Inject constructor(
+    private val db: FirebaseFirestore
+) {
   companion object {
     private const val Collection = "weights"
     private const val KeyMeasuredAt = "measured_at"
     private const val KeyWeightGrams = "weight_grams"
   }
 
-  private val db = FirebaseFirestore.getInstance()
   private val zone = ZoneId.of("Europe/Berlin")
   private val collection get() = db.collection(Collection)
-
-  init {
-    db.firestoreSettings = FirebaseFirestoreSettings.Builder()
-        .setTimestampsInSnapshotsEnabled(true)
-        .build()
-  }
 
   fun getMeasurements(): Observable<List<Measurement>> {
     val snapshots = Observable.create<List<DocumentSnapshot>> { emitter ->
@@ -47,17 +40,30 @@ class MeasurementRepository {
     }
 
     return snapshots.map { documents ->
-      documents.map { document ->
-        Measurement(
-            weight = document.getDouble(KeyWeightGrams)!!,
-            measuredOn = Instant.ofEpochSecond(document.getTimestamp(KeyMeasuredAt)!!.seconds).atZone(zone)
-        )
-      }
+      documents.map { it.toMeasurement() }
     }
   }
 
-  fun getLatestMeasurement(): Maybe<Measurement> {
-    return Maybe.just(Measurement(100.0, ZonedDateTime.now()))
+  fun getLatestMeasurement(): Observable<Measurement> {
+    val snapshots = Observable.create<DocumentSnapshot> { emitter ->
+      val registration =
+          collection
+              .orderBy(KeyMeasuredAt, Query.Direction.DESCENDING)
+              .limit(1)
+              .addSnapshotListener { snapshot, error ->
+                snapshot?.let {
+                  if (!snapshot.isEmpty) {
+                    emitter.onNext(snapshot.documents[0])
+                  }
+                }
+
+                error?.let { emitter.onError(it) }
+              }
+
+      emitter.setCancellable { registration.remove() }
+    }
+
+    return snapshots.map { it.toMeasurement() }
   }
 
   fun insertMeasurement(weight: Double) {
@@ -73,4 +79,9 @@ class MeasurementRepository {
         KeyWeightGrams to measurement.weight
     ))
   }
+
+  private fun DocumentSnapshot.toMeasurement() = Measurement(
+      weight = getDouble(KeyWeightGrams)!!,
+      measuredOn = Instant.ofEpochSecond(getTimestamp(KeyMeasuredAt)!!.seconds).atZone(zone)
+  )
 }

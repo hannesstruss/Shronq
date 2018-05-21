@@ -4,8 +4,12 @@
             xmlns:tools="http://schemas.android.com/tools"
             app:startDestination="@id/homeFragment">
 
-  <fragment android:id="@+id/homeFragment"
+  <fragment android:id="@+id/logWeightFragment"
             android:name="de.hannesstruss.shronq.ui.logweight.LogWeightFragment"
-            android:label="HomeFragment"
+            android:label="LogWeightFragment"
             tools:layout="@layout/log_weight_fragment"/>
+  <fragment android:id="@+id/homeFragment"
+            android:name="de.hannesstruss.shronq.ui.home.HomeFragment"
+            android:label="HomeFragment"
+            tools:layout="@layout/home_fragment"/>
 </navigation>
