@@ -17,17 +17,18 @@
     app:layout_constraintTop_toTopOf="parent"/>
 
   <TextView
-    android:id="@+id/txt_latest"
+    android:id="@+id/txt_latest_weight"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:text="HelllO"
-    app:layout_constraintTop_toBottomOf="@+id/chart"
-  />
+    android:gravity="center_horizontal"
+    app:layout_constraintTop_toBottomOf="@+id/btn_go_to_insert"
+    tools:text="102.5"/>
 
   <Button
     android:id="@+id/btn_go_to_insert"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
     android:text="Insert"
-    app:layout_constraintTop_toBottomOf="@+id/txt_latest"/>
+    app:layout_constraintTop_toBottomOf="@+id/chart"/>
 </android.support.constraint.ConstraintLayout>

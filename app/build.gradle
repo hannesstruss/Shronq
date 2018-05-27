@@ -84,6 +84,8 @@ dependencies {
   implementation deps.rx.java
   implementation deps.rx.android
 
+  implementation deps.rx.binding.main
+
   implementation deps.threetenabp
 
   implementation deps.timber

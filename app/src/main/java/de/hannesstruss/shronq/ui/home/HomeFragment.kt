@@ -8,6 +8,7 @@ import de.hannesstruss.shronq.ui.base.BaseFragment
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.home_fragment.btn_go_to_insert
 import kotlinx.android.synthetic.main.home_fragment.chart
+import kotlinx.android.synthetic.main.home_fragment.txt_latest_weight
 
 class HomeFragment : BaseFragment<HomeState, HomeIntent, HomeViewModel>() {
   override val layout = R.layout.home_fragment
@@ -25,5 +26,8 @@ class HomeFragment : BaseFragment<HomeState, HomeIntent, HomeViewModel>() {
 
   override fun render(state: HomeState) {
     chart.measurements = state.measurements
+    txt_latest_weight.text = state.latestMeasurement?.let {
+      String.format("%.1f", it.weightGrams / 1000.0)
+    } ?: ""
   }
 }

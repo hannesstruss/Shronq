@@ -22,12 +22,18 @@ class HomeViewModel @Inject constructor(
   override val stateReducer = { state: HomeState, action: HomeAction ->
     when (action) {
       is HomeAction.UpdateMeasurements -> state.copy(measurements = action.measurements)
+      is HomeAction.UpdateLastMeasurement -> state.copy(latestMeasurement = action.measurement)
     }
   }
 
   override val extraActions
-    get() = measurementRepository.getMeasurements()
-        .map<HomeAction> { HomeAction.UpdateMeasurements(it) }
+    get() = Observable.merge<HomeAction>(
+        measurementRepository.getMeasurements()
+            .map { HomeAction.UpdateMeasurements(it) },
+
+        measurementRepository.getLatestMeasurement()
+            .map { HomeAction.UpdateLastMeasurement(it) }
+    )
 
   override val initialState = HomeState.initial()
 }

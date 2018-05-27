@@ -7,6 +7,7 @@ import com.google.firebase.firestore.Query
 import io.reactivex.Observable
 import org.threeten.bp.Instant
 import org.threeten.bp.ZoneId
+import org.threeten.bp.ZonedDateTime
 import javax.inject.Inject
 
 class MeasurementRepository @Inject constructor(
@@ -66,15 +67,17 @@ class MeasurementRepository @Inject constructor(
     return snapshots.map { it.toMeasurement() }
   }
 
-  fun insertMeasurement(weight: Double) {
-    collection.add(mapOf(
-        KeyMeasuredAt to Timestamp(Instant.now().epochSecond, 0),
-        KeyWeightGrams to weight
-    ))
+  fun insertMeasurement(weightGrams: Int) {
+    val measurement = Measurement(
+        weightGrams = weightGrams,
+        measuredAt = ZonedDateTime.now()
+    )
+
+    insertMeasurement(measurement)
   }
 
   fun insertMeasurement(measurement: Measurement) {
-    db.collection(Collection).add(mapOf(
+    collection.add(mapOf(
         KeyMeasuredAt to Timestamp(measurement.measuredAt.toInstant().epochSecond, 0),
         KeyWeightGrams to measurement.weightGrams.toDouble()
     ))
