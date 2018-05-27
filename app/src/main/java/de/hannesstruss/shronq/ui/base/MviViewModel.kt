@@ -21,12 +21,8 @@ abstract class MviViewModel<StateT, IntentT, ActionT> : ViewModel() {
     viewsSubj.onNext(nullView)
   }
 
-  fun dispose() {
-    stateDisposable?.dispose()
-  }
-
   final override fun onCleared() {
-    dispose()
+    stateDisposable?.dispose()
   }
 
   protected val intents: Observable<IntentT> = viewsSubj.switchMap { it.intents }

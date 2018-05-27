@@ -1,7 +1,6 @@
 package de.hannesstruss.shronq.ui.base
 
 import android.arch.lifecycle.ViewModelProviders
-import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -28,8 +27,8 @@ abstract class BaseFragment<StateT, IntentT, ViewModelT : MviViewModel<StateT, I
     ViewModelProviders.of(this, factory).get(viewModelClass)
   }
 
-  override fun onAttach(context: Context?) {
-    super.onAttach(context)
+  override fun onStart() {
+    super.onStart()
     viewModel.attachView(this)
 
     stateDisposable = viewModel.states
@@ -37,8 +36,8 @@ abstract class BaseFragment<StateT, IntentT, ViewModelT : MviViewModel<StateT, I
         .subscribe(::render)
   }
 
-  override fun onDetach() {
-    super.onDetach()
+  override fun onStop() {
+    super.onStop()
     viewModel.detachView()
     stateDisposable?.dispose()
   }
