@@ -7,7 +7,7 @@ import io.reactivex.subjects.BehaviorSubject
 
 abstract class MviViewModel<StateT, IntentT, ActionT> : ViewModel() {
   private val viewsSubj = BehaviorSubject.create<MviView<IntentT>>()
-  private val nullView = object : MviView<IntentT> {
+  private val nullView: MviView<IntentT> = object : MviView<IntentT> {
     override val intents = Observable.never<IntentT>()
   }
 

@@ -11,5 +11,8 @@
   <fragment android:id="@+id/homeFragment"
             android:name="de.hannesstruss.shronq.ui.home.HomeFragment"
             android:label="HomeFragment"
-            tools:layout="@layout/home_fragment"/>
+            tools:layout="@layout/home_fragment">
+    <action android:id="@+id/action_homeFragment_to_logWeightFragment"
+            app:destination="@id/logWeightFragment"/>
+  </fragment>
 </navigation>

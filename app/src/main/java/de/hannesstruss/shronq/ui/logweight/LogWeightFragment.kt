@@ -1,27 +1,16 @@
 package de.hannesstruss.shronq.ui.logweight
 
-import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.view.View
-import android.widget.EditText
 import de.hannesstruss.shronq.R
+import de.hannesstruss.shronq.ui.base.BaseFragment
+import io.reactivex.Observable
 
-class LogWeightFragment : Fragment() {
-//  override val layout = R.layout.log_weight_fragment
-//
-//  override fun onInject(appComponent: AppComponent) {
-//    appComponent.inject(this)
-//  }
+class LogWeightFragment : BaseFragment<LogWeightState, LogWeightIntent, LogWeightViewModel>() {
+  override val layout = R.layout.log_weight_fragment
+  override val viewModelClass = LogWeightViewModel::class.java
 
-  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    val txtView = view.findViewById<EditText>(R.id.edit_weight)
+  override val intents = Observable.never<LogWeightIntent>()
 
-//    view.findViewById<Button>(R.id.btn_insert).setOnClickListener {
-//      repo.insertMeasurement(txtView.text.toString().toDouble())
-//    }
-//
-//    repo.getMeasurements().subscribe {
-//      Timber.d("Got ${it.size} measurements")
-//    }
+  override fun render(state: LogWeightState) {
+
   }
 }
