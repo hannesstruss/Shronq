@@ -9,3 +9,4 @@ build/
 app/release
 upload.keystore
 shrnq.json
+play-publisher-service-account.json
