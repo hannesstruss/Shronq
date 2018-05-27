@@ -5,5 +5,5 @@
   <application
     android:label="Shronq Debug"
     tools:replace="label"
-    />
+    tools:ignore="GoogleAppIndexingWarning"/>
 </manifest>
