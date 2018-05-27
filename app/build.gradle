@@ -11,8 +11,8 @@ android {
     applicationId = "de.hannesstruss.shronq"
     minSdkVersion buildConfig.minSdk
     targetSdkVersion buildConfig.targetSdk
-    versionCode = 2
-    versionName = "1.0"
+    versionCode = buildConfig.versionCode
+    versionName = buildConfig.versionName
 
     resValue "string", "firebase_database_url", "\"${getProperty('shronq.firebase_database_url')}\""
     resValue "string", "google_api_key", "\"${getProperty('shronq.firebase_api_key')}\""
