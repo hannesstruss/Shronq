@@ -2,6 +2,7 @@ package de.hannesstruss.shronq.di
 
 import android.app.Application
 import dagger.Component
+import de.hannesstruss.shronq.ui.base.ViewModelFactory
 import de.hannesstruss.shronq.ui.home.HomeFragment
 import de.hannesstruss.shronq.ui.logweight.LogWeightFragment
 import javax.inject.Singleton
@@ -18,6 +19,8 @@ interface AppComponent {
           .build()
     }
   }
+
+  fun viewModelFactory(): ViewModelFactory
 
   fun inject(homeFragment: HomeFragment)
   fun inject(homeFragment: LogWeightFragment)

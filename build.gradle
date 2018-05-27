@@ -14,7 +14,7 @@ buildscript {
       'dagger': '2.16',
       'arch': [
           'navigation': '1.0.0-alpha01',
-          'lifecycle': '2.0.0-alpha1'
+          'lifecycle': '1.1.1'
       ]
   ]
 
@@ -32,7 +32,8 @@ buildscript {
                   'fragment': "android.arch.navigation:navigation-fragment-ktx:${versions.arch.navigation}",
                   'ui': "android.arch.navigation:navigation-ui-ktx:${versions.arch.navigation}",
               ],
-              'viewmodel': "androidx.lifecycle:lifecycle-viewmodel:${versions.arch.lifecycle}"
+              'viewmodel': "android.arch.lifecycle:viewmodel:${versions.arch.lifecycle}",
+              'extensions': "android.arch.lifecycle:extensions:${versions.arch.lifecycle}"
           ]
       ],
       'firebase': [

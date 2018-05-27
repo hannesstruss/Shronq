@@ -1,18 +1,17 @@
 package de.hannesstruss.shronq.ui.logweight
 
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.view.View
 import android.widget.EditText
 import de.hannesstruss.shronq.R
-import de.hannesstruss.shronq.di.AppComponent
-import de.hannesstruss.shronq.ui.base.BaseFragment
 
-class LogWeightFragment : BaseFragment() {
-  override val layout = R.layout.log_weight_fragment
-
-  override fun onInject(appComponent: AppComponent) {
-    appComponent.inject(this)
-  }
+class LogWeightFragment : Fragment() {
+//  override val layout = R.layout.log_weight_fragment
+//
+//  override fun onInject(appComponent: AppComponent) {
+//    appComponent.inject(this)
+//  }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     val txtView = view.findViewById<EditText>(R.id.edit_weight)

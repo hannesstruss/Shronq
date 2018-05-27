@@ -66,6 +66,7 @@ dependencies {
   implementation deps.android.support.constraintLayout
   implementation deps.android.arch.navigation.fragment
   implementation deps.android.arch.navigation.ui
+  implementation deps.android.arch.extensions
   implementation deps.android.arch.viewmodel
 
   implementation deps.gson

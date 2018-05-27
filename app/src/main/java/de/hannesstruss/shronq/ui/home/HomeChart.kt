@@ -4,11 +4,11 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.AttributeSet
-import android.widget.FrameLayout
+import android.view.View
 import de.hannesstruss.shronq.data.Measurement
 import kotlin.properties.Delegates
 
-class HomeChart(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs) {
+class HomeChart(context: Context, attrs: AttributeSet?) : View(context, attrs) {
   private val linePaint = Paint().apply {
     color = 0xFFFFFFFF.toInt()
     isAntiAlias = true
@@ -27,14 +27,16 @@ class HomeChart(context: Context, attrs: AttributeSet?) : FrameLayout(context, a
   override fun onDraw(canvas: Canvas) {
     super.onDraw(canvas)
 
-    if (measurements.size < 2) return
+    val values = measurements
+    
+    if (values.size < 2) return
 
-    val min = measurements.minBy { it.weight }!!.weight
-    val max = measurements.maxBy { it.weight }!!.weight
-    val minTimestamp = measurements.minBy { it.measuredOn.toEpochSecond() }!!.measuredOn.toEpochSecond()
-    val maxTimestamp = measurements.maxBy { it.measuredOn.toEpochSecond() }!!.measuredOn.toEpochSecond()
+    val min = values.minBy { it.weight }!!.weight
+    val max = values.maxBy { it.weight }!!.weight
+    val minTimestamp = values.minBy { it.measuredOn.toEpochSecond() }!!.measuredOn.toEpochSecond()
+    val maxTimestamp = values.maxBy { it.measuredOn.toEpochSecond() }!!.measuredOn.toEpochSecond()
 
-    measurements.zipWithNext().forEach { (from, to) ->
+    values.zipWithNext().forEach { (from, to) ->
       val fromTimestamp = from.measuredOn.toEpochSecond()
       val toTimestamp = to.measuredOn.toEpochSecond()
       val fromTimestampRatio = (fromTimestamp - minTimestamp).toDouble() / (maxTimestamp - minTimestamp)

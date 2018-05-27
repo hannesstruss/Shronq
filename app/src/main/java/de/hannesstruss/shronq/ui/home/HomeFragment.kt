@@ -2,30 +2,25 @@ package de.hannesstruss.shronq.ui.home
 
 import android.os.Bundle
 import android.view.View
-import android.widget.TextView
 import de.hannesstruss.shronq.R
-import de.hannesstruss.shronq.data.MeasurementRepository
-import de.hannesstruss.shronq.di.AppComponent
 import de.hannesstruss.shronq.ui.base.BaseFragment
-import javax.inject.Inject
+import io.reactivex.Observable
 
-class HomeFragment : BaseFragment() {
+class HomeFragment : BaseFragment<HomeState, HomeIntent, HomeViewModel>() {
   override val layout = R.layout.home_fragment
+  override val viewModelClass = HomeViewModel::class.java
 
-  @Inject lateinit var measurementRepository: MeasurementRepository
+  lateinit var chart: HomeChart
 
-  override fun onInject(appComponent: AppComponent) {
-    appComponent.inject(this)
+  override val intents by lazy {
+    Observable.never<HomeIntent>()
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    measurementRepository.getLatestMeasurement().subscribe { measurement ->
-      view.findViewById<TextView>(R.id.txt_latest).text = String.format("%.1f", measurement.weight)
-    }
+    chart = view.findViewById<HomeChart>(R.id.chart)
+  }
 
-    val chart = view.findViewById<HomeChart>(R.id.chart)
-    measurementRepository.getMeasurements().subscribe {
-      chart.measurements = it
-    }
+  override fun render(state: HomeState) {
+    chart.measurements = state.measurements
   }
 }

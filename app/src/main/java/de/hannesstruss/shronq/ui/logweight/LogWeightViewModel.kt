@@ -1,6 +1,6 @@
 package de.hannesstruss.shronq.ui.logweight
 
-import androidx.lifecycle.ViewModel
+import android.arch.lifecycle.ViewModel
 
 class LogWeightViewModel : ViewModel() {
 }
