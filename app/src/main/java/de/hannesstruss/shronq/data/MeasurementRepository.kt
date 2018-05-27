@@ -75,13 +75,13 @@ class MeasurementRepository @Inject constructor(
 
   fun insertMeasurement(measurement: Measurement) {
     db.collection(Collection).add(mapOf(
-        KeyMeasuredAt to Timestamp(measurement.measuredOn.toInstant().epochSecond, 0),
-        KeyWeightGrams to measurement.weight
+        KeyMeasuredAt to Timestamp(measurement.measuredAt.toInstant().epochSecond, 0),
+        KeyWeightGrams to measurement.weightGrams.toDouble()
     ))
   }
 
   private fun DocumentSnapshot.toMeasurement() = Measurement(
-      weight = getDouble(KeyWeightGrams)!!,
-      measuredOn = Instant.ofEpochSecond(getTimestamp(KeyMeasuredAt)!!.seconds).atZone(zone)
+      weightGrams = getDouble(KeyWeightGrams)!!.toInt(),
+      measuredAt = Instant.ofEpochSecond(getTimestamp(KeyMeasuredAt)!!.seconds).atZone(zone)
   )
 }

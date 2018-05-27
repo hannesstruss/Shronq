@@ -1,6 +1,7 @@
 package de.hannesstruss.shronq.di
 
 import android.app.Application
+import android.content.Context
 import dagger.Component
 import de.hannesstruss.shronq.ui.base.ViewModelFactory
 import javax.inject.Singleton

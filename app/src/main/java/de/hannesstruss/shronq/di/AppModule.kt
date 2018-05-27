@@ -1,6 +1,7 @@
 package de.hannesstruss.shronq.di
 
 import android.app.Application
+import android.content.Context
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import dagger.Module
@@ -18,4 +19,6 @@ class AppModule(private val app: Application) {
         .setTimestampsInSnapshotsEnabled(true)
         .build()
   }
+
+  @Provides fun context(): Context = app
 }

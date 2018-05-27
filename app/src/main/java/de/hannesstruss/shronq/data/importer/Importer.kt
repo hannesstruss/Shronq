@@ -1,4 +1,4 @@
-package de.hannesstruss.shronq.data.import
+package de.hannesstruss.shronq.data.importer
 
 import android.content.Context
 import com.google.gson.Gson
@@ -7,6 +7,7 @@ import de.hannesstruss.shronq.data.MeasurementRepository
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.ZoneId
 import java.io.InputStreamReader
+import javax.inject.Inject
 
 data class ShrnqApiResponse(
     val objects: List<ShrnqApiItem>
@@ -17,8 +18,10 @@ data class ShrnqApiItem(
     val value: Double
 )
 
-class Importer(private val measurementRepository: MeasurementRepository,
-               private val context: Context) {
+class Importer @Inject constructor(
+    private val measurementRepository: MeasurementRepository,
+    private val context: Context
+) {
   fun import() {
     val gson = Gson()
 
@@ -30,9 +33,7 @@ class Importer(private val measurementRepository: MeasurementRepository,
     val zone = ZoneId.of("Europe/Berlin")
     items
         .objects
-        .map { Measurement(it.value, LocalDateTime.parse(it.measured_on).atZone(zone)) }
+        .map { Measurement(it.value.toInt() * 1000, LocalDateTime.parse(it.measured_on).atZone(zone)) }
         .forEach { measurementRepository.insertMeasurement(it) }
-
-
   }
 }
