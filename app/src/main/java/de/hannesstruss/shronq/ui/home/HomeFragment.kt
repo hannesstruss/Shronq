@@ -15,7 +15,7 @@ class HomeFragment : BaseFragment<HomeState, HomeIntent, HomeViewModel>() {
   override val viewModelClass = HomeViewModel::class.java
 
   override val intents by lazy {
-    Observable.never<HomeIntent>()
+    Observable.just<HomeIntent>(HomeIntent.Init)
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
