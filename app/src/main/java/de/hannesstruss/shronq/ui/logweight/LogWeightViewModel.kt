@@ -2,22 +2,22 @@ package de.hannesstruss.shronq.ui.logweight
 
 import de.hannesstruss.shronq.data.MeasurementRepository
 import de.hannesstruss.shronq.ui.base.MviViewModel
-import io.reactivex.Observable
 import javax.inject.Inject
 
 class LogWeightViewModel @Inject constructor(
     private val measurementRepository: MeasurementRepository
-) : MviViewModel<LogWeightState, LogWeightIntent, LogWeightAction>() {
-  override val actionCreator = { intent: LogWeightIntent ->
+) : MviViewModel<LogWeightState, LogWeightIntent, LogWeightChange, LogWeightEffect>() {
+
+  override val intentMapper = { intent: LogWeightIntent ->
     when (intent) {
       is LogWeightIntent.LogWeight -> {
         measurementRepository.insertMeasurement(intent.weightGrams)
-        Observable.empty<LogWeightAction>()
+        LogWeightEffect.GoBack.asEvent()
       }
     }
   }
 
-  override val stateReducer = { state: LogWeightState, action: LogWeightAction ->
+  override val stateReducer = { state: LogWeightState, change: LogWeightChange ->
     state
   }
 

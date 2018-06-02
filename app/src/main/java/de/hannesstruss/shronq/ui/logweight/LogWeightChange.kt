@@ -1,3 +1,3 @@
 package de.hannesstruss.shronq.ui.logweight
 
-sealed class LogWeightAction
+sealed class LogWeightChange

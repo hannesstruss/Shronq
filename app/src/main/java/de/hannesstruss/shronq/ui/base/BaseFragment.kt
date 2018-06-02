@@ -10,11 +10,12 @@ import de.hannesstruss.shronq.ShronqApp
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 
-abstract class BaseFragment<StateT, IntentT, ViewModelT : MviViewModel<StateT, IntentT, *>> : Fragment(), MviView<IntentT> {
+abstract class BaseFragment<StateT, IntentT, EffectT, ViewModelT : MviViewModel<StateT, IntentT, *, EffectT>> : Fragment(), MviView<IntentT> {
   abstract protected val layout: Int
   abstract protected val viewModelClass: Class<ViewModelT>
 
   private var stateDisposable: Disposable? = null
+  private var effectsDisposable: Disposable? = null
 
   final override fun onCreateView(inflater: LayoutInflater,
                                   container: ViewGroup?,
@@ -34,13 +35,19 @@ abstract class BaseFragment<StateT, IntentT, ViewModelT : MviViewModel<StateT, I
     stateDisposable = viewModel.states
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(::render)
+
+    effectsDisposable = viewModel.effects
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(::handleEffect)
   }
 
   override fun onStop() {
     super.onStop()
     viewModel.detachView()
     stateDisposable?.dispose()
+    effectsDisposable?.dispose()
   }
 
   abstract fun render(state: StateT)
+  abstract fun handleEffect(effect: EffectT)
 }
