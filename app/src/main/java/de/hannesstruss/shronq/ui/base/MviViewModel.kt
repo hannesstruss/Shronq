@@ -70,5 +70,7 @@ abstract class MviViewModel<StateT, IntentT, ChangeT, EffectT> : ViewModel() {
   protected fun <T : EffectT> T.asEvent(): Observable<MviEvent<out ChangeT, out EffectT>> {
     return Observable.just(MviEvent.Effect(this))
   }
+
+  protected fun Any.asNoEvent(): Observable<MviEvent<out ChangeT, out EffectT>> = Observable.empty()
 }
 

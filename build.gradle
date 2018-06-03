@@ -17,7 +17,8 @@ buildscript {
           'lifecycle': '1.1.1'
       ],
       'playservices': [
-          'fit': '15.0.1'
+          'fit': '15.0.1',
+          'auth': '15.0.1'
       ]
   ]
 
@@ -61,7 +62,8 @@ buildscript {
           'compiler': "com.google.dagger:dagger-compiler:${versions.dagger}"
       ],
       'playservices': [
-          'fit': "com.google.android.gms:play-services-fitness:${versions.playservices.fit}"
+          'fit': "com.google.android.gms:play-services-fitness:${versions.playservices.fit}",
+          'auth': "com.google.android.gms:play-services-auth:${versions.playservices.auth}"
       ]
   ]
 

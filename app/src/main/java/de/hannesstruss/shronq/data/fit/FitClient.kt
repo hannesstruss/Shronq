@@ -1,66 +1,42 @@
 package de.hannesstruss.shronq.data.fit
 
 import android.app.Activity
-import android.os.Bundle
-import com.google.android.gms.common.Scopes
-import com.google.android.gms.common.api.GoogleApiClient
-import com.google.android.gms.common.api.Scope
-import com.google.android.gms.fitness.Fitness
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.fitness.FitnessOptions
+import com.google.android.gms.fitness.data.DataType
 import de.hannesstruss.shronq.ui.di.ActivityHolder
-import timber.log.Timber
 import javax.inject.Inject
 
 class FitClient @Inject constructor(private val activityProvider: ActivityHolder) {
   companion object {
     private const val REQUEST_CODE_AUTH = 12453
+
+    private val fitnessOptions = FitnessOptions.builder()
+        .addDataType(DataType.AGGREGATE_WEIGHT_SUMMARY, FitnessOptions.ACCESS_WRITE)
+        .build()
   }
 
-  private var client: GoogleApiClient? = null
+  private val context by lazy { activityProvider.activity().applicationContext }
+
+  private val hasPermissions get() = GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(context), fitnessOptions)
 
   fun connect() {
-    getClient().connect()
-  }
+    if (!hasPermissions) {
+      val activity = activityProvider.activity()
 
-  fun disconnect() {
-    getClient().disconnect()
+      GoogleSignIn.requestPermissions(
+          activity,
+          REQUEST_CODE_AUTH,
+          GoogleSignIn.getLastSignedInAccount(activity),
+          fitnessOptions)
+    }
   }
 
   fun onActivityResult(requestCode: Int, resultCode: Int) {
     if (requestCode == REQUEST_CODE_AUTH && resultCode == Activity.RESULT_OK) {
-      getClient().connect()
+
+      TODO()
     }
   }
 
-  private fun getClient(): GoogleApiClient {
-    client?.let { return it }
-
-    createClient().let {
-      client = it
-      return it
-    }
-  }
-
-  private fun createClient(): GoogleApiClient {
-    return GoogleApiClient.Builder(activityProvider.requireActivity())
-        .addApi(Fitness.HISTORY_API)
-        .addScope(Scope(Scopes.FITNESS_BODY_READ_WRITE))
-        .addConnectionCallbacks(object : GoogleApiClient.ConnectionCallbacks {
-          override fun onConnectionSuspended(status: Int) {
-            Timber.d("suspended")
-          }
-
-          override fun onConnected(p0: Bundle?) {
-            Timber.d("connected")
-          }
-        })
-        .addOnConnectionFailedListener { result ->
-          if (result.hasResolution()) {
-            Timber.d("Failed, but got resolution. Starting that.")
-            result.startResolutionForResult(activityProvider.requireActivity(), REQUEST_CODE_AUTH)
-          } else {
-            Timber.d("Failed without resolution.")
-          }
-        }
-        .build()
-  }
 }

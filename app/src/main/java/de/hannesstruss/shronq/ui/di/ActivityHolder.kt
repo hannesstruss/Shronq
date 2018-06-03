@@ -25,5 +25,5 @@ class ActivityHolder : Fragment() {
     retainInstance = true
   }
 
-  val activity: Activity get() = requireActivity()
+  fun activity(): Activity = requireActivity()
 }
