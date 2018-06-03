@@ -12,7 +12,7 @@ class LogWeightViewModel @Inject constructor(
     when (intent) {
       is LogWeightIntent.LogWeight -> {
         measurementRepository.insertMeasurement(intent.weightGrams)
-        LogWeightEffect.GoBack.asEvent()
+        LogWeightEffect.GoBack.effectAsEvent()
       }
     }
   }

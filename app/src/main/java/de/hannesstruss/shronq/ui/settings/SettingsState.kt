@@ -1,7 +1,7 @@
 package de.hannesstruss.shronq.ui.settings
 
 data class SettingsState(
-    val x: Boolean
+    val fitIsEnabled: Boolean
 ) {
   companion object {
     fun initial() = SettingsState(false)

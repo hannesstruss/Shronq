@@ -15,10 +15,11 @@ class SettingsFragment : BaseFragment<SettingsState, SettingsIntent, SettingsEff
   }
 
   override fun intents() = switch_connect_google_fit.checkedChanges()
-      .map<SettingsIntent> { SettingsIntent.Connect }
+      .skip(1)
+      .map<SettingsIntent> { if (it) SettingsIntent.ConnectFit else SettingsIntent.DisconnectFit }
 
   override fun render(state: SettingsState) {
-
+    switch_connect_google_fit.isChecked = state.fitIsEnabled
   }
 
   override fun handleEffect(effect: SettingsEffect) {

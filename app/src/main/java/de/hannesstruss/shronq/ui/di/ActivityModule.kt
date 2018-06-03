@@ -1,15 +1,12 @@
 package de.hannesstruss.shronq.ui.di
 
-import android.support.v7.app.AppCompatActivity
 import dagger.Module
 import dagger.Provides
+import de.hannesstruss.android.activityholder.ActivityHolder
+import de.hannesstruss.shronq.ui.MainActivity
 
-@Module(
-    includes = [
-
-    ]
-)
-class ActivityModule(activity: AppCompatActivity) {
+@Module
+class ActivityModule(activity: MainActivity) {
   private val activityHolder = ActivityHolder.get(activity)
 
   @Provides fun activityHolder(): ActivityHolder = activityHolder

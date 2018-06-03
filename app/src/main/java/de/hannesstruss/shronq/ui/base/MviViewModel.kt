@@ -2,11 +2,18 @@ package de.hannesstruss.shronq.ui.base
 
 import android.arch.lifecycle.ViewModel
 import de.hannesstruss.shronq.extensions.ofType
+import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.BehaviorSubject
+import timber.log.Timber
 
 abstract class MviViewModel<StateT, IntentT, ChangeT, EffectT> : ViewModel() {
+  companion object {
+    private const val LOGGING = true
+  }
+
   private val viewsSubj = BehaviorSubject.create<MviView<IntentT>>()
   private val nullView: MviView<IntentT> = object : MviView<IntentT> {
     override fun intents() = Observable.never<IntentT>()
@@ -28,14 +35,14 @@ abstract class MviViewModel<StateT, IntentT, ChangeT, EffectT> : ViewModel() {
 
   protected val intents: Observable<IntentT> = viewsSubj.switchMap { it.intents() }
   protected abstract val intentMapper: (IntentT) -> Observable<out MviEvent<out ChangeT, out EffectT>>
-  protected open val extraEvents: Observable<MviEvent<out ChangeT, out EffectT>> = Observable.never()
+  protected open fun extraEvents(): Observable<MviEvent<out ChangeT, out EffectT>> = Observable.never()
   protected abstract val stateReducer: (StateT, ChangeT) -> StateT
   protected abstract val initialState: StateT
 
   private val allMviEvents by lazy {
     Observable.merge(
-        intents.flatMap(intentMapper),
-        extraEvents
+        intents.logElements("Intent") .flatMap(intentMapper),
+        extraEvents()
     ).share()
   }
 
@@ -43,6 +50,7 @@ abstract class MviViewModel<StateT, IntentT, ChangeT, EffectT> : ViewModel() {
     allMviEvents
         .ofType<MviEvent.Change<ChangeT>>()
         .map { it.change }
+        .logElements("Change")
         .share()
   }
 
@@ -50,6 +58,7 @@ abstract class MviViewModel<StateT, IntentT, ChangeT, EffectT> : ViewModel() {
     allMviEvents
         .ofType<MviEvent.Effect<EffectT>>()
         .map { it.effect }
+        .logElements("Effect")
         .share()
   }
 
@@ -57,6 +66,7 @@ abstract class MviViewModel<StateT, IntentT, ChangeT, EffectT> : ViewModel() {
     allChanges
         .scan(initialState, stateReducer)
         .distinctUntilChanged()
+        .logElements("State")
         .replay(1)
         .autoConnect(0, { stateDisposable = it })
   }
@@ -67,11 +77,25 @@ abstract class MviViewModel<StateT, IntentT, ChangeT, EffectT> : ViewModel() {
     return map { MviEvent.Change(it) }
   }
 
-  protected fun <T : EffectT> T.asEvent(): Observable<MviEvent<out ChangeT, out EffectT>> {
+  protected fun <T : ChangeT> T.changeAsEvent(): Observable<MviEvent<out ChangeT, out EffectT>> {
+    return Observable.just(this).asEvents()
+  }
+
+  protected fun <T : EffectT> T.effectAsEvent(): Observable<MviEvent<out ChangeT, out EffectT>> {
     return Observable.just(MviEvent.Effect(this))
   }
 
   @Suppress("unused")
-  protected fun Any.asNoEvent(): Observable<MviEvent<out ChangeT, out EffectT>> = Observable.empty()
+  protected fun Any.asNoEvent(): Observable<MviEvent<out ChangeT, out EffectT>> = when (this) {
+    is Observable<*> -> ignoreElements().toObservable()
+    is Single<*> -> ignoreElement().toObservable()
+    is Completable -> toObservable()
+    else -> Observable.never()
+  }
+
+  protected fun lastState(): Single<StateT> = states.firstOrError()
+
+  private fun <T> Observable<T>.logElements(name: String): Observable<T> =
+      doOnNext { if (LOGGING) Timber.d("${Thread.currentThread().name}/${this@MviViewModel.javaClass.simpleName}-$name: $it") }
 }
 

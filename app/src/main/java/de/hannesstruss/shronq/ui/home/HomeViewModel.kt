@@ -19,8 +19,8 @@ class HomeViewModel @Inject constructor(
   override val intentMapper = { intent: HomeIntent ->
     when (intent) {
       HomeIntent.Init -> nothing()
-      HomeIntent.InsertWeight -> HomeEffect.NavigateToInsertWeight.asEvent()
-      HomeIntent.EditSettings -> HomeEffect.NavigateToSettings.asEvent()
+      HomeIntent.InsertWeight -> HomeEffect.NavigateToInsertWeight.effectAsEvent()
+      HomeIntent.EditSettings -> HomeEffect.NavigateToSettings.effectAsEvent()
     }
   }
 
@@ -31,16 +31,15 @@ class HomeViewModel @Inject constructor(
     }
   }
 
-  override val extraEvents
-    get() = Observable.merge(
-        measurementRepository.getMeasurements()
-            .map { HomeChange.UpdateMeasurements(it) }
-            .asEvents(),
+  override fun extraEvents() = Observable.merge(
+      measurementRepository.getMeasurements()
+          .map { HomeChange.UpdateMeasurements(it) }
+          .asEvents(),
 
-        measurementRepository.getLatestMeasurement()
-            .map { HomeChange.UpdateLastMeasurement(it) }
-            .asEvents()
-    )!!
+      measurementRepository.getLatestMeasurement()
+          .map { HomeChange.UpdateLastMeasurement(it) }
+          .asEvents()
+  )!!
 
   override val initialState = HomeState.initial()
 }
