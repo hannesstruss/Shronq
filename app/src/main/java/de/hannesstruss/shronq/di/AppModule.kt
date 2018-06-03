@@ -6,13 +6,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import dagger.Module
 import dagger.Provides
-import de.hannesstruss.shronq.ui.ViewModelModule
 
-@Module(
-    includes = [
-      ViewModelModule::class
-    ]
-)
+@Module
 class AppModule(private val app: Application) {
   @Provides fun firebaseFirestore() = FirebaseFirestore.getInstance().apply {
     firestoreSettings = FirebaseFirestoreSettings.Builder()

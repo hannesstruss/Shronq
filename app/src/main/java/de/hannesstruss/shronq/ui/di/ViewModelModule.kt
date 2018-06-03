@@ -1,4 +1,4 @@
-package de.hannesstruss.shronq.ui
+package de.hannesstruss.shronq.ui.di
 
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider

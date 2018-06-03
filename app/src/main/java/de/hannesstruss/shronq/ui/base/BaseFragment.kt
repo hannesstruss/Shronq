@@ -3,10 +3,11 @@ package de.hannesstruss.shronq.ui.base
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import de.hannesstruss.shronq.ShronqApp
+import de.hannesstruss.shronq.ui.di.ActivityComponentRetainer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 
@@ -24,7 +25,7 @@ abstract class BaseFragment<StateT, IntentT, EffectT, ViewModelT : MviViewModel<
   }
 
   protected val viewModel: ViewModelT by lazy {
-    val factory = (requireContext().applicationContext as ShronqApp).appComponent.viewModelFactory()
+    val factory = ActivityComponentRetainer.getComponent(requireActivity() as AppCompatActivity).viewModelFactory()
     ViewModelProviders.of(this, factory).get(viewModelClass)
   }
 

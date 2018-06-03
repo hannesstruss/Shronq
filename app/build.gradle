@@ -76,6 +76,8 @@ dependencies {
   implementation deps.android.arch.extensions
   implementation deps.android.arch.viewmodel
 
+  implementation deps.playservices.fit
+
   implementation deps.gson
 
   implementation deps.firebase.core

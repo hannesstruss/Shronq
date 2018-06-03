@@ -1,9 +1,8 @@
 package de.hannesstruss.shronq.di
 
 import android.app.Application
-import android.content.Context
 import dagger.Component
-import de.hannesstruss.shronq.ui.base.ViewModelFactory
+import de.hannesstruss.shronq.ui.di.ActivityComponent
 import javax.inject.Singleton
 
 @Component(
@@ -19,5 +18,5 @@ interface AppComponent {
     }
   }
 
-  fun viewModelFactory(): ViewModelFactory
+  fun activityComponent(): ActivityComponent.Builder
 }
