@@ -3,12 +3,18 @@ package de.hannesstruss.shronq.data.fit
 import android.app.Activity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.fitness.Fitness
 import com.google.android.gms.fitness.FitnessOptions
+import com.google.android.gms.fitness.data.DataSet
+import com.google.android.gms.fitness.data.DataSource
 import com.google.android.gms.fitness.data.DataType
+import com.google.android.gms.fitness.data.Field
 import de.hannesstruss.android.activityholder.ActivityHolder
 import io.reactivex.Completable
 import io.reactivex.Single
 import timber.log.Timber
+import java.util.Date
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class FitClient @Inject constructor(private val activityHolder: ActivityHolder) {
@@ -68,6 +74,31 @@ class FitClient @Inject constructor(private val activityHolder: ActivityHolder) 
           .addOnCanceledListener {
             emitter.onError(RuntimeException("Canceled"))
           }
+    }
+  }
+
+  fun insert(weightGrams: Int): Completable {
+    val activity = activityHolder.activity()
+
+    val source = DataSource.Builder()
+        .setDataType(DataType.TYPE_WEIGHT)
+        .setType(DataSource.TYPE_RAW)
+        .setAppPackageName(activity)
+        .build()
+
+    val dataset = DataSet.create(source)
+    val dataPoint = dataset.createDataPoint()
+
+    dataPoint.setTimestamp(Date().time, TimeUnit.MILLISECONDS)
+    dataPoint.getValue(Field.FIELD_WEIGHT).setFloat(weightGrams / 1000f)
+
+    dataset.add(dataPoint)
+
+    return Completable.create { emitter ->
+      val lastSignedInAccount = GoogleSignIn.getLastSignedInAccount(activity)!!
+      Fitness.getHistoryClient(activity, lastSignedInAccount).insertData(dataset)
+          .addOnFailureListener { emitter.onError(it) }
+          .addOnCompleteListener { emitter.onComplete() }
     }
   }
 }

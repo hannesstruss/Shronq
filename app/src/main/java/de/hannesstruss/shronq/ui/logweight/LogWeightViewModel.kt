@@ -1,18 +1,27 @@
 package de.hannesstruss.shronq.ui.logweight
 
 import de.hannesstruss.shronq.data.MeasurementRepository
+import de.hannesstruss.shronq.data.fit.FitClient
 import de.hannesstruss.shronq.ui.base.MviViewModel
 import javax.inject.Inject
 
 class LogWeightViewModel @Inject constructor(
-    private val measurementRepository: MeasurementRepository
+    private val measurementRepository: MeasurementRepository,
+    private val fitClient: FitClient
 ) : MviViewModel<LogWeightState, LogWeightIntent, LogWeightChange, LogWeightEffect>() {
 
   override val intentMapper = { intent: LogWeightIntent ->
     when (intent) {
       is LogWeightIntent.LogWeight -> {
         measurementRepository.insertMeasurement(intent.weightGrams)
-        LogWeightEffect.GoBack.effectAsEvent()
+        if (fitClient.isEnabled) {
+          fitClient.insert(intent.weightGrams)
+              .toObservable<LogWeightEffect>()
+              .startWith(LogWeightEffect.GoBack)
+              .effectsAsEvents()
+        } else {
+          LogWeightEffect.GoBack.effectAsEvent()
+        }
       }
     }
   }
