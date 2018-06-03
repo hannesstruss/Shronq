@@ -14,9 +14,8 @@ class SettingsFragment : BaseFragment<SettingsState, SettingsIntent, SettingsEff
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
   }
 
-  override val intents
-    get() = switch_connect_google_fit.checkedChanges()
-        .map<SettingsIntent> { SettingsIntent.Connect }
+  override fun intents() = switch_connect_google_fit.checkedChanges()
+      .map<SettingsIntent> { SettingsIntent.Connect }
 
   override fun render(state: SettingsState) {
 

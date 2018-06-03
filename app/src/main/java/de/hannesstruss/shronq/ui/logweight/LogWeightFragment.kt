@@ -12,7 +12,7 @@ class LogWeightFragment : BaseFragment<LogWeightState, LogWeightIntent, LogWeigh
   override val layout = R.layout.log_weight_fragment
   override val viewModelClass = LogWeightViewModel::class.java
 
-  override val intents get() = btn_insert.clicks()
+  override fun intents() = btn_insert.clicks()
       .map<LogWeightIntent> { LogWeightIntent.LogWeight(weightGrams()) }
 
   override fun render(state: LogWeightState) {

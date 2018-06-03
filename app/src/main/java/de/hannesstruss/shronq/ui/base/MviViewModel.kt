@@ -9,7 +9,7 @@ import io.reactivex.subjects.BehaviorSubject
 abstract class MviViewModel<StateT, IntentT, ChangeT, EffectT> : ViewModel() {
   private val viewsSubj = BehaviorSubject.create<MviView<IntentT>>()
   private val nullView: MviView<IntentT> = object : MviView<IntentT> {
-    override val intents = Observable.never<IntentT>()
+    override fun intents() = Observable.never<IntentT>()
   }
 
   private var stateDisposable: Disposable? = null
@@ -26,7 +26,7 @@ abstract class MviViewModel<StateT, IntentT, ChangeT, EffectT> : ViewModel() {
     stateDisposable?.dispose()
   }
 
-  protected val intents: Observable<IntentT> = viewsSubj.switchMap { it.intents }
+  protected val intents: Observable<IntentT> = viewsSubj.switchMap { it.intents() }
   protected abstract val intentMapper: (IntentT) -> Observable<out MviEvent<out ChangeT, out EffectT>>
   protected open val extraEvents: Observable<MviEvent<out ChangeT, out EffectT>> = Observable.never()
   protected abstract val stateReducer: (StateT, ChangeT) -> StateT
@@ -71,6 +71,7 @@ abstract class MviViewModel<StateT, IntentT, ChangeT, EffectT> : ViewModel() {
     return Observable.just(MviEvent.Effect(this))
   }
 
+  @Suppress("unused")
   protected fun Any.asNoEvent(): Observable<MviEvent<out ChangeT, out EffectT>> = Observable.empty()
 }
 
