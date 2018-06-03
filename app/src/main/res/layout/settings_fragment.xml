@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  xmlns:tools="http://schemas.android.com/tools"
+  tools:context=".ui.settings.SettingsFragment"
+>
+
+  <Switch
+    android:id="@+id/switch_connect_google_fit"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="Share weight with Google Fit"
+    android:padding="16dp"
+  />
+
+</android.support.constraint.ConstraintLayout>

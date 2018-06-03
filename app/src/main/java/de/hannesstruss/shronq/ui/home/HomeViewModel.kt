@@ -18,8 +18,9 @@ class HomeViewModel @Inject constructor(
 
   override val intentMapper = { intent: HomeIntent ->
     when (intent) {
-      is HomeIntent.Init -> nothing()
-      is HomeIntent.InsertWeight -> HomeEffect.NavigateToInsertWeight.asEvent()
+      HomeIntent.Init -> nothing()
+      HomeIntent.InsertWeight -> HomeEffect.NavigateToInsertWeight.asEvent()
+      HomeIntent.EditSettings -> HomeEffect.NavigateToSettings.asEvent()
     }
   }
 

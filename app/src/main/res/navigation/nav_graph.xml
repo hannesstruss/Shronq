@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<navigation xmlns:app="http://schemas.android.com/apk/res-auto"
-            xmlns:android="http://schemas.android.com/apk/res/android"
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
             xmlns:tools="http://schemas.android.com/tools"
             app:startDestination="@id/homeFragment">
 
@@ -14,5 +14,12 @@
             tools:layout="@layout/home_fragment">
     <action android:id="@+id/action_homeFragment_to_logWeightFragment"
             app:destination="@id/logWeightFragment"/>
+    <action android:id="@+id/action_homeFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment"/>
   </fragment>
+  <fragment android:id="@+id/settingsFragment"
+            android:name="de.hannesstruss.shronq.ui.settings.SettingsFragment"
+            android:label="SettingsFragment"
+            tools:layout="@layout/settings_fragment"
+  />
 </navigation>

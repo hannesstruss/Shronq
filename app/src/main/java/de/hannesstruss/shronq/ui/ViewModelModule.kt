@@ -9,6 +9,7 @@ import dagger.multibindings.IntoMap
 import de.hannesstruss.shronq.ui.base.ViewModelFactory
 import de.hannesstruss.shronq.ui.home.HomeViewModel
 import de.hannesstruss.shronq.ui.logweight.LogWeightViewModel
+import de.hannesstruss.shronq.ui.settings.SettingsViewModel
 import kotlin.reflect.KClass
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
@@ -17,6 +18,7 @@ import kotlin.reflect.KClass
 internal annotation class ViewModelKey(val value: KClass<out ViewModel>)
 
 @Module
+@Suppress("Unused")
 abstract class ViewModelModule {
 
   @Binds abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory
@@ -26,4 +28,7 @@ abstract class ViewModelModule {
 
   @Binds @IntoMap @ViewModelKey(LogWeightViewModel::class)
   abstract fun bindLogWeightViewModel(viewModel: LogWeightViewModel): ViewModel
+
+  @Binds @IntoMap @ViewModelKey(SettingsViewModel::class)
+  abstract fun bindSettingsViewModel(viewModel: SettingsViewModel): ViewModel
 }
