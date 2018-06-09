@@ -12,7 +12,7 @@ class SettingsViewModel @Inject constructor(
 
   override val intentMapper = { intent: SettingsIntent ->
     when (intent) {
-      SettingsIntent.ConnectFit ->
+      SettingsIntent.ConnectFit -> {
         if (!fitClient.isEnabled) {
           fitClient.enable().toObservable()
               .map {
@@ -25,10 +25,13 @@ class SettingsViewModel @Inject constructor(
               .asEvents()
               .startWith(SettingsChange.FitEnabled(true).changeAsEvent())
         } else nothing()
+      }
 
-      SettingsIntent.DisconnectFit -> if (fitClient.isEnabled) {
-        fitClient.disable().andThen(SettingsChange.FitEnabled(false).changeAsEvent())
-      } else nothing()
+      SettingsIntent.DisconnectFit -> {
+        if (fitClient.isEnabled) {
+          fitClient.disable().andThen(SettingsChange.FitEnabled(false).changeAsEvent())
+        } else nothing()
+      }
     }
   }
 
