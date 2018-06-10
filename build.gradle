@@ -4,9 +4,16 @@ buildscript {
       'minSdk': 26,
       'targetSdk': 27,
 
-      'versionCode': 3,
-      'versionName': '0.1'
+      'version': [
+          'major': 0,
+          'minor': 1,
+          'patch': 0,
+          'build': 0,
+      ],
   ]
+  ext.buildConfig.version['name'] = "${buildConfig.version.major}.${buildConfig.version.minor}.${buildConfig.version.patch}"
+  ext.buildConfig.version['code'] = buildConfig.version.major * 1000000 + buildConfig.version.minor * 10000 + buildConfig.version.patch * 100 + buildConfig.version.build
+
 
   ext.versions = [
       'supportLibrary': '27.1.1',
