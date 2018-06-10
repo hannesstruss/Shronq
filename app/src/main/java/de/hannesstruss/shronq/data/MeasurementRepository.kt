@@ -78,6 +78,7 @@ class MeasurementRepository @Inject constructor(
   }
 
   fun insertMeasurement(measurement: Measurement) {
+    // TOOD return completable
     collection.add(mapOf(
         KeyMeasuredAt to Timestamp(measurement.measuredAt.toInstant().epochSecond, 0),
         KeyWeightGrams to measurement.weightGrams.toDouble()
