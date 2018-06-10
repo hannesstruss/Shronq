@@ -4,12 +4,15 @@ import de.hannesstruss.shronq.data.MeasurementRepository
 import de.hannesstruss.shronq.data.importer.Importer
 import de.hannesstruss.shronq.ui.base.MviEvent.Companion.nothing
 import de.hannesstruss.shronq.ui.base.MviViewModel
+import de.hannesstruss.shronq.ui.notifications.LogWeightNotification
 import io.reactivex.Observable
+import org.threeten.bp.LocalTime
 import javax.inject.Inject
 
 class HomeViewModel @Inject constructor(
     private val measurementRepository: MeasurementRepository,
-    private val importer: Importer
+    private val importer: Importer,
+    private val logWeightNotification: LogWeightNotification
 ) : MviViewModel<HomeState, HomeIntent, HomeChange, HomeEffect>() {
 
   init {
@@ -18,7 +21,11 @@ class HomeViewModel @Inject constructor(
 
   override val intentMapper = { intent: HomeIntent ->
     when (intent) {
-      HomeIntent.Init -> nothing()
+      HomeIntent.Init -> {
+        // TODO move to settings
+        logWeightNotification.enable(LocalTime.of(7, 0))
+        nothing()
+      }
       HomeIntent.InsertWeight -> HomeEffect.NavigateToInsertWeight.effectAsEvent()
       HomeIntent.EditSettings -> HomeEffect.NavigateToSettings.effectAsEvent()
     }

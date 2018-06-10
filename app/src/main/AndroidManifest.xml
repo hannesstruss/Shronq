@@ -17,13 +17,18 @@
       android:name="com.bugsnag.android.API_KEY"
       android:value="@string/bugsnag_key"/>
 
-    <activity android:name=".ui.MainActivity">
+    <activity
+      android:name=".ui.MainActivity"
+      android:launchMode="singleTop"
+    >
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
 
         <category android:name="android.intent.category.LAUNCHER"/>
       </intent-filter>
     </activity>
+
+    <receiver android:name=".ui.notifications.LogWeightNotificationPublisher"/>
   </application>
 
 </manifest>

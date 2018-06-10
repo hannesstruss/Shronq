@@ -18,7 +18,7 @@ class HomeFragment : BaseFragment<HomeState, HomeIntent, HomeEffect, HomeViewMod
   override fun intents() = Observable.merge(
       btn_go_to_insert.clicks().map { HomeIntent.InsertWeight },
       btn_go_to_settings.clicks().map { HomeIntent.EditSettings }
-  )
+  ).startWith(HomeIntent.Init)
 
   override fun render(state: HomeState) {
     chart.measurements = state.measurements

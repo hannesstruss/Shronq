@@ -11,7 +11,7 @@ import timber.log.Timber
 
 abstract class MviViewModel<StateT, IntentT, ChangeT, EffectT> : ViewModel() {
   companion object {
-    private const val LOGGING = true
+    private const val LOGGING = false
   }
 
   private val viewsSubj = BehaviorSubject.create<MviView<IntentT>>()

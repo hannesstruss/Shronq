@@ -3,6 +3,7 @@ package de.hannesstruss.shronq.ui
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import androidx.navigation.findNavController
 import de.hannesstruss.android.activityholder.ActivityResult
 import de.hannesstruss.android.activityholder.ActivityResultsProvider
 import de.hannesstruss.shronq.R
@@ -18,6 +19,11 @@ class MainActivity : AppCompatActivity(), ActivityResultsProvider {
     setContentView(R.layout.activity_main)
 
     ActivityComponentRetainer.init(this)
+  }
+
+  override fun onNewIntent(intent: Intent?) {
+    super.onNewIntent(intent)
+    findNavController(R.id.nav_host_fragment).onHandleDeepLink(intent)
   }
 
   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
