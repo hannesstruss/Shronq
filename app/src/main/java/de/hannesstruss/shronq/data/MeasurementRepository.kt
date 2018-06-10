@@ -4,6 +4,7 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import de.hannesstruss.shronq.BuildConfig
 import io.reactivex.Observable
 import org.threeten.bp.Instant
 import org.threeten.bp.ZoneId
@@ -14,7 +15,7 @@ class MeasurementRepository @Inject constructor(
     private val db: FirebaseFirestore
 ) {
   companion object {
-    private const val Collection = "weights"
+    private const val Collection = BuildConfig.COLLECTION_NAME
     private const val KeyMeasuredAt = "measured_at"
     private const val KeyWeightGrams = "weight_grams"
   }
