@@ -1,3 +1,10 @@
 <resources>
   <string name="app_name">Shronq</string>
+  <string name="home_btn_insert">Insert</string>
+  <string name="home_btn_settings">Settings</string>
+  <string name="date_range_all">All</string>
+  <string name="date_range_1y">1Y</string>
+  <string name="date_range_6m">6M</string>
+  <string name="date_range_2m">2M</string>
+  <string name="date_range_1m">1M</string>
 </resources>

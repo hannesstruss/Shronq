@@ -16,6 +16,62 @@
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"/>
 
+  <Button
+    android:id="@+id/btn_range_all"
+    style="@style/DateRangeButton"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:text="@string/date_range_all"
+    app:layout_constraintEnd_toStartOf="@+id/btn_range_1y"
+    app:layout_constraintHorizontal_chainStyle="spread_inside"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/chart"
+  />
+
+  <Button
+    android:id="@+id/btn_range_1y"
+    style="@style/DateRangeButton"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/date_range_1y"
+    app:layout_constraintEnd_toStartOf="@+id/btn_range_6m"
+    app:layout_constraintStart_toEndOf="@+id/btn_range_all"
+    app:layout_constraintTop_toBottomOf="@+id/chart"
+  />
+
+  <Button
+    android:id="@+id/btn_range_6m"
+    style="@style/DateRangeButton"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/date_range_6m"
+    app:layout_constraintEnd_toStartOf="@+id/btn_range_2m"
+    app:layout_constraintStart_toEndOf="@+id/btn_range_1y"
+    app:layout_constraintTop_toBottomOf="@+id/chart"/>
+
+  <Button
+    android:id="@+id/btn_range_2m"
+    style="@style/DateRangeButton"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/date_range_2m"
+    app:layout_constraintStart_toEndOf="@+id/btn_range_6m"
+    app:layout_constraintEnd_toStartOf="@+id/btn_range_1m"
+    app:layout_constraintTop_toBottomOf="@+id/chart"
+  />
+
+  <Button
+    android:id="@+id/btn_range_1m"
+    style="@style/DateRangeButton"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="16dp"
+    android:text="@string/date_range_1m"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toEndOf="@+id/btn_range_2m"
+    app:layout_constraintTop_toBottomOf="@+id/chart"/>
+
   <TextView
     android:id="@+id/txt_latest_weight"
     android:layout_width="match_parent"
@@ -26,17 +82,21 @@
 
   <Button
     android:id="@+id/btn_go_to_insert"
-    android:layout_width="match_parent"
+    android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:layout_marginTop="8dp"
-    android:text="Insert"
-    app:layout_constraintTop_toBottomOf="@+id/chart"/>
+    android:text="@string/home_btn_insert"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/btn_range_all"
+    tools:layout_editor_absoluteX="0dp"/>
 
   <Button
     android:id="@+id/btn_go_to_settings"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="8dp"
-    android:text="Settings"
+    android:text="@string/home_btn_settings"
     app:layout_constraintTop_toBottomOf="@+id/txt_latest_weight"/>
+
 </android.support.constraint.ConstraintLayout>
