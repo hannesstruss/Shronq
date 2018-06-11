@@ -16,7 +16,7 @@ class HomeViewModel @Inject constructor(
 ) : MviViewModel<HomeState, HomeIntent, HomeChange, HomeEffect>() {
 
   init {
-//    importer.import()
+    importer.import()
   }
 
   override val intentMapper = { intent: HomeIntent ->
@@ -28,6 +28,7 @@ class HomeViewModel @Inject constructor(
       }
       HomeIntent.InsertWeight -> HomeEffect.NavigateToInsertWeight.effectAsEvent()
       HomeIntent.EditSettings -> HomeEffect.NavigateToSettings.effectAsEvent()
+      is HomeIntent.UpdateVisiblePeriod -> HomeChange.UpdateVisiblePeriod(intent.period).changeAsEvent()
     }
   }
 
@@ -35,6 +36,7 @@ class HomeViewModel @Inject constructor(
     when (change) {
       is HomeChange.UpdateMeasurements -> state.copy(measurements = change.measurements)
       is HomeChange.UpdateLastMeasurement -> state.copy(latestMeasurement = change.measurement)
+      is HomeChange.UpdateVisiblePeriod -> state.copy(visiblePeriod = change.period)
     }
   }
 

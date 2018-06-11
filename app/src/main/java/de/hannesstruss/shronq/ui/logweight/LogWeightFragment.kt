@@ -3,7 +3,7 @@ package de.hannesstruss.shronq.ui.logweight
 import androidx.navigation.fragment.findNavController
 import com.jakewharton.rxbinding2.view.clicks
 import de.hannesstruss.shronq.R
-import de.hannesstruss.shronq.extensions.exhaust
+import de.hannesstruss.kotlin.extensions.exhaust
 import de.hannesstruss.shronq.ui.base.BaseFragment
 import kotlinx.android.synthetic.main.log_weight_fragment.btn_insert
 import kotlinx.android.synthetic.main.log_weight_fragment.edit_weight

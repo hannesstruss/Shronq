@@ -1,4 +1,4 @@
-package de.hannesstruss.shronq.extensions
+package de.hannesstruss.kotlin.extensions
 
 import io.reactivex.Observable
 
