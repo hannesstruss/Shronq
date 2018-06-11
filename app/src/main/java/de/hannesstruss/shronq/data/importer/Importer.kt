@@ -33,7 +33,7 @@ class Importer @Inject constructor(
     val zone = ZoneId.of("Europe/Berlin")
     items
         .objects
-        .map { Measurement(it.value.toInt() * 1000, LocalDateTime.parse(it.measured_on).atZone(zone)) }
+        .map { Measurement((it.value * 1000).toInt(), LocalDateTime.parse(it.measured_on).atZone(zone)) }
         .forEach { measurementRepository.insertMeasurement(it) }
   }
 }
