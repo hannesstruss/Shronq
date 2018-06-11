@@ -21,19 +21,19 @@ class ActivityComponentRetainer : Fragment() {
     private fun createFragment(activity: MainActivity): ActivityComponentRetainer {
       val fragment = ActivityComponentRetainer()
 
-      val appComponent = (activity.applicationContext as ShronqApp).appComponent
-      fragment.component = appComponent.activityComponent()
-          .activityModule(ActivityModule(activity))
-          .build()
-
       val fm = activity.supportFragmentManager
       fm.beginTransaction().add(fragment, TAG).commitNow()
       return fragment
     }
   }
 
-  lateinit var component: ActivityComponent
-    private set
+  val component: ActivityComponent by lazy {
+    val activity = requireActivity() as MainActivity
+    val appComponent = (activity.applicationContext as ShronqApp).appComponent
+    appComponent.activityComponent()
+        .activityModule(ActivityModule(activity))
+        .build()
+  }
 
   init {
     retainInstance = true
