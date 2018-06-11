@@ -49,6 +49,7 @@ class LogWeightNotification @Inject constructor(private val context: Context) {
         .setContentTitle("Hey! Tracking time.")
         .setContentText("How is it looking today?")
         .setSmallIcon(R.drawable.ic_trending_up_black_24dp)
+        .setAutoCancel(true)
         .setContentIntent(pendingIntent)
         .build()
     nm.notify(LogWeightNotificationId, notification)
