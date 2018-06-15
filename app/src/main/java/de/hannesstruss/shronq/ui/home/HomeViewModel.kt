@@ -16,7 +16,7 @@ class HomeViewModel @Inject constructor(
 ) : MviViewModel<HomeState, HomeIntent, HomeChange, HomeEffect>() {
 
   init {
-    importer.import()
+//    importer.importFirebaseToLocal()
   }
 
   override val intentMapper = { intent: HomeIntent ->

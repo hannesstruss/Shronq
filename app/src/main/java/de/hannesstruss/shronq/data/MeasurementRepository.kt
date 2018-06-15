@@ -5,14 +5,17 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import de.hannesstruss.shronq.BuildConfig
+import de.hannesstruss.shronq.data.db.AppDatabase
 import io.reactivex.Observable
+import io.reactivex.schedulers.Schedulers
 import org.threeten.bp.Instant
 import org.threeten.bp.ZoneId
 import org.threeten.bp.ZonedDateTime
 import javax.inject.Inject
 
 class MeasurementRepository @Inject constructor(
-    private val db: FirebaseFirestore
+    private val db: FirebaseFirestore,
+    private val appDatabase: AppDatabase
 ) {
   companion object {
     private const val Collection = BuildConfig.COLLECTION_NAME
@@ -24,6 +27,16 @@ class MeasurementRepository @Inject constructor(
   private val collection get() = db.collection(Collection)
 
   fun getMeasurements(): Observable<List<Measurement>> {
+    val dao = appDatabase.dbMeasurementDao()
+    return Observable.create<List<Measurement>> { emitter ->
+      val measurements = dao.selectAll().map {
+        Measurement(it.weightGrams, it.measuredAt, it.firebaseId)
+      }
+      emitter.onNext(measurements)
+    }.subscribeOn(Schedulers.io())
+  }
+
+  fun getMeasurementsFirebase(): Observable<List<Measurement>> {
     val snapshots = Observable.create<List<DocumentSnapshot>> { emitter ->
       val registration =
           collection
@@ -87,6 +100,7 @@ class MeasurementRepository @Inject constructor(
 
   private fun DocumentSnapshot.toMeasurement() = Measurement(
       weightGrams = getDouble(KeyWeightGrams)!!.toInt(),
-      measuredAt = Instant.ofEpochSecond(getTimestamp(KeyMeasuredAt)!!.seconds).atZone(zone)
+      measuredAt = Instant.ofEpochSecond(getTimestamp(KeyMeasuredAt)!!.seconds).atZone(zone),
+      firebaseId = id
   )
 }

@@ -21,7 +21,8 @@ buildscript {
       'dagger': '2.16',
       'arch': [
           'navigation': '1.0.0-alpha01',
-          'lifecycle': '1.1.1'
+          'lifecycle': '1.1.1',
+          'room': '1.1.1-rc1'
       ],
       'playservices': [
           'fit': '15.0.1',
@@ -43,8 +44,16 @@ buildscript {
                   'fragment': "android.arch.navigation:navigation-fragment-ktx:${versions.arch.navigation}",
                   'ui': "android.arch.navigation:navigation-ui-ktx:${versions.arch.navigation}",
               ],
-              'viewmodel': "android.arch.lifecycle:viewmodel:${versions.arch.lifecycle}",
-              'extensions': "android.arch.lifecycle:extensions:${versions.arch.lifecycle}"
+              'lifecycle': [
+                  'viewmodel': "android.arch.lifecycle:viewmodel:${versions.arch.lifecycle}",
+                  'extensions': "android.arch.lifecycle:extensions:${versions.arch.lifecycle}"
+              ],
+              'room': [
+                  'runtime': "android.arch.persistence.room:runtime:${versions.arch.room}",
+                  'compiler': "android.arch.persistence.room:compiler:${versions.arch.room}",
+                  'rx2': "android.arch.persistence.room:rxjava2:${versions.arch.room}"
+              ]
+
           ]
       ],
       'firebase': [
