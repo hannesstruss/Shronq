@@ -12,9 +12,13 @@ import org.threeten.bp.ZonedDateTime
 )
 data class DbMeasurement(
     @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+    val id: Int = NO_ID,
     val weightGrams: Int,
     val measuredAt: ZonedDateTime,
     val firebaseId: String?,
     val isSynced: Boolean
-)
+) {
+  companion object {
+    const val NO_ID = 0
+  }
+}

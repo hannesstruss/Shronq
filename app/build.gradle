@@ -53,7 +53,7 @@ android {
       versionNameSuffix = "-dev"
       signingConfig signingConfigs.debug
 
-      buildConfigField "String", "COLLECTION_NAME", "\"weights_debug\""
+      buildConfigField "String", "FIREBASE_COLLECTION_NAME", "\"weights_debug\""
     }
 
     release {
@@ -63,7 +63,7 @@ android {
         signingConfig signingConfigs.debug
       }
 
-      buildConfigField "String", "COLLECTION_NAME", "\"weights\""
+      buildConfigField "String", "FIREBASE_COLLECTION_NAME", "\"weights\""
     }
   }
 }

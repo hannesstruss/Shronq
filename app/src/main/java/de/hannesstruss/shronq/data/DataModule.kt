@@ -1,20 +1,13 @@
 package de.hannesstruss.shronq.data
 
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.FirebaseFirestoreSettings
 import dagger.Module
-import dagger.Provides
 import de.hannesstruss.shronq.data.db.DbModule
+import de.hannesstruss.shronq.data.firebase.FirebaseModule
 
 @Module(
     includes = [
-      DbModule::class
+      DbModule::class,
+      FirebaseModule::class
     ]
 )
-class DataModule {
-  @Provides fun firebaseFirestore() = FirebaseFirestore.getInstance().apply {
-    firestoreSettings = FirebaseFirestoreSettings.Builder()
-        .setTimestampsInSnapshotsEnabled(true)
-        .build()
-  }
-}
+class DataModule

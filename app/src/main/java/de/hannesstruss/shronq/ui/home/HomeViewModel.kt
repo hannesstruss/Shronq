@@ -2,6 +2,7 @@ package de.hannesstruss.shronq.ui.home
 
 import de.hannesstruss.shronq.data.MeasurementRepository
 import de.hannesstruss.shronq.data.importer.Importer
+import de.hannesstruss.shronq.data.sync.Syncer
 import de.hannesstruss.shronq.ui.base.MviEvent.Companion.nothing
 import de.hannesstruss.shronq.ui.base.MviViewModel
 import de.hannesstruss.shronq.ui.notifications.LogWeightNotification
@@ -12,11 +13,12 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val measurementRepository: MeasurementRepository,
     private val importer: Importer,
-    private val logWeightNotification: LogWeightNotification
+    private val logWeightNotification: LogWeightNotification,
+    private val syncer: Syncer
 ) : MviViewModel<HomeState, HomeIntent, HomeChange, HomeEffect>() {
 
   init {
-//    importer.importFirebaseToLocal()
+    syncer.syncUp().subscribe()
   }
 
   override val intentMapper = { intent: HomeIntent ->
