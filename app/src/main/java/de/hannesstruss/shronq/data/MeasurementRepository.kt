@@ -19,9 +19,7 @@ class MeasurementRepository @Inject constructor(
 
     return dao.selectAll()
         .map { all ->
-          all.map {
-            Measurement(it.weightGrams, it.measuredAt, it.firebaseId)
-          }
+          all.map { it.toMeasurement() }
         }
         .toObservable()
   }
@@ -31,7 +29,7 @@ class MeasurementRepository @Inject constructor(
 
     return dao.selectLatest()
         .map {
-          Measurement(it.weightGrams, it.measuredAt, it.firebaseId)
+          it.toMeasurement()
         }
         .toObservable()
   }
@@ -62,4 +60,10 @@ class MeasurementRepository @Inject constructor(
       WorkManager.getInstance().enqueue(work)
     }.subscribeOn(Schedulers.io())
   }
+
+  private fun DbMeasurement.toMeasurement() = Measurement(
+      weightGrams = weightGrams,
+      measuredAt = measuredAt,
+      firebaseId = firebaseId
+  )
 }
