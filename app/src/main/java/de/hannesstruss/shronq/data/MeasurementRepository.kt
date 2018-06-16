@@ -57,7 +57,6 @@ class MeasurementRepository @Inject constructor(
 
   private fun DbMeasurement.toMeasurement() = Measurement(
       weightGrams = weightGrams,
-      measuredAt = measuredAt,
-      firebaseId = firebaseId
+      measuredAt = measuredAt
   )
 }
