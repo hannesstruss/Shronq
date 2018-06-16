@@ -52,8 +52,8 @@ buildscript {
                   'runtime': "android.arch.persistence.room:runtime:${versions.arch.room}",
                   'compiler': "android.arch.persistence.room:compiler:${versions.arch.room}",
                   'rx2': "android.arch.persistence.room:rxjava2:${versions.arch.room}"
-              ]
-
+              ],
+              'work': 'android.arch.work:work-runtime-ktx:1.0.0-alpha02'
           ]
       ],
       'firebase': [

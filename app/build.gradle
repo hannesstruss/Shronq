@@ -92,6 +92,8 @@ dependencies {
   implementation deps.android.arch.room.rx2
   kapt deps.android.arch.room.compiler
 
+  implementation deps.android.arch.work
+
   implementation deps.playservices.fit
   implementation deps.playservices.auth
 
