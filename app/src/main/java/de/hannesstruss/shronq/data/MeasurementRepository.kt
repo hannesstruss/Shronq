@@ -2,8 +2,8 @@ package de.hannesstruss.shronq.data
 
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
-import de.hannesstruss.shronq.data.db.AppDatabase
 import de.hannesstruss.shronq.data.db.DbMeasurement
+import de.hannesstruss.shronq.data.db.DbMeasurementDao
 import de.hannesstruss.shronq.data.sync.SyncWorker
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -12,11 +12,9 @@ import org.threeten.bp.ZonedDateTime
 import javax.inject.Inject
 
 class MeasurementRepository @Inject constructor(
-    private val appDatabase: AppDatabase
+    private val dao: DbMeasurementDao
 ) {
   fun getMeasurements(): Observable<List<Measurement>> {
-    val dao = appDatabase.dbMeasurementDao()
-
     return dao.selectAll()
         .map { all ->
           all.map { it.toMeasurement() }
@@ -25,12 +23,8 @@ class MeasurementRepository @Inject constructor(
   }
 
   fun getLatestMeasurement(): Observable<Measurement> {
-    val dao = appDatabase.dbMeasurementDao()
-
     return dao.selectLatest()
-        .map {
-          it.toMeasurement()
-        }
+        .map { it.toMeasurement() }
         .toObservable()
   }
 
@@ -52,7 +46,7 @@ class MeasurementRepository @Inject constructor(
           isSynced = false
       )
 
-      appDatabase.dbMeasurementDao().insertAll(dbMeasurement)
+      dao.insertAll(dbMeasurement)
 
       val work = OneTimeWorkRequestBuilder<SyncWorker>()
           .setConstraints(SyncWorker.CONSTRAINTS)
