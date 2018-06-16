@@ -1,18 +1,34 @@
 package de.hannesstruss.shronq.data.sync
 
 import androidx.work.Constraints
+import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import androidx.work.Worker
 import de.hannesstruss.shronq.ShronqApp
 import timber.log.Timber
 import java.io.IOException
 import javax.inject.Inject
 
-class SyncWorker : Worker() {
+class SyncUpWorker : Worker() {
   companion object {
-    val CONSTRAINTS: Constraints = Constraints.Builder()
+    private val TAG = SyncUpWorker::class.java.simpleName
+
+    private val CONSTRAINTS: Constraints = Constraints.Builder()
+        .setRequiresBatteryNotLow(true)
         .setRequiredNetworkType(NetworkType.CONNECTED)
         .build()
+
+    private val EXISTING_WORK_POLICY = ExistingWorkPolicy.APPEND
+
+    fun runOnce() {
+      val request = OneTimeWorkRequestBuilder<SyncUpWorker>()
+          .setConstraints(SyncUpWorker.CONSTRAINTS)
+          .build()
+      WorkManager.getInstance()
+          .beginUniqueWork(TAG, EXISTING_WORK_POLICY, request).enqueue()
+    }
   }
 
   @Inject lateinit var syncer: Syncer

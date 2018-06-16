@@ -1,10 +1,8 @@
 package de.hannesstruss.shronq.data
 
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
 import de.hannesstruss.shronq.data.db.DbMeasurement
 import de.hannesstruss.shronq.data.db.DbMeasurementDao
-import de.hannesstruss.shronq.data.sync.SyncWorker
+import de.hannesstruss.shronq.data.sync.SyncUpWorker
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
@@ -48,10 +46,7 @@ class MeasurementRepository @Inject constructor(
 
       dao.insertAll(dbMeasurement)
 
-      val work = OneTimeWorkRequestBuilder<SyncWorker>()
-          .setConstraints(SyncWorker.CONSTRAINTS)
-          .build()
-      WorkManager.getInstance().enqueue(work)
+      SyncUpWorker.runOnce()
     }.subscribeOn(Schedulers.io())
   }
 
