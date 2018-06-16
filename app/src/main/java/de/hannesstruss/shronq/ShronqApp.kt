@@ -3,6 +3,7 @@ package de.hannesstruss.shronq
 import android.app.Application
 import com.bugsnag.android.Bugsnag
 import com.jakewharton.threetenabp.AndroidThreeTen
+import de.hannesstruss.shronq.data.sync.SyncDownWorker
 import de.hannesstruss.shronq.di.AppComponent
 import timber.log.Timber
 
@@ -19,5 +20,7 @@ class ShronqApp : Application() {
     }
 
     AndroidThreeTen.init(this)
+
+    SyncDownWorker.schedulePeriodically()
   }
 }

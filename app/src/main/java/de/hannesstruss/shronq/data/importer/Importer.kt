@@ -4,6 +4,7 @@ import android.content.Context
 import com.google.gson.Gson
 import de.hannesstruss.shronq.data.Measurement
 import de.hannesstruss.shronq.data.MeasurementRepository
+import de.hannesstruss.shronq.data.db.AppDatabase
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.ZoneId
 import java.io.InputStreamReader
@@ -20,9 +21,10 @@ data class ShrnqApiItem(
 
 class Importer @Inject constructor(
     private val measurementRepository: MeasurementRepository,
+    private val appDatabase: AppDatabase,
     private val context: Context
 ) {
-  fun import() {
+  fun importJsonToFirebase() {
     val gson = Gson()
 
     val items = context.assets.open("shrnq.json").use {
@@ -35,5 +37,26 @@ class Importer @Inject constructor(
         .objects
         .map { Measurement((it.value * 1000).toInt(), LocalDateTime.parse(it.measured_on).atZone(zone)) }
         .forEach { measurementRepository.insertMeasurement(it) }
+  }
+
+  fun importFirebaseToLocal() {
+//    measurementRepository.getMeasurements()
+//        .observeOn(Schedulers.io())
+//        .doOnNext { measurements ->
+//          val dao = appDatabase.dbMeasurementDao()
+//
+//          measurements.forEach { measurement ->
+//            val dbMeasurement = DbMeasurement(
+//                firebaseId = measurement.firebaseId!!,
+//                weightGrams = measurement.weightGrams,
+//                measuredAt = measurement.measuredAt,
+//                isSynced = true
+//            )
+//
+//            dao.insertAll(dbMeasurement)
+//          }
+//        }
+//        .observeOn(AndroidSchedulers.mainThread())
+//        .subscribe()
   }
 }

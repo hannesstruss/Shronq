@@ -2,6 +2,8 @@ package de.hannesstruss.shronq.di
 
 import android.app.Application
 import dagger.Component
+import de.hannesstruss.shronq.data.sync.SyncDownWorker
+import de.hannesstruss.shronq.data.sync.SyncUpWorker
 import de.hannesstruss.shronq.ui.di.ActivityComponent
 import javax.inject.Singleton
 
@@ -19,4 +21,7 @@ interface AppComponent {
   }
 
   fun activityComponent(): ActivityComponent.Builder
+
+  fun inject(syncUpWorker: SyncUpWorker)
+  fun inject(syncDownWorker: SyncDownWorker)
 }

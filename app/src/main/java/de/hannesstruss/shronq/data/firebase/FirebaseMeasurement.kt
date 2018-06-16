@@ -1,8 +1,9 @@
-package de.hannesstruss.shronq.data
+package de.hannesstruss.shronq.data.firebase
 
 import org.threeten.bp.ZonedDateTime
 
-data class Measurement(
+data class FirebaseMeasurement(
+    val id: String,
     val weightGrams: Int,
     val measuredAt: ZonedDateTime
 )

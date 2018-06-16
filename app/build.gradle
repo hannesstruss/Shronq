@@ -21,6 +21,12 @@ android {
     resValue "string", "project_id", "\"${getProperty('shronq.firebase_project_id')}\""
 
     resValue "string", "bugsnag_key", getProperty('shronq.bugsnag_key')
+
+    javaCompileOptions {
+      annotationProcessorOptions {
+        arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+      }
+    }
   }
 
   signingConfigs {
@@ -47,7 +53,7 @@ android {
       versionNameSuffix = "-dev"
       signingConfig signingConfigs.debug
 
-      buildConfigField "String", "COLLECTION_NAME", "\"weights_debug\""
+      buildConfigField "String", "FIREBASE_COLLECTION_NAME", "\"weights_debug\""
     }
 
     release {
@@ -57,7 +63,7 @@ android {
         signingConfig signingConfigs.debug
       }
 
-      buildConfigField "String", "COLLECTION_NAME", "\"weights\""
+      buildConfigField "String", "FIREBASE_COLLECTION_NAME", "\"weights\""
     }
   }
 }
@@ -75,10 +81,18 @@ dependencies {
 
   implementation deps.android.support.appCompat
   implementation deps.android.support.constraintLayout
+
   implementation deps.android.arch.navigation.fragment
   implementation deps.android.arch.navigation.ui
-  implementation deps.android.arch.extensions
-  implementation deps.android.arch.viewmodel
+
+  implementation deps.android.arch.lifecycle.extensions
+  implementation deps.android.arch.lifecycle.viewmodel
+
+  implementation deps.android.arch.room.runtime
+  implementation deps.android.arch.room.rx2
+  kapt deps.android.arch.room.compiler
+
+  implementation deps.android.arch.work
 
   implementation deps.playservices.fit
   implementation deps.playservices.auth

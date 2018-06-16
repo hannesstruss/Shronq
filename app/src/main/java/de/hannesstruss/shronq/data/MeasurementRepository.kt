@@ -1,92 +1,57 @@
 package de.hannesstruss.shronq.data
 
-import com.google.firebase.Timestamp
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
-import de.hannesstruss.shronq.BuildConfig
+import de.hannesstruss.shronq.data.db.DbMeasurement
+import de.hannesstruss.shronq.data.db.DbMeasurementDao
+import de.hannesstruss.shronq.data.sync.SyncUpWorker
+import io.reactivex.Completable
 import io.reactivex.Observable
-import org.threeten.bp.Instant
-import org.threeten.bp.ZoneId
+import io.reactivex.schedulers.Schedulers
 import org.threeten.bp.ZonedDateTime
 import javax.inject.Inject
 
 class MeasurementRepository @Inject constructor(
-    private val db: FirebaseFirestore
+    private val dao: DbMeasurementDao
 ) {
-  companion object {
-    private const val Collection = BuildConfig.COLLECTION_NAME
-    private const val KeyMeasuredAt = "measured_at"
-    private const val KeyWeightGrams = "weight_grams"
-  }
-
-  private val zone = ZoneId.of("Europe/Berlin")
-  private val collection get() = db.collection(Collection)
-
   fun getMeasurements(): Observable<List<Measurement>> {
-    val snapshots = Observable.create<List<DocumentSnapshot>> { emitter ->
-      val registration =
-          collection
-              .orderBy(KeyMeasuredAt, Query.Direction.ASCENDING)
-              .addSnapshotListener { snapshot, error ->
-                snapshot?.let {
-                  emitter.onNext(snapshot.documents)
-                }
-
-                error?.let {
-                  emitter.onError(error)
-                }
-              }
-
-      emitter.setCancellable { registration.remove() }
-    }
-
-    return snapshots.map { documents ->
-      documents.map { it.toMeasurement() }
-    }
+    return dao.selectAll()
+        .map { all ->
+          all.map { it.toMeasurement() }
+        }
+        .toObservable()
   }
 
   fun getLatestMeasurement(): Observable<Measurement> {
-    val snapshots = Observable.create<DocumentSnapshot> { emitter ->
-      val registration =
-          collection
-              .orderBy(KeyMeasuredAt, Query.Direction.DESCENDING)
-              .limit(1)
-              .addSnapshotListener { snapshot, error ->
-                snapshot?.let {
-                  if (!snapshot.isEmpty) {
-                    emitter.onNext(snapshot.documents[0])
-                  }
-                }
-
-                error?.let { emitter.onError(it) }
-              }
-
-      emitter.setCancellable { registration.remove() }
-    }
-
-    return snapshots.map { it.toMeasurement() }
+    return dao.selectLatest()
+        .map { it.toMeasurement() }
+        .toObservable()
   }
 
-  fun insertMeasurement(weightGrams: Int) {
+  fun insertMeasurement(weightGrams: Int): Completable {
     val measurement = Measurement(
         weightGrams = weightGrams,
         measuredAt = ZonedDateTime.now()
     )
 
-    insertMeasurement(measurement)
+    return insertMeasurement(measurement)
   }
 
-  fun insertMeasurement(measurement: Measurement) {
-    // TOOD return completable
-    collection.add(mapOf(
-        KeyMeasuredAt to Timestamp(measurement.measuredAt.toInstant().epochSecond, 0),
-        KeyWeightGrams to measurement.weightGrams.toDouble()
-    ))
+  fun insertMeasurement(measurement: Measurement): Completable {
+    return Completable.fromAction {
+      val dbMeasurement = DbMeasurement(
+          weightGrams = measurement.weightGrams,
+          measuredAt = measurement.measuredAt,
+          firebaseId = null,
+          isSynced = false
+      )
+
+      dao.insertAll(dbMeasurement)
+
+      SyncUpWorker.runOnce()
+    }.subscribeOn(Schedulers.io())
   }
 
-  private fun DocumentSnapshot.toMeasurement() = Measurement(
-      weightGrams = getDouble(KeyWeightGrams)!!.toInt(),
-      measuredAt = Instant.ofEpochSecond(getTimestamp(KeyMeasuredAt)!!.seconds).atZone(zone)
+  private fun DbMeasurement.toMeasurement() = Measurement(
+      weightGrams = weightGrams,
+      measuredAt = measuredAt
   )
 }
