@@ -26,28 +26,28 @@ class SyncUpWorker : Worker() {
       val request = OneTimeWorkRequestBuilder<SyncUpWorker>()
           .setConstraints(SyncUpWorker.CONSTRAINTS)
           .build()
-      WorkManager.getInstance()
+      WorkManager.getInstance()!!
           .beginUniqueWork(TAG, EXISTING_WORK_POLICY, request).enqueue()
     }
   }
 
   @Inject lateinit var syncer: Syncer
 
-  override fun doWork(): WorkerResult {
+  override fun doWork(): Worker.Result {
     (applicationContext as ShronqApp).appComponent.inject(this)
 
     Timber.d("Starting to sync up")
 
     try {
       syncer.syncUp().blockingAwait()
-      return WorkerResult.SUCCESS
+      return Worker.Result.SUCCESS
     } catch (e: Exception) {
       if (e is IOException) {
         Timber.d("Should retry")
-        return WorkerResult.RETRY
+        return Worker.Result.RETRY
       } else {
         Timber.e(e, "Sync failure")
-        return WorkerResult.FAILURE
+        return Worker.Result.FAILURE
       }
     }
   }
