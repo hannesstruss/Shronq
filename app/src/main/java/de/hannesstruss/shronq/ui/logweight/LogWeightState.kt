@@ -8,4 +8,6 @@ data class LogWeightState(
         isInserting = false
     )
   }
+
+  val insertButtonEnabled get() = !isInserting
 }

@@ -2,8 +2,8 @@ package de.hannesstruss.shronq.ui.logweight
 
 import androidx.navigation.fragment.findNavController
 import com.jakewharton.rxbinding2.view.clicks
-import de.hannesstruss.shronq.R
 import de.hannesstruss.kotlin.extensions.exhaust
+import de.hannesstruss.shronq.R
 import de.hannesstruss.shronq.ui.base.BaseFragment
 import kotlinx.android.synthetic.main.log_weight_fragment.btn_insert
 import kotlinx.android.synthetic.main.log_weight_fragment.edit_weight
@@ -16,7 +16,7 @@ class LogWeightFragment : BaseFragment<LogWeightState, LogWeightIntent, LogWeigh
       .map<LogWeightIntent> { LogWeightIntent.LogWeight(weightGrams()) }
 
   override fun render(state: LogWeightState) {
-
+    btn_insert.isEnabled = state.insertButtonEnabled
   }
 
   override fun handleEffect(effect: LogWeightEffect) {
