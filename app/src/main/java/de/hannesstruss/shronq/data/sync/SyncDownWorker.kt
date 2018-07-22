@@ -23,9 +23,6 @@ class SyncDownWorker : Worker() {
     fun schedulePeriodically() {
       val wm = WorkManager.getInstance()!!
 
-      // Clean up previous broken scheduling
-      wm.cancelAllWork()
-
       val request = PeriodicWorkRequestBuilder<SyncDownWorker>(7, TimeUnit.DAYS)
           .setConstraints(CONSTRAINTS)
           .build()
