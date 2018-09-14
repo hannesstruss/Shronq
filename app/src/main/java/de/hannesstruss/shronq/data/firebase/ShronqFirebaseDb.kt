@@ -10,6 +10,7 @@ import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import org.threeten.bp.Instant
 import org.threeten.bp.ZoneId
+import java.util.concurrent.Executors
 import javax.inject.Inject
 
 class ShronqFirebaseDb @Inject constructor(
@@ -23,6 +24,7 @@ class ShronqFirebaseDb @Inject constructor(
 
   private val collection = firestore.collection(CollectionName)
   private val zone = ZoneId.systemDefault()
+  private val scheduler = Schedulers.from(Executors.newSingleThreadExecutor())
 
   fun getAllMeasurements(): Single<List<FirebaseMeasurement>> {
     val snapshots = Single.create<List<DocumentSnapshot>> { emitter ->
@@ -42,6 +44,7 @@ class ShronqFirebaseDb @Inject constructor(
     }
 
     return snapshots
+        .subscribeOn(scheduler)
         .observeOn(Schedulers.computation())
         .map { documents ->
           documents.map { it.toMeasurement() }
@@ -49,7 +52,7 @@ class ShronqFirebaseDb @Inject constructor(
   }
 
   fun addMeasurement(measurement: Measurement): Single<FirebaseMeasurement> {
-    return Single.create { emitter ->
+    val insert = Single.create<FirebaseMeasurement> { emitter ->
       val task = collection.add(mapOf(
           KeyMeasuredAt to Timestamp(measurement.measuredAt.toInstant().epochSecond, 0),
           KeyWeightGrams to measurement.weightGrams.toDouble()
@@ -61,6 +64,7 @@ class ShronqFirebaseDb @Inject constructor(
       }
       task.addOnFailureListener { emitter.onError(it) }
     }
+    return insert.subscribeOn(scheduler)
   }
 
   private fun DocumentSnapshot.toMeasurement() = FirebaseMeasurement(
