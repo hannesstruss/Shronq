@@ -12,7 +12,9 @@ import org.threeten.bp.Instant
 import org.threeten.bp.ZoneId
 import java.util.concurrent.Executors
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class ShronqFirebaseDb @Inject constructor(
     private val firestore: FirebaseFirestore
 ) {
