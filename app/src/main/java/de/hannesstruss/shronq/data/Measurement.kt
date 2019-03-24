@@ -1,6 +1,6 @@
 package de.hannesstruss.shronq.data
 
-import org.threeten.bp.ZonedDateTime
+import java.time.ZonedDateTime
 
 data class Measurement(
     val weightGrams: Int,

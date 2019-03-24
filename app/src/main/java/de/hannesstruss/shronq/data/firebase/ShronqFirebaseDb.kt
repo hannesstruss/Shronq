@@ -8,8 +8,8 @@ import de.hannesstruss.shronq.BuildConfig
 import de.hannesstruss.shronq.data.Measurement
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
-import org.threeten.bp.Instant
-import org.threeten.bp.ZoneId
+import java.time.Instant
+import java.time.ZoneId
 import java.util.concurrent.Executors
 import javax.inject.Inject
 import javax.inject.Singleton

@@ -15,7 +15,7 @@ import kotlinx.android.synthetic.main.home_fragment.btn_range_6m
 import kotlinx.android.synthetic.main.home_fragment.btn_range_all
 import kotlinx.android.synthetic.main.home_fragment.chart
 import kotlinx.android.synthetic.main.home_fragment.txt_latest_weight
-import org.threeten.bp.Period
+import java.time.Period
 
 class HomeFragment : BaseFragment<HomeState, HomeIntent, HomeEffect, HomeViewModel>() {
   override val layout = R.layout.home_fragment

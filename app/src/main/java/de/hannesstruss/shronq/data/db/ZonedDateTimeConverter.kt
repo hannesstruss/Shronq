@@ -1,7 +1,7 @@
 package de.hannesstruss.shronq.data.db
 
 import android.arch.persistence.room.TypeConverter
-import org.threeten.bp.ZonedDateTime
+import java.time.ZonedDateTime
 
 class ZonedDateTimeConverter {
   companion object {

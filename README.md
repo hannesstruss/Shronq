@@ -1,0 +1,3 @@
+# Release
+
+    ./gradlew :app:publishApkRelease

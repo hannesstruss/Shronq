@@ -1,6 +1,6 @@
 package de.hannesstruss.shronq.ui.home
 
-import org.threeten.bp.Period
+import java.time.Period
 
 sealed class HomeIntent {
   object Init : HomeIntent()

@@ -107,8 +107,6 @@ dependencies {
 
   implementation deps.rx.binding.main
 
-  implementation deps.threetenabp
-
   implementation deps.timber
   implementation deps.bugsnag.sdk
 }

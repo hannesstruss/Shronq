@@ -11,9 +11,9 @@ import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
 import androidx.navigation.NavDeepLinkBuilder
 import de.hannesstruss.shronq.R
-import org.threeten.bp.LocalDate
-import org.threeten.bp.LocalTime
-import org.threeten.bp.OffsetDateTime
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.OffsetDateTime
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 

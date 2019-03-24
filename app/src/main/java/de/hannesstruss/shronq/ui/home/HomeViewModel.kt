@@ -7,7 +7,7 @@ import de.hannesstruss.shronq.ui.base.MviEvent.Companion.nothing
 import de.hannesstruss.shronq.ui.base.MviViewModel
 import de.hannesstruss.shronq.ui.notifications.LogWeightNotification
 import io.reactivex.Observable
-import org.threeten.bp.LocalTime
+import java.time.LocalTime
 import javax.inject.Inject
 
 class HomeViewModel @Inject constructor(

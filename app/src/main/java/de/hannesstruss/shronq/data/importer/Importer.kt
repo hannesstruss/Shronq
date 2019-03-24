@@ -5,9 +5,9 @@ import com.google.gson.Gson
 import de.hannesstruss.shronq.data.Measurement
 import de.hannesstruss.shronq.data.MeasurementRepository
 import de.hannesstruss.shronq.data.db.AppDatabase
-import org.threeten.bp.LocalDateTime
-import org.threeten.bp.ZoneId
 import java.io.InputStreamReader
+import java.time.LocalDateTime
+import java.time.ZoneId
 import javax.inject.Inject
 
 data class ShrnqApiResponse(

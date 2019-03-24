@@ -1,7 +1,7 @@
 package de.hannesstruss.shronq.ui.home
 
 import de.hannesstruss.shronq.data.Measurement
-import org.threeten.bp.Period
+import java.time.Period
 
 data class HomeState(
     val measurements: List<Measurement>,

@@ -67,7 +67,6 @@ buildscript {
               'main': 'com.jakewharton.rxbinding2:rxbinding-kotlin:2.1.1'
           ]
       ],
-      'threetenabp': 'com.jakewharton.threetenabp:threetenabp:1.1.0',
       'bugsnag': [
           'sdk': 'com.bugsnag:bugsnag-android:4.4.0'
       ],

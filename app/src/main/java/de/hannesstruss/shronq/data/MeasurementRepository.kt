@@ -6,7 +6,7 @@ import de.hannesstruss.shronq.data.sync.SyncUpWorker
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
-import org.threeten.bp.ZonedDateTime
+import java.time.ZonedDateTime
 import javax.inject.Inject
 
 class MeasurementRepository @Inject constructor(

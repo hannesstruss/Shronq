@@ -7,8 +7,8 @@ import android.util.AttributeSet
 import android.view.View
 import de.hannesstruss.kotlin.delegates.idempotent
 import de.hannesstruss.shronq.data.Measurement
-import org.threeten.bp.Period
-import org.threeten.bp.ZonedDateTime
+import java.time.Period
+import java.time.ZonedDateTime
 
 class HomeChart(context: Context, attrs: AttributeSet?) : View(context, attrs) {
   private val linePaint = Paint().apply {
