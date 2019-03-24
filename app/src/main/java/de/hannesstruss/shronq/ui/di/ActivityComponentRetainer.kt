@@ -1,10 +1,10 @@
 package de.hannesstruss.shronq.ui.di
 
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import de.hannesstruss.shronq.ShronqApp
 import de.hannesstruss.shronq.ui.MainActivity
 
-class ActivityComponentRetainer : Fragment() {
+class ActivityComponentRetainer : androidx.fragment.app.Fragment() {
   companion object {
     private val TAG = "${ActivityComponentRetainer::class.java.canonicalName}_TAG"
 

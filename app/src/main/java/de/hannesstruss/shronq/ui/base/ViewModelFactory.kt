@@ -1,7 +1,7 @@
 package de.hannesstruss.shronq.ui.base
 
-import android.arch.lifecycle.ViewModel
-import android.arch.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import de.hannesstruss.shronq.ui.di.PerActivity
 import javax.inject.Inject
 import javax.inject.Provider

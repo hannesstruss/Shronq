@@ -1,6 +1,6 @@
 package de.hannesstruss.shronq.ui.base
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 import de.hannesstruss.kotlin.extensions.ofType
 import io.reactivex.Completable
 import io.reactivex.Observable

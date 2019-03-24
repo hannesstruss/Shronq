@@ -2,14 +2,14 @@ package de.hannesstruss.android.activityholder
 
 import android.app.Activity
 import android.content.Context
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v7.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.appcompat.app.AppCompatActivity
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
 import timber.log.Timber
 
-class ActivityHolder : Fragment() {
+class ActivityHolder : androidx.fragment.app.Fragment() {
   companion object {
     private val TAG = "${ActivityHolder::class.java.canonicalName}_TAG"
 
@@ -18,7 +18,7 @@ class ActivityHolder : Fragment() {
       return fm.findFragmentByTag(TAG) as ActivityHolder? ?: create(fm)
     }
 
-    private fun create(fm: FragmentManager): ActivityHolder {
+    private fun create(fm: androidx.fragment.app.FragmentManager): ActivityHolder {
       val fragment = ActivityHolder()
       fm.beginTransaction().add(fragment, TAG).commitNow()
       return fragment

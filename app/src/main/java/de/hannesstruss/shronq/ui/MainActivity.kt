@@ -2,7 +2,7 @@ package de.hannesstruss.shronq.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import de.hannesstruss.android.activityholder.ActivityResult
 import de.hannesstruss.android.activityholder.ActivityResultsProvider
