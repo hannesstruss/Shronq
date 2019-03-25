@@ -81,10 +81,6 @@ play {
   track = 'internal'
 }
 
-//configurations {
-//  all*.exclude group: 'com.google.guava', module: 'listenablefuture'
-//}
-
 dependencies {
   implementation deps.kotlin.stdlib
 
