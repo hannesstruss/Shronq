@@ -16,7 +16,7 @@ import javax.inject.Singleton
 
 @Singleton
 class ShronqFirebaseDb @Inject constructor(
-    private val firestore: FirebaseFirestore
+    firestore: FirebaseFirestore
 ) {
   companion object {
     private const val CollectionName = BuildConfig.FIREBASE_COLLECTION_NAME
@@ -34,8 +34,9 @@ class ShronqFirebaseDb @Inject constructor(
           .orderBy(KeyMeasuredAt, Query.Direction.ASCENDING)
           .get()
           .addOnCompleteListener { task ->
-            if (!emitter.isDisposed) {
-              emitter.onSuccess(task.result.documents)
+            val result = task.result
+            if (!emitter.isDisposed && result != null) {
+              emitter.onSuccess(result.documents)
             }
           }
           .addOnFailureListener { e ->

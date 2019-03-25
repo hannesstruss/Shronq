@@ -1,27 +1,29 @@
 package de.hannesstruss.shronq.data.sync
 
+import android.content.Context
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.Worker
+import androidx.work.WorkerParameters
 import de.hannesstruss.shronq.ShronqApp
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class SyncDownWorker : Worker() {
+class SyncDownWorker(context: Context, params: WorkerParameters) : Worker(context, params) {
   companion object {
     private val CONSTRAINTS = Constraints.Builder()
         .setRequiredNetworkType(NetworkType.UNMETERED)
         .setRequiresBatteryNotLow(true)
         .build()
 
-    private val WORK_NAME = "SyncDownWorker"
+    private const val WORK_NAME = "SyncDownWorker"
 
     fun schedulePeriodically() {
-      val wm = WorkManager.getInstance()!!
+      val wm = WorkManager.getInstance()
 
       val request = PeriodicWorkRequestBuilder<SyncDownWorker>(7, TimeUnit.DAYS)
           .setConstraints(CONSTRAINTS)
@@ -32,16 +34,16 @@ class SyncDownWorker : Worker() {
 
   @Inject lateinit var syncer: Syncer
 
-  override fun doWork(): Worker.Result {
+  override fun doWork(): Result {
     (applicationContext as ShronqApp).appComponent.inject(this)
 
-    try {
+    return try {
       syncer.syncDown().blockingAwait()
-      return Worker.Result.SUCCESS
+      Result.success()
     } catch (e: IOException) {
-      return Worker.Result.RETRY
+      Result.retry()
     } catch (e: Exception) {
-      return Worker.Result.FAILURE
+      Result.failure()
     }
   }
 }

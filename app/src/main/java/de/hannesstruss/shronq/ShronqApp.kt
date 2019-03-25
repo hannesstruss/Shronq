@@ -7,7 +7,7 @@ import de.hannesstruss.shronq.di.AppComponent
 import timber.log.Timber
 
 class ShronqApp : Application() {
-  val appComponent by lazy { AppComponent.init(this) }
+  lateinit var appComponent: AppComponent
 
   override fun onCreate() {
     super.onCreate()
@@ -17,6 +17,8 @@ class ShronqApp : Application() {
     } else {
       Bugsnag.init(this)
     }
+
+    appComponent = AppComponent.init(this)
 
     SyncDownWorker.schedulePeriodically()
   }

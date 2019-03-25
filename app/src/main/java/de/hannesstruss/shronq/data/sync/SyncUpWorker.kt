@@ -1,17 +1,19 @@
 package de.hannesstruss.shronq.data.sync
 
+import android.content.Context
 import androidx.work.Constraints
 import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.Worker
+import androidx.work.WorkerParameters
 import de.hannesstruss.shronq.ShronqApp
 import timber.log.Timber
 import java.io.IOException
 import javax.inject.Inject
 
-class SyncUpWorker : Worker() {
+class SyncUpWorker(context: Context, params: WorkerParameters) : Worker(context, params) {
   companion object {
     private val TAG = SyncUpWorker::class.java.simpleName
 
@@ -26,28 +28,28 @@ class SyncUpWorker : Worker() {
       val request = OneTimeWorkRequestBuilder<SyncUpWorker>()
           .setConstraints(SyncUpWorker.CONSTRAINTS)
           .build()
-      WorkManager.getInstance()!!
+      WorkManager.getInstance()
           .beginUniqueWork(TAG, EXISTING_WORK_POLICY, request).enqueue()
     }
   }
 
   @Inject lateinit var syncer: Syncer
 
-  override fun doWork(): Worker.Result {
+  override fun doWork(): Result {
     (applicationContext as ShronqApp).appComponent.inject(this)
 
     Timber.d("Starting to sync up")
 
-    try {
+    return try {
       syncer.syncUp().blockingAwait()
-      return Worker.Result.SUCCESS
+      Result.success()
     } catch (e: Exception) {
       if (e is IOException) {
         Timber.d("Should retry")
-        return Worker.Result.RETRY
+        Result.retry()
       } else {
         Timber.e(e, "Sync failure")
-        return Worker.Result.FAILURE
+        Result.failure()
       }
     }
   }

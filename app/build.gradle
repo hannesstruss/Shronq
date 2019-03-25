@@ -51,12 +51,15 @@ android {
     debug {
       applicationIdSuffix = ".dev"
       versionNameSuffix = "-dev"
+      minifyEnabled false
       signingConfig signingConfigs.debug
 
       buildConfigField "String", "FIREBASE_COLLECTION_NAME", "\"weights_debug\""
+
     }
 
     release {
+      minifyEnabled false
       if (file('upload.keystore').exists()) {
         signingConfig signingConfigs.upload
       } else {
@@ -72,6 +75,10 @@ play {
   jsonFile = file('play-publisher-service-account.json')
   track = 'internal'
 }
+
+//configurations {
+//  all*.exclude group: 'com.google.guava', module: 'listenablefuture'
+//}
 
 dependencies {
   implementation deps.kotlin.stdlib
@@ -92,7 +99,9 @@ dependencies {
   implementation deps.android.arch.room.rx2
   kapt deps.android.arch.room.compiler
 
-  implementation deps.android.arch.work
+  implementation(deps.android.arch.work) {
+    exclude group: 'com.google.guava', module: 'listenablefuture'
+  }
 
   implementation deps.playservices.fit
   implementation deps.playservices.auth

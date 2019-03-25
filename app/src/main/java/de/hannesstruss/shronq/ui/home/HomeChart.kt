@@ -17,7 +17,7 @@ class HomeChart(context: Context, attrs: AttributeSet?) : View(context, attrs) {
     strokeWidth = 4f
   }
 
-  var measurements: List<Measurement> by idempotent(emptyList()) { newValue ->
+  var measurements: List<Measurement> by idempotent(emptyList()) {
     invalidate()
   }
 

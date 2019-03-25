@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity(), ActivityResultsProvider {
 
   override fun onNewIntent(intent: Intent?) {
     super.onNewIntent(intent)
-    findNavController(R.id.nav_host_fragment).onHandleDeepLink(intent)
+    findNavController(R.id.nav_host_fragment).handleDeepLink(intent)
   }
 
   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
