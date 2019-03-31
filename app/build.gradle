@@ -77,7 +77,7 @@ android {
 }
 
 play {
-  jsonFile = file('play-publisher-service-account.json')
+  serviceAccountCredentials = file('play-publisher-service-account.json')
   track = 'internal'
 }
 
