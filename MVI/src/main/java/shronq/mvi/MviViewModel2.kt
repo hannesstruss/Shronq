@@ -1,8 +1,10 @@
 package shronq.mvi
 
+import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 /*
  * TODO
@@ -28,27 +30,47 @@ import kotlinx.coroutines.CoroutineScope
  * instead we should use `typealias MyAction = (State) -> State`
  */
 
-class MviEngine<StateT : Any, IntentT : Any> private constructor(
+class MviEngine<StateT : Any, IntentT : Any>(
+    private val coroutineScope: CoroutineScope,
     initialState: StateT,
-    intents: Observable<out IntentT>,
-    initializer: EngineContext<StateT, IntentT>.() -> Unit
+    private val intents: Observable<out IntentT>,
+    private val initializer: EngineContext<StateT, IntentT>.() -> Unit
 ) {
-  companion object {
-    fun <StateT : Any, IntentT : Any> create(
-        initialState: StateT,
-        intents : Observable<out IntentT>,
-        initializer: EngineContext<StateT, IntentT>.() -> Unit
-    ): MviEngine<StateT, IntentT> {
-      return MviEngine(initialState, intents, initializer)
+  private val disposable = CompositeDisposable()
+  private val transitions = PublishRelay.create<StateTransition<StateT>>().toSerialized()
+  private val intentContext = object : IntentContext<StateT> {
+    override fun enterState(block: StateTransition<StateT>) {
+      transitions.accept(block)
     }
   }
 
-  val states: Observable<StateT> = Observable.never()
+  val states: Observable<StateT> = transitions.scan(initialState) { state, transition ->
+    val ctx = object : StateEditorContext<StateT> {
+      override val state = state
+    }
+
+    ctx.transition()
+  }
+
+  fun start() {
+    val ctx = EngineContext<StateT, IntentT>()
+    ctx.initializer()
+
+    disposable += intents.subscribe { intent ->
+      for (binding in ctx.intentBindings) {
+        if (binding.intentClass == intent.javaClass) {
+          coroutineScope.launch {
+            @Suppress("UNCHECKED_CAST")
+            val casted = binding as ListenerBinding<StateT, IntentT>
+            casted.listener(intentContext, intent)
+          }
+        }
+      }
+    }
+  }
 }
 
-class EngineContext<StateT, IntentT> internal constructor(
-    private val coroutineScope: CoroutineScope
-) {
+class EngineContext<StateT, IntentT> internal constructor() {
   private val disposable = CompositeDisposable()
   val intentBindings = mutableListOf<ListenerBinding<StateT, out IntentT>>()
   val firstIntentBindings = mutableListOf<ListenerBinding<StateT, out IntentT>>()
@@ -71,13 +93,15 @@ class EngineContext<StateT, IntentT> internal constructor(
   }
 
   inline fun <reified T : IntentT> streamOf(noinline block: StreamContext<StateT>.(Observable<T>) -> StreamContextToken) {
-    TODO("not implemented")
+    // TODO
   }
 
   fun externals(block: ExternalsContext<StateT>.() -> Unit) {
-    TODO("not implemented")
+    // TODO
   }
 }
+
+typealias StateTransition<StateT> = StateEditorContext<StateT>.() -> StateT
 
 class ListenerBinding<StateT, SpecificIntentT>(
     val intentClass: Class<out SpecificIntentT>,
@@ -85,7 +109,7 @@ class ListenerBinding<StateT, SpecificIntentT>(
 )
 
 interface IntentContext<StateT> {
-  fun enterState(block: StateEditorContext<StateT>.() -> StateT)
+  fun enterState(block: StateTransition<StateT>)
 }
 
 interface StateEditorContext<StateT> {
@@ -105,6 +129,6 @@ interface ExternalsContext<StateT> {
 }
 
 interface ExternalsItemContext<StateT> {
-  fun enterState(block: StateEditorContext<StateT>.() -> StateT)
+  fun enterState(block: StateTransition<StateT>)
 }
 

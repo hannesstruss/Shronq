@@ -1,10 +1,12 @@
 package shronq.mvi
 
-import com.google.common.truth.Truth.assertThat
 import io.reactivex.subjects.PublishSubject
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.TestCoroutineContext
+import org.junit.Before
 import org.junit.Test
-import shronq.mvi.MviEngine.Companion.create
 import shronq.mvi.TestIntent.CountDown
 import shronq.mvi.TestIntent.CountUp
 import java.util.concurrent.TimeUnit
@@ -12,7 +14,16 @@ import java.util.concurrent.TimeUnit
 class MviEngineTest {
   val intents = PublishSubject.create<TestIntent>()
 
-  val engine: MviEngine<TestState, TestIntent> = create(TestState.initial(), intents) {
+  val testCoroutineContext = TestCoroutineContext()
+  val scope = object : CoroutineScope {
+    override val coroutineContext = testCoroutineContext
+  }
+
+  val engine: MviEngine<TestState, TestIntent> = MviEngine(
+      scope,
+      TestState.initial(),
+      intents
+  ) {
     onInit {
       println("Hello!")
       delay(200)
@@ -23,7 +34,6 @@ class MviEngineTest {
     // nest(myNestedEngine) { nestedState -> ... }
 
     on<CountUp> {
-      delay(1000)
       enterState { state.incrementCounter() }
     }
 
@@ -53,7 +63,19 @@ class MviEngineTest {
 
   val states = engine.states.test()
 
+  @Before fun setup() {
+    engine.start()
+  }
+
   @Test fun `starts with initial state`() {
-    assertThat(states.events.first()).isEqualTo(TestState.initial())
+    states.assertValues(TestState.initial())
+  }
+
+  @Test fun `intention triggers new state`() {
+    runBlocking {
+      intents.onNext(TestIntent.CountUp)
+      testCoroutineContext.triggerActions()
+      states.assertValues(TestState.initial(), TestState(counter = 1))
+    }
   }
 }

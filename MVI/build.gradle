@@ -6,6 +6,7 @@ dependencies {
   compile deps.kotlin.coroutines.core
 
   compile deps.rx.java
+  compile deps.rx.relay
 
   testCompile deps.junit
   testCompile deps.truth
