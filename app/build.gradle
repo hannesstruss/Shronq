@@ -82,7 +82,10 @@ play {
 }
 
 dependencies {
+  implementation project(":MVI")
+
   implementation deps.kotlin.stdlib
+  implementation deps.kotlin.coroutines.rx2
 
   implementation deps.dagger.runtime
   kapt deps.dagger.compiler

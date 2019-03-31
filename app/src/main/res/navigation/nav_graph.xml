@@ -2,7 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
             xmlns:tools="http://schemas.android.com/tools"
-            app:startDestination="@id/homeFragment">
+            app:startDestination="@id/mviTestFragment">
 
   <fragment android:id="@+id/logWeightFragment"
             android:name="de.hannesstruss.shronq.ui.logweight.LogWeightFragment"
@@ -22,4 +22,8 @@
             android:label="SettingsFragment"
             tools:layout="@layout/settings_fragment"
   />
+  <fragment android:id="@+id/mviTestFragment"
+            android:name="de.hannesstruss.shronq.ui.mvitest.MviTestFragment"
+            android:label="MviTestFragment"
+            tools:layout="@layout/mvi_test_fragment"/>
 </navigation>

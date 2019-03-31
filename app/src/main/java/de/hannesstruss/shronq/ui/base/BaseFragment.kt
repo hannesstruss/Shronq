@@ -1,17 +1,17 @@
 package de.hannesstruss.shronq.ui.base
 
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import de.hannesstruss.shronq.ui.MainActivity
 import de.hannesstruss.shronq.ui.di.ActivityComponentRetainer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 
-abstract class BaseFragment<StateT, IntentT, EffectT, ViewModelT : MviViewModel<StateT, IntentT, *, EffectT>> : androidx.fragment.app.Fragment(), MviView<IntentT> {
+abstract class BaseFragment<StateT, IntentT, EffectT, ViewModelT : MviViewModel<StateT, IntentT, *, EffectT>> : Fragment(), MviView<IntentT> {
   abstract protected val layout: Int
   abstract protected val viewModelClass: Class<ViewModelT>
 

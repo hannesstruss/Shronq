@@ -1,0 +1,12 @@
+apply plugin: 'kotlin'
+
+dependencies {
+  compile deps.kotlin.stdlib
+
+  compile deps.kotlin.coroutines.core
+
+  compile deps.rx.java
+
+  testCompile deps.junit
+  testCompile deps.truth
+}
