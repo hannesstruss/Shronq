@@ -1,5 +1,6 @@
 package shronq.mvi
 
+import com.google.common.truth.Truth.assertThat
 import io.reactivex.subjects.PublishSubject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -19,6 +20,10 @@ class MviEngineTest {
     override val coroutineContext = testCoroutineContext
   }
 
+  val times = PublishSubject.create<Int>()
+  var countUpReceivedFromStreamOf = 0
+  var countUpReceivedFromOnFirst = 0
+
   val engine: MviEngine<TestState, TestIntent> = MviEngine(
       scope,
       TestState.initial(),
@@ -37,6 +42,10 @@ class MviEngineTest {
       enterState { state.incrementCounter() }
     }
 
+    onFirst<CountUp> {
+      countUpReceivedFromOnFirst++
+    }
+
     streamOf<CountDown> { intents ->
       intents
           .sample(1, TimeUnit.SECONDS)
@@ -47,14 +56,13 @@ class MviEngineTest {
 
     streamOf<CountUp> { intents ->
       intents
-          .sample(1, TimeUnit.SECONDS)
-          .doOnNext { println("Here we're just doing side effects, for whatever reason") }
+          .doOnNext { countUpReceivedFromStreamOf++ }
           .hookUp()
     }
 
-    externals {
-      MyTimeService.times
-          .map { it.second }
+    externalStream {
+      times
+          .map { it * 2 }
           .hookUp {
             enterState { state.addSeconds(it) }
           }
@@ -76,6 +84,32 @@ class MviEngineTest {
       intents.onNext(TestIntent.CountUp)
       testCoroutineContext.triggerActions()
       states.assertValues(TestState.initial(), TestState(counter = 1))
+    }
+  }
+
+  @Test fun `onFirst works`() {
+    runBlocking {
+      intents.onNext(TestIntent.CountUp)
+      intents.onNext(TestIntent.CountUp)
+      testCoroutineContext.triggerActions()
+      assertThat(countUpReceivedFromOnFirst).isEqualTo(1)
+    }
+  }
+
+  @Test fun `streamOf works`() {
+    runBlocking {
+      intents.onNext(TestIntent.CountUp)
+      intents.onNext(TestIntent.CountUp)
+      testCoroutineContext.triggerActions()
+      assertThat(countUpReceivedFromStreamOf).isEqualTo(2)
+    }
+  }
+
+  @Test fun `externals work`() {
+    runBlocking {
+      times.onNext(1)
+      times.onNext(2)
+      states.assertValues(TestState.initial(), TestState.initial().copy(secondsSum = 2), TestState.initial().copy(secondsSum = 6))
     }
   }
 }

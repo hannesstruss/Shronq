@@ -67,14 +67,52 @@ class MviEngine<StateT : Any, IntentT : Any>(
         }
       }
     }
+
+    for (binding in ctx.firstIntentBindings) {
+      disposable += intents
+          .filter { it.javaClass == binding.intentClass }
+          .firstElement()
+          .subscribe {
+            coroutineScope.launch {
+              @Suppress("UNCHECKED_CAST")
+              val casted = binding as ListenerBinding<StateT, IntentT>
+              casted.listener(intentContext, it)
+            }
+          }
+    }
+
+    val streamContext = object : StreamContext<StateT> {
+      override fun <T> Observable<T>.hookUp(): HookedUpSubscription {
+        disposable += subscribe()
+        return HookedUpSubscription()
+      }
+
+      override fun <T> Observable<T>.hookUp(block: IntentContext<StateT>.(T) -> Unit): HookedUpSubscription {
+        disposable += subscribe {
+          block(intentContext, it)
+        }
+        return HookedUpSubscription()
+      }
+    }
+
+    for (binding in ctx.streamBindings) {
+      val filteredIntentions = intents.filter { it.javaClass == binding.intentClass }
+      @Suppress("UNCHECKED_CAST")
+      val casted = binding as StreamBinding<StateT, IntentT>
+      casted.block(streamContext, filteredIntentions)
+    }
+
+    for (binding in ctx.externalStreamBindings) {
+      binding.block(streamContext)
+    }
   }
 }
 
 class EngineContext<StateT, IntentT> internal constructor() {
-  private val disposable = CompositeDisposable()
   val intentBindings = mutableListOf<ListenerBinding<StateT, out IntentT>>()
   val firstIntentBindings = mutableListOf<ListenerBinding<StateT, out IntentT>>()
-  val streamListeners = mutableMapOf<Class<out IntentT>, StreamContext<StateT>.(Observable<out IntentT>) -> StreamContextToken>()
+  val streamBindings = mutableListOf<StreamBinding<StateT, out IntentT>>()
+  val externalStreamBindings = mutableListOf<ExternalBinding<StateT>>()
 
   internal var onInitCallback: (suspend () -> Unit)? = null
 
@@ -88,17 +126,18 @@ class EngineContext<StateT, IntentT> internal constructor() {
   }
 
   inline fun <reified T : IntentT> onFirst(noinline block: suspend IntentContext<StateT>.(T) -> Unit) {
-    // TODO
     val binding = ListenerBinding(T::class.java, block)
     firstIntentBindings.add(binding)
   }
 
-  inline fun <reified T : IntentT> streamOf(noinline block: StreamContext<StateT>.(Observable<T>) -> StreamContextToken) {
-    // TODO
+  inline fun <reified T : IntentT> streamOf(noinline block: StreamContext<StateT>.(Observable<out T>) -> HookedUpSubscription) {
+    val binding = StreamBinding(T::class.java, block)
+    streamBindings.add(binding)
   }
 
-  fun externals(block: ExternalsContext<StateT>.() -> Unit) {
-    // TODO
+  fun externalStream(block: StreamContext<StateT>.() -> HookedUpSubscription) {
+    val binding = ExternalBinding(block)
+    externalStreamBindings.add(binding)
   }
 }
 
@@ -107,6 +146,11 @@ typealias StateTransition<StateT> = StateEditorContext<StateT>.() -> StateT
 class ListenerBinding<StateT, SpecificIntentT>(
     val intentClass: Class<out SpecificIntentT>,
     val listener: suspend IntentContext<StateT>.(SpecificIntentT) -> Unit
+)
+
+class StreamBinding<StateT, SpecificIntentT>(
+    val intentClass: Class<out SpecificIntentT>,
+    val block: StreamContext<StateT>.(Observable<out SpecificIntentT>) -> HookedUpSubscription
 )
 
 interface IntentContext<StateT> {
@@ -118,18 +162,13 @@ interface StateEditorContext<StateT> {
 }
 
 interface StreamContext<StateT> {
-  fun <T> Observable<T>.hookUp(): StreamContextToken
-  fun <T> Observable<T>.hookUp(block: IntentContext<StateT>.(T) -> Unit): StreamContextToken
+  fun <T> Observable<T>.hookUp(): HookedUpSubscription
+  fun <T> Observable<T>.hookUp(block: IntentContext<StateT>.(T) -> Unit): HookedUpSubscription
 }
 
-// Force usage of `hookUp` in `streamOf` TODO: make more forceful and less abusable
-interface StreamContextToken
+/** Enforces usage of `StreamContext.hookUp`. */
+class HookedUpSubscription internal constructor()
 
-interface ExternalsContext<StateT> {
-  fun <T> Observable<T>.hookUp(block: suspend ExternalsItemContext<StateT>.(T) -> Unit)
-}
-
-interface ExternalsItemContext<StateT> {
-  fun enterState(block: StateTransition<StateT>)
-}
-
+class ExternalBinding<StateT>(
+    val block: StreamContext<StateT>.() -> HookedUpSubscription
+)
