@@ -17,6 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import shronq.mvi.MviEngine
+import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
 
 class MviTestFragment : Fragment(), CoroutineScope {
@@ -61,11 +62,18 @@ class MviTestFragment : Fragment(), CoroutineScope {
         println("Got Down")
         enterState { state.copy(counter = state.counter - 1) }
       }
+
+      externalStream {
+        Observable.interval(1, TimeUnit.SECONDS)
+            .hookUp {
+              enterState { state.copy(counter = state.counter + 1) }
+            }
+      }
     }
 
     engine.states
         .doOnNext { println("Got state: $it") }
-        .subscribeOn(AndroidSchedulers.mainThread())
+        .observeOn(AndroidSchedulers.mainThread())
         .subscribe {
           txt_counter.text = "${it.counter}"
           btn_incr.isEnabled = !it.loading
