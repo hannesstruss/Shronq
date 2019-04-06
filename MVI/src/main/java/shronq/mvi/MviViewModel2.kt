@@ -105,6 +105,10 @@ class MviEngine<StateT : Any, IntentT : Any>(
     for (binding in ctx.externalStreamBindings) {
       binding.block(streamContext)
     }
+
+    coroutineScope.launch {
+      ctx.onInitCallback?.invoke()
+    }
   }
 }
 

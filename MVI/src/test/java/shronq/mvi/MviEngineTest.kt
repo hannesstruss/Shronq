@@ -3,7 +3,6 @@ package shronq.mvi
 import com.google.common.truth.Truth.assertThat
 import io.reactivex.subjects.PublishSubject
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineContext
 import org.junit.Before
@@ -23,6 +22,7 @@ class MviEngineTest {
   val times = PublishSubject.create<Int>()
   var countUpReceivedFromStreamOf = 0
   var countUpReceivedFromOnFirst = 0
+  var onInitCalled = 0
 
   val engine: MviEngine<TestState, TestIntent> = MviEngine(
       scope,
@@ -30,9 +30,7 @@ class MviEngineTest {
       intents
   ) {
     onInit {
-      println("Hello!")
-      delay(200)
-      println("Hello again!")
+      onInitCalled++
     }
 
     // TODO: nested view model engines
@@ -77,6 +75,11 @@ class MviEngineTest {
 
   @Test fun `starts with initial state`() {
     states.assertValues(TestState.initial())
+  }
+
+  @Test fun `calls onInit once`() {
+    testCoroutineContext.triggerActions()
+    assertThat(onInitCalled).isEqualTo(1)
   }
 
   @Test fun `intention triggers new state`() {
