@@ -7,8 +7,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.jakewharton.rxbinding2.view.clicks
 import de.hannesstruss.shronq.R
+import de.hannesstruss.shronq.ui.mvitest.MviTestIntent.Crash
+import de.hannesstruss.shronq.ui.mvitest.MviTestIntent.Down
+import de.hannesstruss.shronq.ui.mvitest.MviTestIntent.Up
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import kotlinx.android.synthetic.main.mvi_test_fragment.btn_crash
 import kotlinx.android.synthetic.main.mvi_test_fragment.btn_decr
 import kotlinx.android.synthetic.main.mvi_test_fragment.btn_incr
 import kotlinx.android.synthetic.main.mvi_test_fragment.txt_counter
@@ -16,6 +20,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import shronq.mvi.MviEngine
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
@@ -47,24 +52,37 @@ class MviTestFragment : Fragment(), CoroutineScope {
         coroutineScope = this,
         initialState = MviTestState(0),
         intents = Observable.merge(
-            btn_incr.clicks().map { MviTestIntent.Up },
-            btn_decr.clicks().map { MviTestIntent.Down }
+            btn_incr.clicks().map { Up },
+            btn_decr.clicks().map { Down },
+            btn_crash.clicks().map { Crash }
         )
     ) {
-      on<MviTestIntent.Up> {
+      on<Up> {
         println("Got Up")
         enterState { state.copy(loading = true) }
         delay(1000)
         enterState { state.copy(loading = false, counter = state.counter + 1) }
       }
 
-      on<MviTestIntent.Down> {
+      on<Down> {
         println("Got Down")
         enterState { state.copy(counter = state.counter - 1) }
       }
 
+      on<Crash> {
+        withContext(Dispatchers.IO) {
+          throw RuntimeException("Digger")
+        }
+      }
+
       externalStream {
         Observable.interval(1, TimeUnit.SECONDS)
+            .map {
+              if (it > 5) {
+                throw RuntimeException("Babo")
+              }
+              it
+            }
             .hookUp {
               enterState { state.copy(counter = state.counter + 1) }
             }

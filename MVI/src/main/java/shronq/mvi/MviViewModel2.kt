@@ -2,9 +2,11 @@ package shronq.mvi
 
 import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.Observable
-import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.rx2.openSubscription
 
 /*
  * TODO
@@ -30,20 +32,19 @@ import kotlinx.coroutines.launch
  * instead we should use `typealias MyAction = (State) -> State`
  */
 
+@ObsoleteCoroutinesApi
 class MviEngine<StateT : Any, IntentT : Any>(
     private val coroutineScope: CoroutineScope,
     initialState: StateT,
     private val intents: Observable<out IntentT>,
     private val initializer: EngineContext<StateT, IntentT>.() -> Unit
 ) {
-  private val disposable = CompositeDisposable()
   private val transitions = PublishRelay.create<StateTransition<StateT>>().toSerialized()
   private val intentContext = object : IntentContext<StateT> {
     override fun enterState(block: StateTransition<StateT>) {
       transitions.accept(block)
     }
   }
-
   val states: Observable<StateT> = transitions.scan(initialState) { state, transition ->
     val ctx = object : StateEditorContext<StateT> {
       override val state = state
@@ -56,10 +57,10 @@ class MviEngine<StateT : Any, IntentT : Any>(
     val ctx = EngineContext<StateT, IntentT>()
     ctx.initializer()
 
-    disposable += intents.subscribe { intent ->
-      for (binding in ctx.intentBindings) {
-        if (binding.intentClass == intent.javaClass) {
-          coroutineScope.launch {
+    coroutineScope.launch {
+      intents.openSubscription().consumeEach { intent ->
+        for (binding in ctx.intentBindings) {
+          if (binding.intentClass == intent.javaClass) {
             @Suppress("UNCHECKED_CAST")
             val casted = binding as ListenerBinding<StateT, IntentT>
             casted.listener(intentContext, intent)
@@ -69,27 +70,33 @@ class MviEngine<StateT : Any, IntentT : Any>(
     }
 
     for (binding in ctx.firstIntentBindings) {
-      disposable += intents
-          .filter { it.javaClass == binding.intentClass }
-          .firstElement()
-          .subscribe {
-            coroutineScope.launch {
+      coroutineScope.launch {
+        intents
+            .filter { it.javaClass == binding.intentClass }
+            .firstElement()
+            .openSubscription()
+            .consumeEach { intent ->
               @Suppress("UNCHECKED_CAST")
               val casted = binding as ListenerBinding<StateT, IntentT>
-              casted.listener(intentContext, it)
+              casted.listener(intentContext, intent)
             }
-          }
+      }
     }
 
     val streamContext = object : StreamContext<StateT> {
       override fun <T> Observable<T>.hookUp(): HookedUpSubscription {
-        disposable += subscribe()
-        return HookedUpSubscription()
+        return hookUpInternal(null)
       }
 
       override fun <T> Observable<T>.hookUp(block: IntentContext<StateT>.(T) -> Unit): HookedUpSubscription {
-        disposable += subscribe {
-          block(intentContext, it)
+        return hookUpInternal(block)
+      }
+
+      private fun <T> Observable<T>.hookUpInternal(block: (IntentContext<StateT>.(T) -> Unit)?): HookedUpSubscription {
+        coroutineScope.launch {
+          this@hookUpInternal
+              .openSubscription()
+              .consumeEach { block?.invoke(intentContext, it) }
         }
         return HookedUpSubscription()
       }

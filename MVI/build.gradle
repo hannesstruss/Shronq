@@ -4,6 +4,7 @@ dependencies {
   compile deps.kotlin.stdlib
 
   compile deps.kotlin.coroutines.core
+  compile deps.kotlin.coroutines.rx2
 
   compile deps.rx.java
   compile deps.rx.relay
