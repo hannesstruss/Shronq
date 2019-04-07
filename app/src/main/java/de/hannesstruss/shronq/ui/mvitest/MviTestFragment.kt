@@ -77,12 +77,6 @@ class MviTestFragment : Fragment(), CoroutineScope {
 
       externalStream {
         Observable.interval(1, TimeUnit.SECONDS)
-            .map {
-              if (it > 5) {
-                throw RuntimeException("Babo")
-              }
-              it
-            }
             .hookUp {
               enterState { state.copy(counter = state.counter + 1) }
             }

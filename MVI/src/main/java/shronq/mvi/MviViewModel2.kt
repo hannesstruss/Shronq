@@ -3,7 +3,6 @@ package shronq.mvi
 import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.Observable
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.rx2.openSubscription
@@ -32,7 +31,6 @@ import kotlinx.coroutines.rx2.openSubscription
  * instead we should use `typealias MyAction = (State) -> State`
  */
 
-@ObsoleteCoroutinesApi
 class MviEngine<StateT : Any, IntentT : Any>(
     private val coroutineScope: CoroutineScope,
     initialState: StateT,
