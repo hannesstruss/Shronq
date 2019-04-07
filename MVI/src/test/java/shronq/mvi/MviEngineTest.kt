@@ -43,10 +43,6 @@ class MviEngineTest {
     assertThat(onInitCalled).isEqualTo(1)
   }
 
-  @Test fun `errors from onInit are relayed`() {
-    TODO("Not implemented")
-  }
-
   @Test fun `intents are unsubscribed from when job is cancelled`() {
     runBlocking {
       engine {
@@ -107,10 +103,6 @@ class MviEngineTest {
     }
   }
 
-  @Test fun `errors from onFirst are relayed`() {
-    TODO("Not implemented")
-  }
-
   @Test fun `streamOf works`() {
     runBlocking {
       var countUpReceivedFromStreamOf = 0
@@ -132,14 +124,6 @@ class MviEngineTest {
       assertThat(countUpReceivedFromStreamOf).isEqualTo(2)
       assertThat(hookUpBlockCalled).isEqualTo(2)
     }
-  }
-
-  @Test fun `errors from streamOf handlers are relayed`() {
-    TODO("Not implemented")
-  }
-
-  @Test fun `errors from streamOf observables are relayed`() {
-    TODO("Not implemented")
   }
 
   @Test fun `externals work`() {
@@ -190,21 +174,5 @@ class MviEngineTest {
     job.cancel()
     testCoroutineContext.triggerActions()
     assertThat(external.hasObservers()).isFalse()
-  }
-
-  @Test fun `errors from external stream handlers are relayed`() {
-    TODO("Not implemented")
-  }
-
-  @Test fun `errors from external streams are relayed`() {
-    TODO("Not implemented")
-  }
-
-  @Test fun `throws when starting twice`() {
-    TODO("Not implemented")
-  }
-
-  @Test fun `can be disposed`() {
-    TODO("Not implemented")
   }
 }
