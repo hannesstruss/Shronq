@@ -1,15 +1,13 @@
 package shronq.mvi
 
 import com.google.common.truth.Truth.assertThat
+import io.reactivex.observers.TestObserver
 import io.reactivex.subjects.PublishSubject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineContext
-import org.junit.Before
 import org.junit.Test
-import shronq.mvi.TestIntent.CountDown
 import shronq.mvi.TestIntent.CountUp
-import java.util.concurrent.TimeUnit
 
 class MviEngineTest {
   val intents = PublishSubject.create<TestIntent>()
@@ -19,79 +17,57 @@ class MviEngineTest {
     override val coroutineContext = testCoroutineContext
   }
 
-  val times = PublishSubject.create<Int>()
-  var countUpReceivedFromStreamOf = 0
-  var countUpReceivedFromOnFirst = 0
-  var onInitCalled = 0
-
-  val engine: MviEngine<TestState, TestIntent> = MviEngine(
-      scope,
-      TestState.initial(),
-      intents
-  ) {
-    onInit {
-      onInitCalled++
-    }
-
-    // TODO: nested view model engines
-    // nest(myNestedEngine) { nestedState -> ... }
-
-    on<CountUp> {
-      enterState { state.incrementCounter() }
-    }
-
-    onFirst<CountUp> {
-      countUpReceivedFromOnFirst++
-    }
-
-    streamOf<CountDown> { intents ->
-      intents
-          .sample(1, TimeUnit.SECONDS)
-          .hookUp {
-            enterState { state.decrementCounter() }
-          }
-    }
-
-    streamOf<CountUp> { intents ->
-      intents
-          .doOnNext { countUpReceivedFromStreamOf++ }
-          .hookUp()
-    }
-
-    externalStream {
-      times
-          .map { it * 2 }
-          .hookUp {
-            enterState { state.addSeconds(it) }
-          }
-    }
-  }
-
-  val states = engine.states.test()
-
-  @Before fun setup() {
+  private fun engine(initializer: EngineContext<TestState, TestIntent>.() -> Unit): TestObserver<TestState> {
+    val engine = MviEngine(scope, TestState.initial(), intents, initializer)
     engine.start()
+    return engine.states.test()
   }
 
   @Test fun `starts with initial state`() {
+    val states = engine {  }
     states.assertValues(TestState.initial())
   }
 
-  @Test fun `calls onInit once`() {
+  @Test fun `calls onInit`() {
+    var onInitCalled = 0
+    engine {
+      onInit {
+        onInitCalled++
+      }
+    }
     testCoroutineContext.triggerActions()
     assertThat(onInitCalled).isEqualTo(1)
   }
 
+  @Test fun `errors from onInit are relayed`() {
+    TODO("Not implemented")
+  }
+
   @Test fun `intention triggers new state`() {
     runBlocking {
+      val states = engine {
+        on<CountUp> {
+          enterState { state.incrementCounter() }
+        }
+      }
       intents.onNext(TestIntent.CountUp)
       testCoroutineContext.triggerActions()
       states.assertValues(TestState.initial(), TestState(counter = 1))
     }
   }
 
+  @Test fun `errors from intention handlers are relayed`() {
+    TODO("Not implemented")
+  }
+
   @Test fun `onFirst works`() {
     runBlocking {
+      var countUpReceivedFromOnFirst = 0
+      engine {
+        onFirst<CountUp> {
+          countUpReceivedFromOnFirst++
+        }
+      }
       intents.onNext(TestIntent.CountUp)
       intents.onNext(TestIntent.CountUp)
       testCoroutineContext.triggerActions()
@@ -99,8 +75,21 @@ class MviEngineTest {
     }
   }
 
+  @Test fun `errors from onFirst are relayed`() {
+    TODO("Not implemented")
+  }
+
   @Test fun `streamOf works`() {
     runBlocking {
+      var countUpReceivedFromStreamOf = 0
+      engine {
+        streamOf<CountUp> { intents ->
+          intents
+              .doOnNext { countUpReceivedFromStreamOf++ }
+              .hookUp()
+        }
+      }
+
       intents.onNext(TestIntent.CountUp)
       intents.onNext(TestIntent.CountUp)
       testCoroutineContext.triggerActions()
@@ -108,11 +97,47 @@ class MviEngineTest {
     }
   }
 
+  @Test fun `errors from streamOf handlers are relayed`() {
+    TODO("Not implemented")
+  }
+
+  @Test fun `errors from streamOf observables are relayed`() {
+    TODO("Not implemented")
+  }
+
   @Test fun `externals work`() {
     runBlocking {
+      val times = PublishSubject.create<Int>()
+
+      val states = engine {
+        externalStream {
+          times
+              .map { it * 2 }
+              .hookUp {
+                enterState { state.addSeconds(it) }
+              }
+        }
+      }
+
       times.onNext(1)
       times.onNext(2)
       states.assertValues(TestState.initial(), TestState.initial().copy(secondsSum = 2), TestState.initial().copy(secondsSum = 6))
     }
+  }
+
+  @Test fun `errors from external stream handlers are relayed`() {
+    TODO("Not implemented")
+  }
+
+  @Test fun `errors from external streams are relayed`() {
+    TODO("Not implemented")
+  }
+
+  @Test fun `throws when starting twice`() {
+    TODO("Not implemented")
+  }
+
+  @Test fun `can be disposed`() {
+    TODO("Not implemented")
   }
 }
