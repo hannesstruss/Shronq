@@ -4,6 +4,8 @@ import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.Observable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.rx2.openSubscription
 
@@ -111,6 +113,26 @@ class MviEngine<StateT : Any, IntentT : Any>(
       binding.block(streamContext)
     }
 
+    val flowContext = object : FlowContext<StateT> {
+      override fun <T> Flow<T>.hookUp(): HookedUpSubscription {
+        coroutineScope.launch {
+          collect {  }
+        }
+        return HookedUpSubscription()
+      }
+
+      override fun <T> Flow<T>.hookUp(block: IntentContext<StateT>.(T) -> Unit): HookedUpSubscription {
+        coroutineScope.launch {
+          collect { block(intentContext, it) }
+        }
+        return HookedUpSubscription()
+      }
+    }
+
+    for (binding in ctx.externalFlowBindings) {
+      binding.block(flowContext)
+    }
+
     coroutineScope.launch {
       ctx.onInitCallback?.invoke()
     }
@@ -122,6 +144,7 @@ class EngineContext<StateT, IntentT> internal constructor() {
   val firstIntentBindings = mutableListOf<ListenerBinding<StateT, out IntentT>>()
   val streamBindings = mutableListOf<StreamBinding<StateT, out IntentT>>()
   val externalStreamBindings = mutableListOf<ExternalBinding<StateT>>()
+  val externalFlowBindings = mutableListOf<FlowBinding<StateT>>()
 
   internal var onInitCallback: (suspend () -> Unit)? = null
 
@@ -147,6 +170,11 @@ class EngineContext<StateT, IntentT> internal constructor() {
   fun externalStream(block: StreamContext<StateT>.() -> HookedUpSubscription) {
     val binding = ExternalBinding(block)
     externalStreamBindings.add(binding)
+  }
+
+  fun externalFlow(block: FlowContext<StateT>.() -> HookedUpSubscription) {
+    val binding = FlowBinding(block)
+    externalFlowBindings.add(binding)
   }
 }
 
@@ -175,9 +203,18 @@ interface StreamContext<StateT> {
   fun <T> Observable<T>.hookUp(block: IntentContext<StateT>.(T) -> Unit): HookedUpSubscription
 }
 
+interface FlowContext<StateT> {
+  fun <T> Flow<T>.hookUp(): HookedUpSubscription
+  fun <T> Flow<T>.hookUp(block: IntentContext<StateT>.(T) -> Unit): HookedUpSubscription
+}
+
 /** Enforces usage of `StreamContext.hookUp`. */
 class HookedUpSubscription internal constructor()
 
 class ExternalBinding<StateT>(
     val block: StreamContext<StateT>.() -> HookedUpSubscription
+)
+
+class FlowBinding<StateT>(
+    val block: FlowContext<StateT>.() -> HookedUpSubscription
 )

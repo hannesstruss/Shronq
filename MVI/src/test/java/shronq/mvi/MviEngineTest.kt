@@ -6,6 +6,7 @@ import io.reactivex.subjects.PublishSubject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineContext
 import org.junit.Test
@@ -22,9 +23,10 @@ class MviEngineTest {
 
   private fun engine(initializer: EngineContext<TestState, TestIntent>.() -> Unit): TestObserver<TestState> {
     val engine = MviEngine(scope, TestState.initial(), intents, initializer)
+    val test = engine.states.test()
     engine.start()
     testCoroutineContext.triggerActions()
-    return engine.states.test()
+    return test
   }
 
   @Test fun `starts with initial state`() {
@@ -174,5 +176,23 @@ class MviEngineTest {
     job.cancel()
     testCoroutineContext.triggerActions()
     assertThat(external.hasObservers()).isFalse()
+  }
+
+  @Test fun `externalFlow works`() {
+    runBlocking {
+      val states = engine {
+        externalFlow {
+          flowOf(1, 2, 3).hookUp { flowItem ->
+            enterState { state.copy(counter = flowItem) }
+          }
+        }
+      }
+      states.assertValues(
+          TestState(counter = 0),
+          TestState(counter = 1),
+          TestState(counter = 2),
+          TestState(counter = 3)
+      )
+    }
   }
 }
