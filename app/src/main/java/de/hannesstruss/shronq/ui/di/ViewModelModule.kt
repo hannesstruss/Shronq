@@ -10,7 +10,7 @@ import de.hannesstruss.shronq.ui.base.ViewModelFactory
 import de.hannesstruss.shronq.ui.home.HomeViewModel
 import de.hannesstruss.shronq.ui.logweight.LogWeightViewModel
 import de.hannesstruss.shronq.ui.mvitest.MviTestViewModel
-import de.hannesstruss.shronq.ui.settings.SettingsViewModel2
+import de.hannesstruss.shronq.ui.settings.SettingsViewModel
 import kotlin.reflect.KClass
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
@@ -30,8 +30,8 @@ abstract class ViewModelModule {
   @Binds @IntoMap @ViewModelKey(LogWeightViewModel::class)
   abstract fun bindLogWeightViewModel(viewModel: LogWeightViewModel): ViewModel
 
-  @Binds @IntoMap @ViewModelKey(SettingsViewModel2::class)
-  abstract fun bindSettingsViewModel(viewModel: SettingsViewModel2): ViewModel
+  @Binds @IntoMap @ViewModelKey(SettingsViewModel::class)
+  abstract fun bindSettingsViewModel(viewModel: SettingsViewModel): ViewModel
 
   @Binds @IntoMap @ViewModelKey(MviTestViewModel::class)
   abstract fun bindMviTestViewModel(viewModel: MviTestViewModel): ViewModel

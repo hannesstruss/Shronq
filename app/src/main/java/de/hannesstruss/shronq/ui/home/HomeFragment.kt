@@ -38,11 +38,4 @@ class HomeFragment : BaseFragment2<HomeState, HomeIntent, HomeViewModel>() {
       String.format("%.1f", it.weightGrams / 1000.0)
     } ?: ""
   }
-
-//  override fun handleEffect(effect: HomeEffect) {
-//    when (effect) {
-//      HomeEffect.NavigateToInsertWeight -> findNavController().navigate(R.id.action_homeFragment_to_logWeightFragment)
-//      HomeEffect.NavigateToSettings -> findNavController().navigate(R.id.action_homeFragment_to_settingsFragment)
-//    }.exhaust()
-//  }
 }
