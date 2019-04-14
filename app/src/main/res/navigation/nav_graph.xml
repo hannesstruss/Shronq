@@ -22,8 +22,4 @@
             android:label="SettingsFragment"
             tools:layout="@layout/settings_fragment"
   />
-  <fragment android:id="@+id/mviTestFragment"
-            android:name="de.hannesstruss.shronq.ui.mvitest.MviTestFragment"
-            android:label="MviTestFragment"
-            tools:layout="@layout/mvi_test_fragment"/>
 </navigation>
