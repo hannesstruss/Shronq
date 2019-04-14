@@ -134,7 +134,7 @@ class MviEngine<StateT : Any, IntentT : Any>(
     }
 
     coroutineScope.launch {
-      ctx.onInitCallback?.invoke()
+      ctx.onInitCallback?.invoke(intentContext)
     }
   }
 }
@@ -146,9 +146,9 @@ class EngineContext<StateT, IntentT> internal constructor() {
   val externalStreamBindings = mutableListOf<ExternalBinding<StateT>>()
   val externalFlowBindings = mutableListOf<FlowBinding<StateT>>()
 
-  internal var onInitCallback: (suspend () -> Unit)? = null
+  internal var onInitCallback: (suspend IntentContext<StateT>.() -> Unit)? = null
 
-  fun onInit(block: suspend () -> Unit) {
+  fun onInit(block: suspend IntentContext<StateT>.() -> Unit) {
     onInitCallback = block
   }
 
