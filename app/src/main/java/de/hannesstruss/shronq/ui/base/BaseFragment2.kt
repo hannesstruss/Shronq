@@ -2,7 +2,10 @@ package de.hannesstruss.shronq.ui.base
 
 import android.content.Context
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import de.hannesstruss.shronq.ui.MainActivity
@@ -11,6 +14,7 @@ import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 
 abstract class BaseFragment2<StateT : Any, IntentT : Any, ViewModelT : MviViewModel2<StateT, IntentT>> : Fragment() {
+  @get:LayoutRes abstract val layout: Int
   abstract val viewModelClass: Class<ViewModelT>
   abstract fun intents(): Observable<IntentT>
   abstract fun render(state: StateT)
@@ -27,6 +31,12 @@ abstract class BaseFragment2<StateT : Any, IntentT : Any, ViewModelT : MviViewMo
     super.onAttach(context)
 
     initViewModel()
+  }
+
+  override fun onCreateView(inflater: LayoutInflater,
+                            container: ViewGroup?,
+                            savedInstanceState: Bundle?): View? {
+    return inflater.inflate(layout, container, false)
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

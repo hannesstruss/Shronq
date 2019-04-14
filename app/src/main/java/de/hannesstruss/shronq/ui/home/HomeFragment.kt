@@ -1,10 +1,8 @@
 package de.hannesstruss.shronq.ui.home
 
-import androidx.navigation.fragment.findNavController
 import com.jakewharton.rxbinding2.view.clicks
-import de.hannesstruss.kotlin.extensions.exhaust
 import de.hannesstruss.shronq.R
-import de.hannesstruss.shronq.ui.base.BaseFragment
+import de.hannesstruss.shronq.ui.base.BaseFragment2
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.home_fragment.btn_go_to_insert
 import kotlinx.android.synthetic.main.home_fragment.btn_go_to_settings
@@ -17,7 +15,7 @@ import kotlinx.android.synthetic.main.home_fragment.chart
 import kotlinx.android.synthetic.main.home_fragment.txt_latest_weight
 import java.time.Period
 
-class HomeFragment : BaseFragment<HomeState, HomeIntent, HomeEffect, HomeViewModel>() {
+class HomeFragment : BaseFragment2<HomeState, HomeIntent, HomeViewModel>() {
   override val layout = R.layout.home_fragment
   override val viewModelClass = HomeViewModel::class.java
 
@@ -41,10 +39,10 @@ class HomeFragment : BaseFragment<HomeState, HomeIntent, HomeEffect, HomeViewMod
     } ?: ""
   }
 
-  override fun handleEffect(effect: HomeEffect) {
-    when (effect) {
-      HomeEffect.NavigateToInsertWeight -> findNavController().navigate(R.id.action_homeFragment_to_logWeightFragment)
-      HomeEffect.NavigateToSettings -> findNavController().navigate(R.id.action_homeFragment_to_settingsFragment)
-    }.exhaust()
-  }
+//  override fun handleEffect(effect: HomeEffect) {
+//    when (effect) {
+//      HomeEffect.NavigateToInsertWeight -> findNavController().navigate(R.id.action_homeFragment_to_logWeightFragment)
+//      HomeEffect.NavigateToSettings -> findNavController().navigate(R.id.action_homeFragment_to_settingsFragment)
+//    }.exhaust()
+//  }
 }
