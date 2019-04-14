@@ -3,7 +3,7 @@ package de.hannesstruss.shronq.ui.home
 import de.hannesstruss.shronq.R
 import de.hannesstruss.shronq.data.MeasurementRepository
 import de.hannesstruss.shronq.data.sync.Syncer
-import de.hannesstruss.shronq.ui.base.MviViewModel2
+import de.hannesstruss.shronq.ui.base.MviViewModel
 import de.hannesstruss.shronq.ui.home.HomeIntent.EditSettings
 import de.hannesstruss.shronq.ui.home.HomeIntent.InsertWeight
 import de.hannesstruss.shronq.ui.home.HomeIntent.UpdateVisiblePeriod
@@ -18,7 +18,7 @@ class HomeViewModel
     private val logWeightNotification: LogWeightNotification,
     private val navigator: Navigator,
     private val syncer: Syncer
-) : MviViewModel2<HomeState, HomeIntent>() {
+) : MviViewModel<HomeState, HomeIntent>() {
   override val initialState = HomeState.initial()
 
   override val engine = createEngine {

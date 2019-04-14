@@ -1,54 +1,60 @@
 package de.hannesstruss.shronq.ui.base
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.CallSuper
+import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import de.hannesstruss.shronq.ui.MainActivity
 import de.hannesstruss.shronq.ui.di.ActivityComponentRetainer
-import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 
-abstract class BaseFragment<StateT, IntentT, EffectT, ViewModelT : MviViewModel<StateT, IntentT, *, EffectT>> : Fragment(), MviView<IntentT> {
-  abstract protected val layout: Int
-  abstract protected val viewModelClass: Class<ViewModelT>
+abstract class BaseFragment<StateT : Any, IntentT : Any, ViewModelT : MviViewModel<StateT, IntentT>> : Fragment() {
+  @get:LayoutRes abstract val layout: Int
+  abstract val viewModelClass: Class<ViewModelT>
+  abstract fun intents(): Observable<IntentT>
+  abstract fun render(state: StateT)
 
+  private lateinit var viewModel: ViewModelT
   private var stateDisposable: Disposable? = null
-  private var effectsDisposable: Disposable? = null
 
-  final override fun onCreateView(inflater: LayoutInflater,
-                                  container: ViewGroup?,
-                                  savedInstanceState: Bundle?): View? {
+  private fun initViewModel() {
+    val factory = ActivityComponentRetainer.getComponent(requireActivity() as MainActivity).viewModelFactory()
+    viewModel = ViewModelProviders.of(this, factory).get(viewModelClass)
+  }
+
+  @CallSuper
+  override fun onAttach(context: Context?) {
+    super.onAttach(context)
+
+    initViewModel()
+  }
+
+  @CallSuper
+  override fun onCreateView(inflater: LayoutInflater,
+                            container: ViewGroup?,
+                            savedInstanceState: Bundle?): View? {
     return inflater.inflate(layout, container, false)
   }
 
-  protected val viewModel: ViewModelT by lazy {
-    val factory = ActivityComponentRetainer.getComponent(requireActivity() as MainActivity).viewModelFactory()
-    ViewModelProviders.of(this, factory).get(viewModelClass)
+  @CallSuper
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
+
+    stateDisposable = viewModel.states.subscribe { render(it) }
+    viewModel.attachView(intents())
   }
 
-  override fun onStart() {
-    super.onStart()
-    viewModel.attachView(this)
+  @CallSuper
+  override fun onDestroyView() {
+    super.onDestroyView()
 
-    stateDisposable = viewModel.states
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(::render)
-
-    effectsDisposable = viewModel.effects
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(::handleEffect)
-  }
-
-  override fun onStop() {
-    super.onStop()
-    viewModel.detachView()
     stateDisposable?.dispose()
-    effectsDisposable?.dispose()
+    viewModel.dropView()
   }
-
-  abstract fun render(state: StateT)
-  abstract fun handleEffect(effect: EffectT)
 }

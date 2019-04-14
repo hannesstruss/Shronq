@@ -1,6 +1,6 @@
 package de.hannesstruss.shronq.ui.mvitest
 
-import de.hannesstruss.shronq.ui.base.MviViewModel2
+import de.hannesstruss.shronq.ui.base.MviViewModel
 import io.reactivex.Observable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class MviTestViewModel
-@Inject constructor() : MviViewModel2<MviTestState, MviTestIntent>() {
+@Inject constructor() : MviViewModel<MviTestState, MviTestIntent>() {
 
   override val initialState = MviTestState(0)
 

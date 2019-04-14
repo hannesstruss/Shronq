@@ -2,14 +2,14 @@ package de.hannesstruss.shronq.ui.mvitest
 
 import com.jakewharton.rxbinding2.view.clicks
 import de.hannesstruss.shronq.R
-import de.hannesstruss.shronq.ui.base.BaseFragment2
+import de.hannesstruss.shronq.ui.base.BaseFragment
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.mvi_test_fragment.btn_crash
 import kotlinx.android.synthetic.main.mvi_test_fragment.btn_decr
 import kotlinx.android.synthetic.main.mvi_test_fragment.btn_incr
 import kotlinx.android.synthetic.main.mvi_test_fragment.txt_counter
 
-class MviTestFragment : BaseFragment2<MviTestState, MviTestIntent, MviTestViewModel>() {
+class MviTestFragment : BaseFragment<MviTestState, MviTestIntent, MviTestViewModel>() {
   override val layout = R.layout.mvi_test_fragment
   override val viewModelClass = MviTestViewModel::class.java
 
