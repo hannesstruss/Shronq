@@ -1,14 +1,12 @@
 package de.hannesstruss.shronq.ui.logweight
 
-import androidx.navigation.fragment.findNavController
 import com.jakewharton.rxbinding2.view.clicks
-import de.hannesstruss.kotlin.extensions.exhaust
 import de.hannesstruss.shronq.R
-import de.hannesstruss.shronq.ui.base.BaseFragment
+import de.hannesstruss.shronq.ui.base.BaseFragment2
 import kotlinx.android.synthetic.main.log_weight_fragment.btn_insert
 import kotlinx.android.synthetic.main.log_weight_fragment.edit_weight
 
-class LogWeightFragment : BaseFragment<LogWeightState, LogWeightIntent, LogWeightEffect, LogWeightViewModel>() {
+class LogWeightFragment : BaseFragment2<LogWeightState, LogWeightIntent, LogWeightViewModel>() {
   override val layout = R.layout.log_weight_fragment
   override val viewModelClass = LogWeightViewModel::class.java
 
@@ -17,12 +15,6 @@ class LogWeightFragment : BaseFragment<LogWeightState, LogWeightIntent, LogWeigh
 
   override fun render(state: LogWeightState) {
     btn_insert.isEnabled = state.insertButtonEnabled
-  }
-
-  override fun handleEffect(effect: LogWeightEffect) {
-    when (effect) {
-      LogWeightEffect.GoBack -> findNavController().popBackStack()
-    }.exhaust()
   }
 
   private fun weightGrams(): Int {

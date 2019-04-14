@@ -16,8 +16,14 @@ class ActivityModule(activity: MainActivity) {
 
   @Provides fun navigator(): Navigator {
     return object : Navigator {
+      private val navController get() =
+        activityHolder.activity().findNavController(R.id.nav_host_fragment)
+
+      override fun back() {
+        navController.popBackStack()
+      }
+
       override fun navigate(action: Int) {
-        val navController = activityHolder.activity().findNavController(R.id.nav_host_fragment)
         navController.navigate(action)
       }
     }

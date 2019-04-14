@@ -3,43 +3,44 @@ package de.hannesstruss.shronq.ui.logweight
 import de.hannesstruss.android.KeyboardHider
 import de.hannesstruss.shronq.data.MeasurementRepository
 import de.hannesstruss.shronq.data.fit.FitClient
-import de.hannesstruss.shronq.ui.base.MviEvent
-import de.hannesstruss.shronq.ui.base.MviViewModel
-import io.reactivex.Observable
+import de.hannesstruss.shronq.ui.base.MviViewModel2
+import de.hannesstruss.shronq.ui.logweight.LogWeightIntent.LogWeight
+import de.hannesstruss.shronq.ui.navigation.Navigator
+import kotlinx.coroutines.async
+import kotlinx.coroutines.rx2.await
 import javax.inject.Inject
 
-class LogWeightViewModel @Inject constructor(
+class LogWeightViewModel
+@Inject constructor(
     private val measurementRepository: MeasurementRepository,
     private val fitClient: FitClient,
-    private val keyboardHider: KeyboardHider
-) : MviViewModel<LogWeightState, LogWeightIntent, LogWeightChange, LogWeightEffect>() {
-
-  override val intentMapper = { intent: LogWeightIntent ->
-    when (intent) {
-      is LogWeightIntent.LogWeight -> {
-        keyboardHider.hideKeyboard()
-
-        val o: Observable<MviEvent<out LogWeightChange, out LogWeightEffect>> = Observable.merge(
-            measurementRepository.insertMeasurement(intent.weightGrams).toObservable(),
-
-            if (fitClient.isEnabled) {
-              fitClient.insert(intent.weightGrams).toObservable()
-            } else {
-              Observable.empty<MviEvent<LogWeightChange, LogWeightEffect>>()
-            }
-        )
-        o
-            .startWith(LogWeightChange.StartedInserting.changeAsEvent())
-            .concatWith(LogWeightEffect.GoBack.effectAsEvent())
-      }
-    }
-  }
-
-  override val stateReducer = { state: LogWeightState, change: LogWeightChange ->
-    when (change) {
-      LogWeightChange.StartedInserting -> state.copy(isInserting = true)
-    }
-  }
-
+    private val keyboardHider: KeyboardHider,
+    private val navigator: Navigator
+): MviViewModel2<LogWeightState, LogWeightIntent>() {
   override val initialState = LogWeightState.initial()
+
+  override val engine = createEngine {
+    on<LogWeight> { intent ->
+      keyboardHider.hideKeyboard()
+
+      enterState { state.copy(isInserting = true) }
+
+      val insertDb = async {
+        measurementRepository
+            .insertMeasurement(intent.weightGrams)
+            .await()
+      }
+
+      val insertFit = async {
+        if (fitClient.isEnabled) {
+          fitClient.insert(intent.weightGrams).await()
+        }
+      }
+
+      insertDb.join()
+      insertFit.join()
+
+      navigator.back()
+    }
+  }
 }
