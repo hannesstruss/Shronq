@@ -9,6 +9,7 @@ import dagger.multibindings.IntoMap
 import de.hannesstruss.shronq.ui.base.ViewModelFactory
 import de.hannesstruss.shronq.ui.home.HomeViewModel
 import de.hannesstruss.shronq.ui.logweight.LogWeightViewModel
+import de.hannesstruss.shronq.ui.mvitest.MviTestViewModel
 import de.hannesstruss.shronq.ui.settings.SettingsViewModel
 import kotlin.reflect.KClass
 
@@ -31,4 +32,7 @@ abstract class ViewModelModule {
 
   @Binds @IntoMap @ViewModelKey(SettingsViewModel::class)
   abstract fun bindSettingsViewModel(viewModel: SettingsViewModel): ViewModel
+
+  @Binds @IntoMap @ViewModelKey(MviTestViewModel::class)
+  abstract fun bindMviTestViewModel(viewModel: MviTestViewModel): ViewModel
 }
