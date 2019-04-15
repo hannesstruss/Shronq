@@ -8,6 +8,7 @@ import de.hannesstruss.shronq.ui.logweight.LogWeightIntent.LogWeight
 import de.hannesstruss.shronq.ui.navigation.Navigator
 import kotlinx.coroutines.async
 import kotlinx.coroutines.rx2.await
+import kotlinx.coroutines.rx2.awaitFirst
 import javax.inject.Inject
 
 class LogWeightViewModel
@@ -20,6 +21,11 @@ class LogWeightViewModel
   override val initialState = LogWeightState.initial()
 
   override val engine = createEngine {
+    onInit {
+      val lastWeight = measurementRepository.getLatestMeasurement().awaitFirst().weightGrams
+      enterState { state.copy(lastWeight = lastWeight) }
+    }
+
     on<LogWeight> { intent ->
       keyboardHider.hideKeyboard()
 
