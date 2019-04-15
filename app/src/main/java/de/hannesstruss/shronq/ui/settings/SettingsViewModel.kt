@@ -31,7 +31,7 @@ class SettingsViewModel
           ConnectResult.Canceled ->
             enterState { state.copy(fitIsEnabled = false) }
 
-          ConnectResult.Failed -> throw AssertionError("What could possibly go wrong?")
+          else -> throw AssertionError("What could possibly go wrong?")
         }
       }
     }
