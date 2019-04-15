@@ -4,9 +4,6 @@ import de.hannesstruss.shronq.data.Measurement
 import de.hannesstruss.shronq.data.db.DbMeasurement
 import de.hannesstruss.shronq.data.db.DbMeasurementDao
 import de.hannesstruss.shronq.data.firebase.ShronqFirebaseDb
-import io.reactivex.Completable
-import io.reactivex.Observable
-import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.rx2.await
 import timber.log.Timber
 import javax.inject.Inject
@@ -40,27 +37,21 @@ class Syncer @Inject constructor(
     }
   }
 
-  fun syncUp(): Completable {
-    return measurementDao.getUnsyncedMeasurements()
-        .subscribeOn(Schedulers.io())
-        .flatMapObservable { Observable.fromIterable(it) }
-        .flatMapCompletable { dbMeasurement ->
+  suspend fun syncUp() {
+    val unsyncedMeasurements = measurementDao.getUnsyncedMeasurements()
 
-          val measurement = Measurement(
-              weightGrams = dbMeasurement.weightGrams,
-              measuredAt = dbMeasurement.measuredAt
-          )
+    for (dbMeasurement in unsyncedMeasurements) {
+      val measurement = Measurement(
+          weightGrams = dbMeasurement.weightGrams,
+          measuredAt = dbMeasurement.measuredAt
+      )
 
-          firebaseDb.addMeasurement(measurement)
-              .observeOn(Schedulers.io())
-              .flatMapMaybe { firebaseMeasurement ->
-                measurementDao.selectById(dbMeasurement.id)
-                    .doOnSuccess {
-                      val updated = it.copy(firebaseId = firebaseMeasurement.id, isSynced = true)
-                      measurementDao.update(updated)
-                    }
-              }
-              .ignoreElement()
-        }
+      val firebaseMeasurement = firebaseDb.addMeasurement(measurement).await()
+      val selected = measurementDao.selectById(dbMeasurement.id)
+      if (selected != null) {
+        val updated = selected.copy(firebaseId = firebaseMeasurement.id, isSynced = true)
+        measurementDao.update(updated)
+      }
+    }
   }
 }
