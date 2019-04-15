@@ -5,6 +5,7 @@ import de.hannesstruss.shronq.data.MeasurementRepository
 import de.hannesstruss.shronq.data.fit.FitClient
 import de.hannesstruss.shronq.ui.base.MviViewModel
 import de.hannesstruss.shronq.ui.logweight.LogWeightIntent.LogWeight
+import de.hannesstruss.shronq.ui.logweight.LogWeightIntent.Seeked
 import de.hannesstruss.shronq.ui.navigation.Navigator
 import kotlinx.coroutines.async
 import kotlinx.coroutines.rx2.await
@@ -24,6 +25,10 @@ class LogWeightViewModel
     onInit {
       val lastWeight = measurementRepository.getLatestMeasurement().awaitFirst().weightGrams
       enterState { state.copy(lastWeight = lastWeight) }
+    }
+
+    on<Seeked> {
+      enterState { state.copy(seekbarValue = it.seekedValue) }
     }
 
     on<LogWeight> { intent ->
