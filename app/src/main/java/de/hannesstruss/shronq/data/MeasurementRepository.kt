@@ -3,9 +3,7 @@ package de.hannesstruss.shronq.data
 import de.hannesstruss.shronq.data.db.DbMeasurement
 import de.hannesstruss.shronq.data.db.DbMeasurementDao
 import de.hannesstruss.shronq.data.sync.SyncUpWorker
-import io.reactivex.Completable
 import io.reactivex.Observable
-import io.reactivex.schedulers.Schedulers
 import java.time.ZonedDateTime
 import javax.inject.Inject
 
@@ -26,28 +24,26 @@ class MeasurementRepository @Inject constructor(
         .toObservable()
   }
 
-  fun insertMeasurement(weightGrams: Int): Completable {
+  suspend fun insertMeasurement(weightGrams: Int) {
     val measurement = Measurement(
         weightGrams = weightGrams,
         measuredAt = ZonedDateTime.now()
     )
 
-    return insertMeasurement(measurement)
+    insertMeasurement(measurement)
   }
 
-  fun insertMeasurement(measurement: Measurement): Completable {
-    return Completable.fromAction {
-      val dbMeasurement = DbMeasurement(
-          weightGrams = measurement.weightGrams,
-          measuredAt = measurement.measuredAt,
-          firebaseId = null,
-          isSynced = false
-      )
+  suspend fun insertMeasurement(measurement: Measurement) {
+    val dbMeasurement = DbMeasurement(
+        weightGrams = measurement.weightGrams,
+        measuredAt = measurement.measuredAt,
+        firebaseId = null,
+        isSynced = false
+    )
 
-      dao.insertAll(dbMeasurement)
+    dao.insertAll(dbMeasurement)
 
-      SyncUpWorker.runOnce()
-    }.subscribeOn(Schedulers.io())
+    SyncUpWorker.runOnce()
   }
 
   private fun DbMeasurement.toMeasurement() = Measurement(

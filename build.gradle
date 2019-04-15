@@ -25,7 +25,7 @@ buildscript {
       'arch': [
           'navigation': '1.0.0',
           'lifecycle': '2.0.0',
-          'room': '2.0.0'
+          'room': '2.1.0-alpha06'
       ],
       'playservices': [
           'fit': '16.0.1',
@@ -58,6 +58,7 @@ buildscript {
               'room': [
                   'runtime': "androidx.room:room-runtime:${versions.arch.room}",
                   'compiler': "androidx.room:room-compiler:${versions.arch.room}",
+                  'ktx': "androidx.room:room-ktx:${versions.arch.room}",
                   'rx2': "androidx.room:room-rxjava2:${versions.arch.room}"
               ],
               'work': 'androidx.work:work-runtime-ktx:2.0.0'

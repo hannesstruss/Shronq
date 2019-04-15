@@ -1,13 +1,8 @@
 package de.hannesstruss.shronq.data.importer
 
 import android.content.Context
-import com.google.gson.Gson
-import de.hannesstruss.shronq.data.Measurement
 import de.hannesstruss.shronq.data.MeasurementRepository
 import de.hannesstruss.shronq.data.db.AppDatabase
-import java.io.InputStreamReader
-import java.time.LocalDateTime
-import java.time.ZoneId
 import javax.inject.Inject
 
 data class ShrnqApiResponse(
@@ -24,20 +19,20 @@ class Importer @Inject constructor(
     private val appDatabase: AppDatabase,
     private val context: Context
 ) {
-  fun importJsonToFirebase() {
-    val gson = Gson()
-
-    val items = context.assets.open("shrnq.json").use {
-      val reader = InputStreamReader(it)
-      gson.fromJson(reader, ShrnqApiResponse::class.java)
-    }
-
-    val zone = ZoneId.of("Europe/Berlin")
-    items
-        .objects
-        .map { Measurement((it.value * 1000).toInt(), LocalDateTime.parse(it.measured_on).atZone(zone)) }
-        .forEach { measurementRepository.insertMeasurement(it) }
-  }
+//  fun importJsonToFirebase() {
+//    val gson = Gson()
+//
+//    val items = context.assets.open("shrnq.json").use {
+//      val reader = InputStreamReader(it)
+//      gson.fromJson(reader, ShrnqApiResponse::class.java)
+//    }
+//
+//    val zone = ZoneId.of("Europe/Berlin")
+//    items
+//        .objects
+//        .map { Measurement((it.value * 1000).toInt(), LocalDateTime.parse(it.measured_on).atZone(zone)) }
+//        .forEach { measurementRepository.insertMeasurement(it) }
+//  }
 
   fun importFirebaseToLocal() {
 //    measurementRepository.getMeasurements()

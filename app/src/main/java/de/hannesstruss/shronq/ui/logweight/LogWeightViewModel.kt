@@ -16,7 +16,7 @@ class LogWeightViewModel
     private val fitClient: FitClient,
     private val keyboardHider: KeyboardHider,
     private val navigator: Navigator
-): MviViewModel<LogWeightState, LogWeightIntent>() {
+) : MviViewModel<LogWeightState, LogWeightIntent>() {
   override val initialState = LogWeightState.initial()
 
   override val engine = createEngine {
@@ -26,9 +26,7 @@ class LogWeightViewModel
       enterState { state.copy(isInserting = true) }
 
       val insertDb = async {
-        measurementRepository
-            .insertMeasurement(intent.weightGrams)
-            .await()
+        measurementRepository.insertMeasurement(intent.weightGrams)
       }
 
       val insertFit = async {

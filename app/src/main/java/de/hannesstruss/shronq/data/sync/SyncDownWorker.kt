@@ -2,18 +2,18 @@ package de.hannesstruss.shronq.data.sync
 
 import android.content.Context
 import androidx.work.Constraints
+import androidx.work.CoroutineWorker
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import androidx.work.Worker
 import androidx.work.WorkerParameters
 import de.hannesstruss.shronq.ShronqApp
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class SyncDownWorker(context: Context, params: WorkerParameters) : Worker(context, params) {
+class SyncDownWorker(context: Context, params: WorkerParameters) : CoroutineWorker(context, params) {
   companion object {
     private val CONSTRAINTS = Constraints.Builder()
         .setRequiredNetworkType(NetworkType.UNMETERED)
@@ -34,11 +34,11 @@ class SyncDownWorker(context: Context, params: WorkerParameters) : Worker(contex
 
   @Inject lateinit var syncer: Syncer
 
-  override fun doWork(): Result {
+  override suspend fun doWork(): Result {
     (applicationContext as ShronqApp).appComponent.inject(this)
 
     return try {
-      syncer.syncDown().blockingAwait()
+      syncer.syncDown()
       Result.success()
     } catch (e: IOException) {
       Result.retry()

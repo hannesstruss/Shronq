@@ -26,7 +26,7 @@ interface DbMeasurementDao {
   fun getUnsyncedMeasurements(): Single<List<DbMeasurement>>
 
   @Insert
-  fun insertAll(vararg measurement: DbMeasurement)
+  suspend fun insertAll(vararg measurement: DbMeasurement)
 
   @Update
   fun update(measurement: DbMeasurement)

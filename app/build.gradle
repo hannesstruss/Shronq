@@ -104,6 +104,7 @@ dependencies {
   implementation deps.android.arch.lifecycle.viewmodel
 
   implementation deps.android.arch.room.runtime
+  implementation deps.android.arch.room.ktx
   implementation deps.android.arch.room.rx2
   kapt deps.android.arch.room.compiler
 
