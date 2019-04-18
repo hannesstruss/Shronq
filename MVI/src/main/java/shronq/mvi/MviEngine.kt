@@ -7,6 +7,7 @@ import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.rx2.awaitFirst
 import kotlinx.coroutines.rx2.openSubscription
 
 /*
@@ -44,13 +45,28 @@ class MviEngine<StateT : Any, IntentT : Any>(
     override fun enterState(block: StateTransition<StateT>) {
       transitions.accept(block)
     }
-  }
-  val states: Observable<StateT> = transitions.scan(initialState) { state, transition ->
-    val ctx = object : StateEditorContext<StateT> {
-      override val state = state
-    }
 
-    ctx.transition()
+    override suspend fun getLatestState(): StateT {
+      return states.awaitFirst()
+    }
+  }
+  val states: Observable<StateT>
+
+  init {
+    val connectableStates = transitions.scan(initialState) { state, transition ->
+      val ctx = object : StateEditorContext<StateT> {
+        override val state = state
+      }
+
+      ctx.transition()
+    }.replay(1)
+
+    // Immediately subscribe to catch all states in the replay. There's no chance
+    // of upstream resources to leak or errors to be emitted, so that's okay.
+    // TODO: There's actually a chance of throwing an error from the transition lambda D:
+    connectableStates.autoConnect(0)
+
+    states = connectableStates
   }
 
   fun start() {
@@ -116,7 +132,7 @@ class MviEngine<StateT : Any, IntentT : Any>(
     val flowContext = object : FlowContext<StateT> {
       override fun <T> Flow<T>.hookUp(): HookedUpSubscription {
         coroutineScope.launch {
-          collect {  }
+          collect { }
         }
         return HookedUpSubscription()
       }
@@ -192,6 +208,7 @@ class StreamBinding<StateT, SpecificIntentT>(
 
 interface IntentContext<StateT> {
   fun enterState(block: StateTransition<StateT>)
+  suspend fun getLatestState(): StateT
 }
 
 interface StateEditorContext<StateT> {
