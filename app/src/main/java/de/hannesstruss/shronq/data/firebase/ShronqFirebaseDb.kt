@@ -6,8 +6,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import de.hannesstruss.shronq.BuildConfig
 import de.hannesstruss.shronq.data.Measurement
-import io.reactivex.Single
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import java.time.Instant
 import java.time.ZoneId
 import java.util.concurrent.Executors
@@ -26,48 +27,28 @@ class ShronqFirebaseDb @Inject constructor(
 
   private val collection = firestore.collection(CollectionName)
   private val zone = ZoneId.systemDefault()
-  private val scheduler = Schedulers.from(Executors.newSingleThreadExecutor())
+  private val ctx = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
 
-  fun getAllMeasurements(): Single<List<FirebaseMeasurement>> {
-    val snapshots = Single.create<List<DocumentSnapshot>> { emitter ->
-      collection
-          .orderBy(KeyMeasuredAt, Query.Direction.ASCENDING)
+  suspend fun getAllMeasurements(): List<FirebaseMeasurement> {
+    val snapshot = withContext(ctx) {
+      collection.orderBy(KeyMeasuredAt, Query.Direction.ASCENDING)
           .get()
-          .addOnCompleteListener { task ->
-            val result = task.result
-            if (!emitter.isDisposed && result != null) {
-              emitter.onSuccess(result.documents)
-            }
-          }
-          .addOnFailureListener { e ->
-            if (!emitter.isDisposed) {
-              emitter.onError(e)
-            }
-          }
+          .await()
     }
 
-    return snapshots
-        .subscribeOn(scheduler)
-        .observeOn(Schedulers.computation())
-        .map { documents ->
-          documents.map { it.toMeasurement() }
-        }
+    return snapshot.documents.map { it.toMeasurement() }
   }
 
-  fun addMeasurement(measurement: Measurement): Single<FirebaseMeasurement> {
-    val insert = Single.create<FirebaseMeasurement> { emitter ->
+  suspend fun addMeasurement(measurement: Measurement): FirebaseMeasurement {
+    val snapshot = withContext(ctx) {
       val task = collection.add(mapOf(
           KeyMeasuredAt to Timestamp(measurement.measuredAt.toInstant().epochSecond, 0),
           KeyWeightGrams to measurement.weightGrams.toDouble()
       ))
-      task.addOnSuccessListener { result ->
-        result.get()
-            .addOnSuccessListener { emitter.onSuccess(it.toMeasurement()) }
-            .addOnFailureListener { emitter.onError(it) }
-      }
-      task.addOnFailureListener { emitter.onError(it) }
+      task.await().get().await()
     }
-    return insert.subscribeOn(scheduler)
+
+    return snapshot.toMeasurement()
   }
 
   private fun DocumentSnapshot.toMeasurement() = FirebaseMeasurement(

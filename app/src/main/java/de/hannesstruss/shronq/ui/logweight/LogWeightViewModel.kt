@@ -1,6 +1,7 @@
 package de.hannesstruss.shronq.ui.logweight
 
 import de.hannesstruss.android.KeyboardHider
+import de.hannesstruss.kotlin.extensions.awaitFirst
 import de.hannesstruss.shronq.data.MeasurementRepository
 import de.hannesstruss.shronq.data.fit.FitClient
 import de.hannesstruss.shronq.ui.base.MviViewModel
@@ -9,7 +10,6 @@ import de.hannesstruss.shronq.ui.logweight.LogWeightIntent.Seeked
 import de.hannesstruss.shronq.ui.navigation.Navigator
 import kotlinx.coroutines.async
 import kotlinx.coroutines.rx2.await
-import kotlinx.coroutines.rx2.awaitFirst
 import javax.inject.Inject
 
 class LogWeightViewModel

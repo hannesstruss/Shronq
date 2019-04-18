@@ -18,7 +18,7 @@ interface DbMeasurementDao {
   suspend fun selectById(id: Int): DbMeasurement?
 
   @Query("select id from dbmeasurement where firebaseId = :firebaseId limit 1")
-  fun getIdForFirebaseId(firebaseId: String): Int?
+  suspend fun getIdForFirebaseId(firebaseId: String): Int?
 
   @Query("select * from dbmeasurement where firebaseId = null or isSynced = 0")
   suspend fun getUnsyncedMeasurements(): List<DbMeasurement>

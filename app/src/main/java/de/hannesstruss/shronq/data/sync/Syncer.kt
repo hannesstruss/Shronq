@@ -4,7 +4,6 @@ import de.hannesstruss.shronq.data.Measurement
 import de.hannesstruss.shronq.data.db.DbMeasurement
 import de.hannesstruss.shronq.data.db.DbMeasurementDao
 import de.hannesstruss.shronq.data.firebase.ShronqFirebaseDb
-import kotlinx.coroutines.rx2.await
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -14,7 +13,7 @@ class Syncer @Inject constructor(
     private val measurementDao: DbMeasurementDao
 ) {
   suspend fun syncDown() {
-    val measurements = firebaseDb.getAllMeasurements().await()
+    val measurements = firebaseDb.getAllMeasurements()
 
     for (measurement in measurements) {
       val localId = measurementDao.getIdForFirebaseId(measurement.id)
@@ -46,7 +45,7 @@ class Syncer @Inject constructor(
           measuredAt = dbMeasurement.measuredAt
       )
 
-      val firebaseMeasurement = firebaseDb.addMeasurement(measurement).await()
+      val firebaseMeasurement = firebaseDb.addMeasurement(measurement)
       val selected = measurementDao.selectById(dbMeasurement.id)
       if (selected != null) {
         val updated = selected.copy(firebaseId = firebaseMeasurement.id, isSynced = true)

@@ -39,14 +39,14 @@ class HomeViewModel
       enterState { state.copy(visiblePeriod = it.period) }
     }
 
-    externalStream {
+    externalFlow {
       measurementRepository.getMeasurements()
           .hookUp {
             enterState { state.copy(measurements = it) }
           }
     }
 
-    externalStream {
+    externalFlow {
       measurementRepository.getLatestMeasurement()
           .hookUp {
             enterState { state.copy(latestMeasurement = it) }

@@ -1,27 +1,28 @@
 package de.hannesstruss.shronq.data
 
+import de.hannesstruss.kotlin.extensions.toFlow
 import de.hannesstruss.shronq.data.db.DbMeasurement
 import de.hannesstruss.shronq.data.db.DbMeasurementDao
 import de.hannesstruss.shronq.data.sync.SyncUpWorker
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
 import java.time.ZonedDateTime
 import javax.inject.Inject
 
 class MeasurementRepository @Inject constructor(
     private val dao: DbMeasurementDao
 ) {
-  fun getMeasurements(): Observable<List<Measurement>> {
+  fun getMeasurements(): Flow<List<Measurement>> {
     return dao.selectAll()
         .map { all ->
           all.map { it.toMeasurement() }
         }
-        .toObservable()
+        .toFlow()
   }
 
-  fun getLatestMeasurement(): Observable<Measurement> {
+  fun getLatestMeasurement(): Flow<Measurement> {
     return dao.selectLatest()
         .map { it.toMeasurement() }
-        .toObservable()
+        .toFlow()
   }
 
   suspend fun insertMeasurement(weightGrams: Int) {
