@@ -6,7 +6,8 @@ import de.hannesstruss.shronq.di.AppGraph
 @Component(
     modules = [
       ActivityModule::class,
-      DebugViewModelModule::class
+      ViewModelModule::class,
+      ReleaseViewModelFactoryModule::class
     ],
     dependencies = [AppGraph::class]
 )

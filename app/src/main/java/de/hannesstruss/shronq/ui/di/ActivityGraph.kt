@@ -8,7 +8,9 @@ interface ActivityGraph {
   companion object {
     fun init(activity: MainActivity): ActivityGraph {
       val appComponent = (activity.applicationContext as ShronqApp).appComponent
-      return appComponent.activityComponent()
+
+      return DaggerActivityComponent.builder()
+          .appGraph(appComponent)
           .activityModule(ActivityModule(activity))
           .build()
     }
