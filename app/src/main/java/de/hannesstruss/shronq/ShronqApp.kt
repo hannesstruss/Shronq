@@ -4,6 +4,7 @@ import android.app.Application
 import com.bugsnag.android.Bugsnag
 import de.hannesstruss.shronq.data.sync.SyncDownWorker
 import de.hannesstruss.shronq.di.AppComponent
+import de.hannesstruss.shronq.ui.notifications.LunchNotificationScheduler
 import timber.log.Timber
 
 class ShronqApp : Application() {
@@ -19,5 +20,6 @@ class ShronqApp : Application() {
     }
 
     SyncDownWorker.schedulePeriodically()
+    LunchNotificationScheduler(this).schedule()
   }
 }

@@ -9,7 +9,8 @@ import java.time.ZonedDateTime
 import javax.inject.Inject
 
 class MeasurementRepository @Inject constructor(
-    private val dao: DbMeasurementDao
+    private val dao: DbMeasurementDao,
+    private val clock: Clock
 ) {
   fun getMeasurements(): Flow<List<Measurement>> {
     return dao.selectAll()
@@ -28,7 +29,7 @@ class MeasurementRepository @Inject constructor(
   suspend fun insertMeasurement(weightGrams: Int) {
     val measurement = Measurement(
         weight = Weight.fromGrams(weightGrams),
-        measuredAt = ZonedDateTime.now()
+        measuredAt = clock.now()
     )
 
     insertMeasurement(measurement)
@@ -45,6 +46,10 @@ class MeasurementRepository @Inject constructor(
     dao.insertAll(dbMeasurement)
 
     SyncUpWorker.runOnce()
+  }
+
+  suspend fun getAverageWeightBetween(from: ZonedDateTime, to: ZonedDateTime): Weight {
+    return Weight.fromGrams(dao.getAverageWeightBetween(from, to))
   }
 
   private fun DbMeasurement.toMeasurement() = Measurement(

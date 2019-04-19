@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import io.reactivex.Flowable
+import java.time.ZonedDateTime
 
 @Dao
 interface DbMeasurementDao {
@@ -22,6 +23,9 @@ interface DbMeasurementDao {
 
   @Query("select * from dbmeasurement where firebaseId = null or isSynced = 0")
   suspend fun getUnsyncedMeasurements(): List<DbMeasurement>
+
+  @Query("select avg(weightGrams) from dbmeasurement where measuredAt >= :from and measuredAt < :to")
+  suspend fun getAverageWeightBetween(from: ZonedDateTime, to: ZonedDateTime): Int
 
   @Insert
   suspend fun insertAll(vararg measurement: DbMeasurement)
