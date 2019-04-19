@@ -30,9 +30,8 @@ abstract class BaseFragment<StateT : Any, IntentT : Any, ViewModelT : MviViewMod
 
   @CallSuper
   override fun onAttach(context: Context?) {
-    super.onAttach(context)
-
     initViewModel()
+    super.onAttach(context)
   }
 
   @CallSuper

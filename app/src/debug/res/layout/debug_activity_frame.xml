@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:orientation="vertical">
+
+  <FrameLayout
+    android:id="@+id/content_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"/>
+
+  <fragment
+    android:id="@+id/drawer"
+    android:name="de.hannesstruss.shronq.ui.DebugDrawerFragment"
+    android:layout_width="250dp"
+    android:layout_height="match_parent"
+    android:layout_gravity="end"/>
+
+</androidx.drawerlayout.widget.DrawerLayout>

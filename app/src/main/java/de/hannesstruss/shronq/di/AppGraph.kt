@@ -2,32 +2,29 @@ package de.hannesstruss.shronq.di
 
 import android.app.Application
 import android.content.Context
-import dagger.Component
 import de.hannesstruss.shronq.ShronqApp
 import de.hannesstruss.shronq.data.sync.SyncDownWorker
 import de.hannesstruss.shronq.data.sync.SyncUpWorker
+import de.hannesstruss.shronq.ui.MainActivity
 import de.hannesstruss.shronq.ui.di.ActivityComponent
 import de.hannesstruss.shronq.ui.notifications.LunchNotificationPublisher
-import javax.inject.Singleton
 
-@Component(
-    modules = [AppModule::class]
-)
-@Singleton
-interface AppComponent {
+interface AppGraph {
   companion object {
-    fun init(app: Application): AppComponent {
+    fun init(app: Application): AppGraph {
       return DaggerAppComponent.builder()
           .appModule(AppModule(app))
           .build()
     }
 
-    fun get(context: Context): AppComponent {
+    fun get(context: Context): AppGraph {
       return (context.applicationContext as ShronqApp).appComponent
     }
   }
 
   fun activityComponent(): ActivityComponent.Builder
+
+  fun inject(mainActivity: MainActivity)
 
   fun inject(syncUpWorker: SyncUpWorker)
   fun inject(syncDownWorker: SyncDownWorker)

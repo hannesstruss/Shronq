@@ -3,7 +3,7 @@ package de.hannesstruss.shronq.ui.notifications
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import de.hannesstruss.shronq.di.AppComponent
+import de.hannesstruss.shronq.di.AppGraph
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -14,7 +14,7 @@ class LunchNotificationPublisher : BroadcastReceiver() {
   private val scope = CoroutineScope(Dispatchers.Main)
 
   override fun onReceive(context: Context, intent: Intent?) {
-    AppComponent.get(context).inject(this)
+    AppGraph.get(context).inject(this)
 
     scope.launch {
       lunchNotification.triggerNow()
