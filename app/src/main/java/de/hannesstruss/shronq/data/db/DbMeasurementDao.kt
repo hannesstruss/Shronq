@@ -25,7 +25,7 @@ interface DbMeasurementDao {
   suspend fun getUnsyncedMeasurements(): List<DbMeasurement>
 
   @Query("select avg(weightGrams) from dbmeasurement where measuredAt >= :from and measuredAt < :to")
-  suspend fun getAverageWeightBetween(from: ZonedDateTime, to: ZonedDateTime): Int
+  suspend fun getAverageWeightBetween(from: ZonedDateTime, to: ZonedDateTime): Int?
 
   @Insert
   suspend fun insertAll(vararg measurement: DbMeasurement)

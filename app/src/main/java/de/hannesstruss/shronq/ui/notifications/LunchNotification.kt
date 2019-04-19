@@ -4,13 +4,21 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
+import androidx.annotation.DrawableRes
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import de.hannesstruss.kotlin.extensions.awaitFirst
 import de.hannesstruss.shronq.R
+import de.hannesstruss.shronq.data.Clock
+import de.hannesstruss.shronq.data.MeasurementRepository
 import javax.inject.Inject
 
 class LunchNotification
-@Inject constructor(private val context: Context) {
+@Inject constructor(
+    private val context: Context,
+    private val clock: Clock,
+    private val measurementRepository: MeasurementRepository
+) {
   companion object {
     private const val ChannelId = "lunch_infos"
     private const val NotificationId = 2
@@ -20,13 +28,37 @@ class LunchNotification
     createNotificationChannel()
   }
 
-  fun triggerNow() {
+  suspend fun triggerNow() {
+    val from = clock.now().minusDays(14)
+    val to = clock.now().minusDays(7)
+    val avgWeight = measurementRepository.getAverageWeightBetween(from, to)
+
+    if (avgWeight == null) return
+
+    val lastWeight = measurementRepository.getLatestMeasurement().awaitFirst().weight
+
+    val isGoingDown = lastWeight < avgWeight
+    val content = if (isGoingDown) {
+      NotificationText(
+          title = "Keep it going!",
+          text = String.format("Down from %.1f last week.", avgWeight.kilograms),
+          icon = R.drawable.ic_trending_down_black_24dp
+      )
+    } else {
+      NotificationText(
+          title = "Salad time!",
+          text = String.format("Up from %.1f last week. You can get back on track!", avgWeight.kilograms),
+          icon = R.drawable.ic_trending_up_black_24dp
+      )
+    }
+
     val nm = NotificationManagerCompat.from(context)
 
     val notification = NotificationCompat.Builder(context, ChannelId)
-        .setContentTitle("Keep it going!")
-        .setContentText("Down from 102,4 last week.")
-        .setSmallIcon(R.drawable.ic_trending_up_black_24dp)
+        .setContentTitle(content.title)
+        .setContentText(content.text)
+        .setVibrate(listOf(500L, 500L, 500L, 500L, 500L).toLongArray())
+        .setSmallIcon(content.icon)
         .setAutoCancel(true)
         .build()
 
@@ -46,4 +78,10 @@ class LunchNotification
       nm.createNotificationChannel(channel)
     }
   }
+
+  private class NotificationText(
+      val title: String,
+      val text: String,
+      @DrawableRes val icon: Int
+  )
 }

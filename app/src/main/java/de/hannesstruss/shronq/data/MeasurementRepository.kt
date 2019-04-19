@@ -48,8 +48,8 @@ class MeasurementRepository @Inject constructor(
     SyncUpWorker.runOnce()
   }
 
-  suspend fun getAverageWeightBetween(from: ZonedDateTime, to: ZonedDateTime): Weight {
-    return Weight.fromGrams(dao.getAverageWeightBetween(from, to))
+  suspend fun getAverageWeightBetween(from: ZonedDateTime, to: ZonedDateTime): Weight? {
+    return dao.getAverageWeightBetween(from, to)?.let { Weight.fromGrams(it) }
   }
 
   private fun DbMeasurement.toMeasurement() = Measurement(

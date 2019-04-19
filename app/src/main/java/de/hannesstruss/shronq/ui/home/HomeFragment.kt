@@ -11,6 +11,7 @@ import kotlinx.android.synthetic.main.home_fragment.btn_range_1y
 import kotlinx.android.synthetic.main.home_fragment.btn_range_2m
 import kotlinx.android.synthetic.main.home_fragment.btn_range_6m
 import kotlinx.android.synthetic.main.home_fragment.btn_range_all
+import kotlinx.android.synthetic.main.home_fragment.btn_test_notification
 import kotlinx.android.synthetic.main.home_fragment.chart
 import kotlinx.android.synthetic.main.home_fragment.txt_latest_weight
 import java.time.Period
@@ -27,7 +28,9 @@ class HomeFragment : BaseFragment<HomeState, HomeIntent, HomeViewModel>() {
       btn_range_1y.clicks().map { HomeIntent.UpdateVisiblePeriod(Period.ofMonths(12)) },
       btn_range_6m.clicks().map { HomeIntent.UpdateVisiblePeriod(Period.ofMonths(6)) },
       btn_range_2m.clicks().map { HomeIntent.UpdateVisiblePeriod(Period.ofMonths(2)) },
-      btn_range_1m.clicks().map { HomeIntent.UpdateVisiblePeriod(Period.ofMonths(1)) }
+      btn_range_1m.clicks().map { HomeIntent.UpdateVisiblePeriod(Period.ofMonths(1)) },
+
+      btn_test_notification.clicks().map { HomeIntent.TestNotificaton }
   )).startWith(HomeIntent.Init)
 
   override fun render(state: HomeState) {
