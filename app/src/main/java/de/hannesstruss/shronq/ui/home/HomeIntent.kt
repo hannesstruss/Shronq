@@ -7,5 +7,4 @@ sealed class HomeIntent {
   object InsertWeight : HomeIntent()
   object EditSettings : HomeIntent()
   data class UpdateVisiblePeriod(val period: Period?) : HomeIntent()
-  object TestNotificaton : HomeIntent()
 }

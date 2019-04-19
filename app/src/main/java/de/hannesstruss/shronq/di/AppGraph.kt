@@ -5,7 +5,6 @@ import android.content.Context
 import de.hannesstruss.shronq.ShronqApp
 import de.hannesstruss.shronq.data.sync.SyncDownWorker
 import de.hannesstruss.shronq.data.sync.SyncUpWorker
-import de.hannesstruss.shronq.ui.MainActivity
 import de.hannesstruss.shronq.ui.di.ActivityComponent
 import de.hannesstruss.shronq.ui.notifications.LunchNotificationPublisher
 
@@ -23,8 +22,6 @@ interface AppGraph {
   }
 
   fun activityComponent(): ActivityComponent.Builder
-
-  fun inject(mainActivity: MainActivity)
 
   fun inject(syncUpWorker: SyncUpWorker)
   fun inject(syncDownWorker: SyncDownWorker)

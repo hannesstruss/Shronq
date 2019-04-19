@@ -12,8 +12,8 @@
 
   <fragment
     android:id="@+id/drawer"
-    android:name="de.hannesstruss.shronq.ui.DebugDrawerFragment"
-    android:layout_width="250dp"
+    android:name="de.hannesstruss.shronq.ui.debugdrawer.DebugDrawerFragment"
+    android:layout_width="300dp"
     android:layout_height="match_parent"
     android:layout_gravity="end"/>
 

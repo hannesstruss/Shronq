@@ -1,5 +1,6 @@
 package de.hannesstruss.shronq.ui.base
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,8 +10,6 @@ import androidx.annotation.CallSuper
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
-import de.hannesstruss.shronq.ui.MainActivity
-import de.hannesstruss.shronq.ui.di.ActivityComponentRetainer
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 
@@ -23,14 +22,15 @@ abstract class BaseFragment<StateT : Any, IntentT : Any, ViewModelT : MviViewMod
   private lateinit var viewModel: ViewModelT
   private var stateDisposable: Disposable? = null
 
-  private fun initViewModel() {
-    val factory = ActivityComponentRetainer.getComponent(requireActivity() as MainActivity).viewModelFactory()
+  @SuppressLint("WrongConstant")
+  private fun initViewModel(context: Context) {
+    val factory = context.getSystemService(ViewModelFactory.SERVICE_NAME) as ViewModelFactory
     viewModel = ViewModelProviders.of(this, factory).get(viewModelClass)
   }
 
   @CallSuper
-  override fun onAttach(context: Context?) {
-    initViewModel()
+  override fun onAttach(context: Context) {
+    initViewModel(context)
     super.onAttach(context)
   }
 

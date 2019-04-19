@@ -8,25 +8,34 @@ import androidx.navigation.findNavController
 import de.hannesstruss.android.activityholder.ActivityResult
 import de.hannesstruss.android.activityholder.ActivityResultsProvider
 import de.hannesstruss.shronq.R
-import de.hannesstruss.shronq.di.AppGraph
-import de.hannesstruss.shronq.ui.di.ActivityComponentRetainer
+import de.hannesstruss.shronq.ui.base.ViewModelFactory
+import de.hannesstruss.shronq.ui.di.ActivityComponent
+import de.hannesstruss.shronq.ui.di.ActivityGraph
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), ActivityResultsProvider {
   @Inject lateinit var appContainer: AppContainer
+  @Inject lateinit var viewModelFactory: ViewModelFactory
+
+  private lateinit var activityComponent: ActivityGraph
 
   private val activityResults = PublishSubject.create<ActivityResult>()
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    AppGraph.get(this).inject(this)
-
     super.onCreate(savedInstanceState)
 
-    LayoutInflater.from(this).inflate(R.layout.activity_main, appContainer.get(this))
+    val nonConfigInstance = lastCustomNonConfigurationInstance
+    if (nonConfigInstance == null) {
+      activityComponent = ActivityGraph.init(this)
+    } else {
+      activityComponent = nonConfigInstance as ActivityComponent
+    }
 
-    ActivityComponentRetainer.init(this)
+    activityComponent.inject(this)
+
+    LayoutInflater.from(this).inflate(R.layout.activity_main, appContainer.get(this))
   }
 
   override fun onNewIntent(intent: Intent?) {
@@ -34,9 +43,20 @@ class MainActivity : AppCompatActivity(), ActivityResultsProvider {
     findNavController(R.id.nav_host_fragment).handleDeepLink(intent)
   }
 
+  override fun getSystemService(name: String): Any {
+    if (name == ViewModelFactory.SERVICE_NAME) {
+      return viewModelFactory
+    }
+    return super.getSystemService(name)
+  }
+
   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
     super.onActivityResult(requestCode, resultCode, data)
     activityResults.onNext(ActivityResult(requestCode, resultCode, data))
+  }
+
+  override fun onRetainCustomNonConfigurationInstance(): Any {
+    return activityComponent
   }
 
   override fun activityResults(): Observable<ActivityResult> = activityResults

@@ -6,11 +6,9 @@ import de.hannesstruss.shronq.data.sync.Syncer
 import de.hannesstruss.shronq.ui.base.MviViewModel
 import de.hannesstruss.shronq.ui.home.HomeIntent.EditSettings
 import de.hannesstruss.shronq.ui.home.HomeIntent.InsertWeight
-import de.hannesstruss.shronq.ui.home.HomeIntent.TestNotificaton
 import de.hannesstruss.shronq.ui.home.HomeIntent.UpdateVisiblePeriod
 import de.hannesstruss.shronq.ui.navigation.Navigator
 import de.hannesstruss.shronq.ui.notifications.LogWeightNotification
-import de.hannesstruss.shronq.ui.notifications.LunchNotification
 import java.time.LocalTime
 import javax.inject.Inject
 
@@ -19,8 +17,7 @@ class HomeViewModel
     private val measurementRepository: MeasurementRepository,
     private val logWeightNotification: LogWeightNotification,
     private val navigator: Navigator,
-    private val syncer: Syncer,
-    private val lunchNotification: LunchNotification
+    private val syncer: Syncer
 ) : MviViewModel<HomeState, HomeIntent>() {
   override val initialState = HomeState.initial()
 
@@ -40,10 +37,6 @@ class HomeViewModel
 
     on<UpdateVisiblePeriod> {
       enterState { state.copy(visiblePeriod = it.period) }
-    }
-
-    on<TestNotificaton> {
-      lunchNotification.triggerNow()
     }
 
     externalFlow {

@@ -1,12 +1,10 @@
 package de.hannesstruss.shronq.ui.di
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import dagger.Binds
 import dagger.MapKey
 import dagger.Module
 import dagger.multibindings.IntoMap
-import de.hannesstruss.shronq.ui.base.ViewModelFactory
 import de.hannesstruss.shronq.ui.home.HomeViewModel
 import de.hannesstruss.shronq.ui.logweight.LogWeightViewModel
 import de.hannesstruss.shronq.ui.settings.SettingsViewModel
@@ -20,9 +18,6 @@ internal annotation class ViewModelKey(val value: KClass<out ViewModel>)
 @Module
 @Suppress("Unused")
 abstract class ViewModelModule {
-
-  @Binds abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory
-
   @Binds @IntoMap @ViewModelKey(HomeViewModel::class)
   abstract fun bindHomeViewModel(viewModel: HomeViewModel): ViewModel
 
