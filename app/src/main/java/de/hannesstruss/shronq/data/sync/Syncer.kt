@@ -1,6 +1,7 @@
 package de.hannesstruss.shronq.data.sync
 
 import de.hannesstruss.shronq.data.Measurement
+import de.hannesstruss.shronq.data.Weight
 import de.hannesstruss.shronq.data.db.DbMeasurement
 import de.hannesstruss.shronq.data.db.DbMeasurementDao
 import de.hannesstruss.shronq.data.firebase.ShronqFirebaseDb
@@ -41,7 +42,7 @@ class Syncer @Inject constructor(
 
     for (dbMeasurement in unsyncedMeasurements) {
       val measurement = Measurement(
-          weightGrams = dbMeasurement.weightGrams,
+          weight = Weight.fromGrams(dbMeasurement.weightGrams),
           measuredAt = dbMeasurement.measuredAt
       )
 

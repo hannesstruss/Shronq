@@ -23,7 +23,7 @@ class LogWeightViewModel
 
   override val engine = createEngine {
     onInit {
-      val lastWeight = measurementRepository.getLatestMeasurement().awaitFirst().weightGrams
+      val lastWeight = measurementRepository.getLatestMeasurement().awaitFirst().weight
       enterState { state.copy(lastWeight = lastWeight) }
     }
 

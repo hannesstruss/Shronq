@@ -27,7 +27,7 @@ class MeasurementRepository @Inject constructor(
 
   suspend fun insertMeasurement(weightGrams: Int) {
     val measurement = Measurement(
-        weightGrams = weightGrams,
+        weight = Weight.fromGrams(weightGrams),
         measuredAt = ZonedDateTime.now()
     )
 
@@ -36,7 +36,7 @@ class MeasurementRepository @Inject constructor(
 
   suspend fun insertMeasurement(measurement: Measurement) {
     val dbMeasurement = DbMeasurement(
-        weightGrams = measurement.weightGrams,
+        weightGrams = measurement.weight.grams,
         measuredAt = measurement.measuredAt,
         firebaseId = null,
         isSynced = false
@@ -48,7 +48,7 @@ class MeasurementRepository @Inject constructor(
   }
 
   private fun DbMeasurement.toMeasurement() = Measurement(
-      weightGrams = weightGrams,
+      weight = Weight.fromGrams(weightGrams),
       measuredAt = measuredAt
   )
 }

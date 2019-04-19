@@ -35,7 +35,7 @@ class HomeFragment : BaseFragment<HomeState, HomeIntent, HomeViewModel>() {
     chart.setPeriod(state.visiblePeriod)
 
     txt_latest_weight.text = state.latestMeasurement?.let {
-      String.format("%.1f", it.weightGrams / 1000.0)
+      String.format("%.1f", it.weight.kilograms)
     } ?: ""
   }
 }

@@ -43,7 +43,7 @@ class ShronqFirebaseDb @Inject constructor(
     val snapshot = withContext(ctx) {
       val task = collection.add(mapOf(
           KeyMeasuredAt to Timestamp(measurement.measuredAt.toInstant().epochSecond, 0),
-          KeyWeightGrams to measurement.weightGrams.toDouble()
+          KeyWeightGrams to measurement.weight.grams.toDouble()
       ))
       task.await().get().await()
     }

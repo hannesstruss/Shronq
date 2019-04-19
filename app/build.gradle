@@ -80,6 +80,15 @@ android {
   }
 }
 
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+  sourceCompatibility = JavaVersion.VERSION_1_8
+  targetCompatibility = JavaVersion.VERSION_1_8
+
+  kotlinOptions {
+    freeCompilerArgs = ["-XXLanguage:+InlineClasses"]
+  }
+}
+
 play {
   serviceAccountCredentials = file('play-publisher-service-account.json')
   track = 'internal'
@@ -129,3 +138,4 @@ dependencies {
   implementation deps.timber
   implementation deps.bugsnag.sdk
 }
+

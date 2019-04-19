@@ -45,8 +45,8 @@ class HomeChart(context: Context, attrs: AttributeSet?) : View(context, attrs) {
 
     if (values.size < 2) return
 
-    val min = values.minBy { it.weightGrams }!!.weightGrams.toDouble()
-    val max = values.maxBy { it.weightGrams }!!.weightGrams.toDouble()
+    val min = values.minBy { it.weight }!!.weight.grams
+    val max = values.maxBy { it.weight }!!.weight.grams
     val minTimestamp = values.minBy { it.measuredAt.toEpochSecond() }!!.measuredAt.toEpochSecond()
     val maxTimestamp = values.maxBy { it.measuredAt.toEpochSecond() }!!.measuredAt.toEpochSecond()
 
@@ -58,8 +58,8 @@ class HomeChart(context: Context, attrs: AttributeSet?) : View(context, attrs) {
           val fromTimestampRatio = (fromTimestamp - minTimestamp).toDouble() / (maxTimestamp - minTimestamp)
           val toTimestampRatio = (toTimestamp - minTimestamp).toDouble() / (maxTimestamp - minTimestamp)
 
-          val fromValue = from.weightGrams.toDouble()
-          val toValue = to.weightGrams.toDouble()
+          val fromValue = from.weight.grams.toDouble()
+          val toValue = to.weight.grams.toDouble()
           val fromValueRatio = (fromValue - min) / (max - min)
           val toValueRatio = (toValue - min) / (max - min)
 
