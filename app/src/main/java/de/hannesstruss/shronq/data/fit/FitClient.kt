@@ -10,6 +10,7 @@ import com.google.android.gms.fitness.data.DataSource
 import com.google.android.gms.fitness.data.DataType
 import com.google.android.gms.fitness.data.Field
 import de.hannesstruss.android.activityholder.ActivityHolder
+import de.hannesstruss.shronq.data.Weight
 import io.reactivex.Completable
 import io.reactivex.Single
 import timber.log.Timber
@@ -77,7 +78,7 @@ class FitClient @Inject constructor(private val activityHolder: ActivityHolder) 
     }
   }
 
-  fun insert(weightGrams: Int): Completable {
+  fun insert(weight: Weight): Completable {
     val activity = activityHolder.activity()
 
     val source = DataSource.Builder()
@@ -90,7 +91,7 @@ class FitClient @Inject constructor(private val activityHolder: ActivityHolder) 
     val dataPoint = dataset.createDataPoint()
 
     dataPoint.setTimestamp(Date().time, TimeUnit.MILLISECONDS)
-    dataPoint.getValue(Field.FIELD_WEIGHT).setFloat(weightGrams / 1000f)
+    dataPoint.getValue(Field.FIELD_WEIGHT).setFloat(weight.kilograms.toFloat())
 
     dataset.add(dataPoint)
 

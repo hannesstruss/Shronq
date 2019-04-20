@@ -6,6 +6,7 @@ import dagger.Module
 import dagger.Provides
 import de.hannesstruss.shronq.data.Clock
 import de.hannesstruss.shronq.data.DataModule
+import de.hannesstruss.shronq.widget.ShronqWidgetProvider
 import java.time.Instant
 import java.time.ZonedDateTime
 
@@ -26,4 +27,7 @@ class AppModule(private val app: Application) {
       return ZonedDateTime.now()
     }
   }
+
+  @Provides fun widgetUpdater(context: Context): ShronqWidgetProvider.Updater =
+      ShronqWidgetProvider.RealUpdater(context)
 }

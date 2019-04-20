@@ -11,6 +11,7 @@ import de.hannesstruss.shronq.data.sync.SyncUpWorker
 import de.hannesstruss.shronq.data.sync.Syncer
 import de.hannesstruss.shronq.ui.AppContainer
 import de.hannesstruss.shronq.ui.notifications.LunchNotificationPublisher
+import de.hannesstruss.shronq.widget.ShronqWidgetProvider
 
 interface AppGraph {
   companion object {
@@ -31,8 +32,10 @@ interface AppGraph {
   fun context(): Context
   fun firebaseFirestore(): FirebaseFirestore
   fun syncer(): Syncer
+  fun widgetUpdater(): ShronqWidgetProvider.Updater
 
   fun inject(syncUpWorker: SyncUpWorker)
   fun inject(syncDownWorker: SyncDownWorker)
   fun inject(lunchNotificationPublisher: LunchNotificationPublisher)
+  fun inject(shronqWidgetProvider: ShronqWidgetProvider)
 }

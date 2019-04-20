@@ -28,9 +28,9 @@ class MeasurementRepository @Inject constructor(
         .toFlow()
   }
 
-  suspend fun insertMeasurement(weightGrams: Int) {
+  suspend fun insertMeasurement(weight: Weight) {
     val measurement = Measurement(
-        weight = Weight.fromGrams(weightGrams),
+        weight = weight,
         measuredAt = clock.nowWithZone()
     )
 
