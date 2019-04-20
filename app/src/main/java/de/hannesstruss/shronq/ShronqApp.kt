@@ -2,6 +2,7 @@ package de.hannesstruss.shronq
 
 import android.app.Application
 import com.bugsnag.android.Bugsnag
+import com.jakewharton.processphoenix.ProcessPhoenix
 import de.hannesstruss.shronq.data.sync.SyncDownWorker
 import de.hannesstruss.shronq.di.AppGraph
 import de.hannesstruss.shronq.ui.notifications.LunchNotificationScheduler
@@ -9,6 +10,8 @@ import timber.log.Timber
 
 class ShronqApp : Application() {
   val appComponent by lazy { AppGraph.init(this) }
+
+  private val isMainProcess get() = !ProcessPhoenix.isPhoenixProcess(this)
 
   override fun onCreate() {
     super.onCreate()
@@ -19,7 +22,9 @@ class ShronqApp : Application() {
       Bugsnag.init(this)
     }
 
-    SyncDownWorker.schedulePeriodically()
-    LunchNotificationScheduler(this).schedule()
+    if (isMainProcess) {
+      SyncDownWorker.schedulePeriodically()
+      LunchNotificationScheduler(this).schedule()
+    }
   }
 }

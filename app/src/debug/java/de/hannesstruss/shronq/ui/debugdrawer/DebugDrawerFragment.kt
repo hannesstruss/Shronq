@@ -14,7 +14,7 @@ class DebugDrawerFragment : BaseFragment<Unit, DebugDrawerIntent, DebugDrawerVie
 
   override fun intents() = Observable.merge<DebugDrawerIntent>(
       v<Button>(R.id.btn_test_notification).clicks().map { DebugDrawerIntent.TestNotification },
-      Observable.never()
+      v<Button>(R.id.btn_restart_app).clicks().map { DebugDrawerIntent.RestartApp }
   )
 
   override fun render(state: Unit) {

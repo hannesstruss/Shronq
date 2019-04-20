@@ -137,5 +137,7 @@ dependencies {
 
   implementation deps.timber
   implementation deps.bugsnag.sdk
+
+  implementation deps.processphoenix
 }
 

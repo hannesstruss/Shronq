@@ -86,6 +86,7 @@ buildscript {
           'runtime': "com.google.dagger:dagger:${versions.dagger}",
           'compiler': "com.google.dagger:dagger-compiler:${versions.dagger}"
       ],
+      'processphoenix': 'com.jakewharton:process-phoenix:2.0.0',
       'playservices': [
           'fit': "com.google.android.gms:play-services-fitness:${versions.playservices.fit}",
           'auth': "com.google.android.gms:play-services-auth:${versions.playservices.auth}"
