@@ -10,7 +10,7 @@ import javax.inject.Singleton
 class DbModule {
   @Provides @Singleton fun appDatabase(context: Context): AppDatabase {
     return Room.databaseBuilder(context, AppDatabase::class.java, "shronq.sqlite")
-        .addMigrations(MIGRATION_2_3)
+        .addMigrations(MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
         .build()
   }
 

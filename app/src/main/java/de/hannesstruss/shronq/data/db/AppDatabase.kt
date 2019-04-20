@@ -5,10 +5,10 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
 @Database(
-    version = 3,
+    version = 6,
     entities = [DbMeasurement::class]
 )
-@TypeConverters(ZonedDateTimeConverter::class)
+@TypeConverters(InstantConverter::class)
 abstract class AppDatabase : RoomDatabase() {
   abstract fun dbMeasurementDao(): DbMeasurementDao
 }

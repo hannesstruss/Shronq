@@ -6,6 +6,8 @@ import de.hannesstruss.shronq.data.db.DbMeasurement
 import de.hannesstruss.shronq.data.db.DbMeasurementDao
 import de.hannesstruss.shronq.data.firebase.ShronqFirebaseDb
 import timber.log.Timber
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import javax.inject.Inject
 
 /** Syncs local with Firebase db */
@@ -22,7 +24,8 @@ class Syncer @Inject constructor(
       val dbMeasurement = DbMeasurement(
           id = localId ?: DbMeasurement.NO_ID,
           weightGrams = measurement.weightGrams,
-          measuredAt = measurement.measuredAt,
+          measuredAt = measurement.measuredAt.toInstant(),
+          timezone = measurement.measuredAt.zone.toString(),
           firebaseId = measurement.id,
           isSynced = true
       )
@@ -43,7 +46,7 @@ class Syncer @Inject constructor(
     for (dbMeasurement in unsyncedMeasurements) {
       val measurement = Measurement(
           weight = Weight.fromGrams(dbMeasurement.weightGrams),
-          measuredAt = dbMeasurement.measuredAt
+          measuredAt = ZonedDateTime.ofInstant(dbMeasurement.measuredAt, ZoneId.of(dbMeasurement.timezone))
       )
 
       val firebaseMeasurement = firebaseDb.addMeasurement(measurement)

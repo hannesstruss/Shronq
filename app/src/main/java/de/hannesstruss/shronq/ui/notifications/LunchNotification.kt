@@ -11,6 +11,7 @@ import de.hannesstruss.kotlin.extensions.awaitFirst
 import de.hannesstruss.shronq.R
 import de.hannesstruss.shronq.data.Clock
 import de.hannesstruss.shronq.data.MeasurementRepository
+import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
 class LunchNotification
@@ -29,8 +30,8 @@ class LunchNotification
   }
 
   suspend fun triggerNow() {
-    val from = clock.now().minusDays(14)
-    val to = clock.now().minusDays(7)
+    val from = clock.now().minus(14, ChronoUnit.DAYS)
+    val to = clock.now().minus(7, ChronoUnit.DAYS)
     val avgWeight = measurementRepository.getAverageWeightBetween(from, to)
 
     if (avgWeight == null) return

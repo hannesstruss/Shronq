@@ -5,6 +5,8 @@ import de.hannesstruss.shronq.data.db.DbMeasurement
 import de.hannesstruss.shronq.data.db.DbMeasurementDao
 import de.hannesstruss.shronq.data.sync.SyncUpWorker
 import kotlinx.coroutines.flow.Flow
+import java.time.Instant
+import java.time.ZoneId
 import java.time.ZonedDateTime
 import javax.inject.Inject
 
@@ -29,7 +31,7 @@ class MeasurementRepository @Inject constructor(
   suspend fun insertMeasurement(weightGrams: Int) {
     val measurement = Measurement(
         weight = Weight.fromGrams(weightGrams),
-        measuredAt = clock.now()
+        measuredAt = clock.nowWithZone()
     )
 
     insertMeasurement(measurement)
@@ -38,7 +40,8 @@ class MeasurementRepository @Inject constructor(
   suspend fun insertMeasurement(measurement: Measurement) {
     val dbMeasurement = DbMeasurement(
         weightGrams = measurement.weight.grams,
-        measuredAt = measurement.measuredAt,
+        measuredAt = measurement.measuredAt.toInstant(),
+        timezone = measurement.measuredAt.zone.toString(),
         firebaseId = null,
         isSynced = false
     )
@@ -48,12 +51,12 @@ class MeasurementRepository @Inject constructor(
     SyncUpWorker.runOnce()
   }
 
-  suspend fun getAverageWeightBetween(from: ZonedDateTime, to: ZonedDateTime): Weight? {
+  suspend fun getAverageWeightBetween(from: Instant, to: Instant): Weight? {
     return dao.getAverageWeightBetween(from, to)?.let { Weight.fromGrams(it) }
   }
 
   private fun DbMeasurement.toMeasurement() = Measurement(
       weight = Weight.fromGrams(weightGrams),
-      measuredAt = measuredAt
+      measuredAt = ZonedDateTime.ofInstant(measuredAt, ZoneId.of(timezone))
   )
 }
