@@ -31,6 +31,7 @@
     </activity>
 
     <receiver android:name=".ui.notifications.LogWeightNotificationPublisher"/>
+    <receiver android:name=".ui.notifications.LunchNotificationPublisher"/>
   </application>
 
 </manifest>
