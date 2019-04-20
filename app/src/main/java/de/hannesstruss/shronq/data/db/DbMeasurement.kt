@@ -15,6 +15,7 @@ data class DbMeasurement(
     val id: Int = NO_ID,
     val weightGrams: Int,
     val measuredAt: ZonedDateTime,
+    val timezone: String? = null,
     val firebaseId: String?,
     val isSynced: Boolean
 ) {

@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
 @Database(
-    version = 2,
+    version = 3,
     entities = [DbMeasurement::class]
 )
 @TypeConverters(ZonedDateTimeConverter::class)

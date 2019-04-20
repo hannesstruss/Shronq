@@ -63,6 +63,9 @@ buildscript {
                   'rx2': "androidx.room:room-rxjava2:${versions.arch.room}"
               ],
               'work': 'androidx.work:work-runtime-ktx:2.0.0'
+          ],
+          'ktx': [
+              'sqlite': 'androidx.sqlite:sqlite-ktx:2.0.0'
           ]
       ],
       'firebase': [
