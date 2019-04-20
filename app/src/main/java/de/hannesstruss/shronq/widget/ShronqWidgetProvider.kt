@@ -1,5 +1,6 @@
 package de.hannesstruss.shronq.widget
 
+import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
@@ -10,6 +11,7 @@ import de.hannesstruss.kotlin.extensions.awaitFirst
 import de.hannesstruss.shronq.R
 import de.hannesstruss.shronq.data.MeasurementRepository
 import de.hannesstruss.shronq.di.AppGraph
+import de.hannesstruss.shronq.ui.MainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -70,6 +72,11 @@ class ShronqWidgetProvider : AppWidgetProvider(), CoroutineScope {
       launch {
         val weight = measurementRepository.getLatestMeasurement().awaitFirst().weight.kilograms
         views.setTextViewText(R.id.txt_last_weight, String.format("%.1f", weight))
+
+        val appIntent = Intent(context, MainActivity::class.java)
+        val pendingAppIntent = PendingIntent.getActivity(context, 1, appIntent, 0)
+        views.setOnClickPendingIntent(R.id.txt_last_weight, pendingAppIntent)
+
         appWidgetManager.updateAppWidget(widgetId, views)
       }
     }
