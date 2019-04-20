@@ -21,7 +21,7 @@ class LunchNotificationScheduler(private val context: Context) {
     val alarmManager = context.getSystemService(AlarmManager::class.java)
 
     val offset = OffsetDateTime.now().offset
-    val firstOccurrence = scheduledTime.atDate(LocalDate.now().plusDays(1)).toEpochSecond(offset)
+    val firstOccurrence = scheduledTime.atDate(LocalDate.now().plusDays(1)).toEpochSecond(offset) * 1000
     alarmManager.setRepeating(AlarmManager.RTC, firstOccurrence, TimeUnit.DAYS.toMillis(1), pendingIntent)
   }
 }
