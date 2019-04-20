@@ -18,15 +18,15 @@ class Syncer @Inject constructor(
   suspend fun syncDown() {
     val measurements = firebaseDb.getAllMeasurements()
 
-    for (measurement in measurements) {
-      val localId = measurementDao.getIdForFirebaseId(measurement.id)
+    for (firebaseMeasurement in measurements) {
+      val localId = measurementDao.getIdForFirebaseId(firebaseMeasurement.id)
 
       val dbMeasurement = DbMeasurement(
           id = localId ?: DbMeasurement.NO_ID,
-          weightGrams = measurement.weightGrams,
-          measuredAt = measurement.measuredAt.toInstant(),
-          timezone = measurement.measuredAt.zone.toString(),
-          firebaseId = measurement.id,
+          weightGrams = firebaseMeasurement.weightGrams,
+          measuredAt = firebaseMeasurement.measuredAt.toInstant(),
+          timezone = firebaseMeasurement.measuredAt.zone.toString(),
+          firebaseId = firebaseMeasurement.id,
           isSynced = true
       )
 
