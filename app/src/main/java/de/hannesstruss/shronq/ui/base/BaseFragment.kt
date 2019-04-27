@@ -42,8 +42,8 @@ abstract class BaseFragment<StateT : Any, IntentT : Any, ViewModelT : MviViewMod
   }
 
   @CallSuper
-  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    super.onViewCreated(view, savedInstanceState)
+  override fun onViewStateRestored(savedInstanceState: Bundle?) {
+    super.onViewStateRestored(savedInstanceState)
 
     stateDisposable = viewModel.states.subscribe { render(it) }
     viewModel.attachView(intents())

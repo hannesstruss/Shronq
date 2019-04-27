@@ -70,7 +70,7 @@ class MviEngineTest {
           enterState { state.incrementCounter() }
         }
       }
-      intents.onNext(TestIntent.CountUp)
+      intents.onNext(CountUp)
       testCoroutineContext.triggerActions()
       states.assertValues(TestState.initial(), TestState(counter = 1))
     }
@@ -84,7 +84,7 @@ class MviEngineTest {
         throw e
       }
     }
-    intents.onNext(TestIntent.CountUp)
+    intents.onNext(CountUp)
     testCoroutineContext.triggerActions()
 
     assertThat(testCoroutineContext.exceptions).containsExactly(e)
@@ -98,10 +98,29 @@ class MviEngineTest {
           countUpReceivedFromOnFirst++
         }
       }
-      intents.onNext(TestIntent.CountUp)
-      intents.onNext(TestIntent.CountUp)
+      intents.onNext(CountUp)
+      intents.onNext(CountUp)
       testCoroutineContext.triggerActions()
       assertThat(countUpReceivedFromOnFirst).isEqualTo(1)
+    }
+  }
+
+  @Test fun `onDistinct works`() {
+    runBlocking {
+      var setReceived = 0
+      engine {
+        onDistinct<TestIntent.Set> {
+          setReceived++
+        }
+      }
+      intents.onNext(TestIntent.Set(1))
+      intents.onNext(TestIntent.Set(1))
+      intents.onNext(TestIntent.Set(2))
+      intents.onNext(TestIntent.Set(2))
+      intents.onNext(TestIntent.Set(3))
+      intents.onNext(TestIntent.Set(4))
+      testCoroutineContext.triggerActions()
+      assertThat(setReceived).isEqualTo(4)
     }
   }
 
@@ -119,8 +138,8 @@ class MviEngineTest {
         }
       }
 
-      intents.onNext(TestIntent.CountUp)
-      intents.onNext(TestIntent.CountUp)
+      intents.onNext(CountUp)
+      intents.onNext(CountUp)
       testCoroutineContext.triggerActions()
 
       assertThat(countUpReceivedFromStreamOf).isEqualTo(2)
