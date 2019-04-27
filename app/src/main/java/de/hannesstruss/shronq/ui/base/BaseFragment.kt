@@ -46,7 +46,7 @@ abstract class BaseFragment<StateT : Any, IntentT : Any, ViewModelT : MviViewMod
     super.onViewStateRestored(savedInstanceState)
 
     stateDisposable = viewModel.states.subscribe { render(it) }
-    viewModel.attachView(intents())
+    viewModel.attachView(intents().share())
   }
 
   @CallSuper

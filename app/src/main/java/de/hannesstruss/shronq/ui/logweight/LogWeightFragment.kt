@@ -2,8 +2,8 @@ package de.hannesstruss.shronq.ui.logweight
 
 import android.os.Bundle
 import android.view.View
-import com.jakewharton.rxbinding2.view.clicks
-import com.jakewharton.rxbinding2.widget.changes
+import com.jakewharton.rxbinding3.view.clicks
+import com.jakewharton.rxbinding3.widget.changes
 import de.hannesstruss.shronq.R
 import de.hannesstruss.shronq.ui.base.BaseFragment
 import io.reactivex.Observable

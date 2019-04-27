@@ -77,8 +77,8 @@ class MviEngine<StateT : Any, IntentT : Any>(
       @Suppress("UNCHECKED_CAST")
       val casted = binding as ListenerBinding<StateT, IntentT>
       coroutineScope.launch {
-        var filtered = intents.filter { it.javaClass == binding.intentClass }
-        if (binding.distinct) {
+        var filtered = intents.filter { it.javaClass == casted.intentClass }
+        if (casted.distinct) {
           filtered = filtered.distinctUntilChanged()
         }
         filtered.openSubscription().consumeEach { intent ->

@@ -2,6 +2,7 @@ package de.hannesstruss.shronq.di
 
 import android.app.Application
 import android.content.Context
+import android.content.SharedPreferences
 import com.google.firebase.firestore.FirebaseFirestore
 import de.hannesstruss.shronq.ShronqApp
 import de.hannesstruss.shronq.data.Clock
@@ -33,6 +34,7 @@ interface AppGraph {
   fun firebaseFirestore(): FirebaseFirestore
   fun syncer(): Syncer
   fun widgetUpdater(): ShronqWidgetProvider.Updater
+  fun sharedPreferences(): SharedPreferences
 
   fun inject(syncUpWorker: SyncUpWorker)
   fun inject(syncDownWorker: SyncDownWorker)

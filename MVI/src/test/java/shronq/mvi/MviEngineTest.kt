@@ -69,10 +69,18 @@ class MviEngineTest {
         on<CountUp> {
           enterState { state.incrementCounter() }
         }
+
+        on<CountDown> {
+          enterState { state.decrementCounter() }
+        }
       }
       intents.onNext(CountUp)
+      intents.onNext(CountUp)
+      intents.onNext(CountUp)
+      intents.onNext(CountDown)
       testCoroutineContext.triggerActions()
-      states.assertValues(TestState.initial(), TestState(counter = 1))
+      states.assertValueCount(5)
+      assertThat(states.values().last()).isEqualTo(TestState(2, 0))
     }
   }
 
