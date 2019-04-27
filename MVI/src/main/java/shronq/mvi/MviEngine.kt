@@ -32,6 +32,8 @@ import kotlinx.coroutines.rx2.openSubscription
  * Another middle ground might be allowing a special `EnterState(val state: State)` action
  * for certain engines. This encodes the state at the time of action creation though, so
  * instead we should use `typealias MyAction = (State) -> State`
+ *
+ * TODO: Nested engines?
  */
 
 class MviEngine<StateT : Any, IntentT : Any>(
