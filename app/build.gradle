@@ -14,6 +14,10 @@ android {
     versionCode = buildConfig.version.code
     versionName = buildConfig.version.name
 
+    buildConfigField "String", "AWS_ACCESS_KEY", "\"${getProperty('shronq.aws_access_key')}\""
+    buildConfigField "String", "AWS_SECRET_KEY", "\"${getProperty('shronq.aws_secret_key')}\""
+    buildConfigField "String", "AWS_S3_BUCKET", "\"${getProperty('shronq.aws_s3_bucket')}\""
+
     resValue "string", "firebase_database_url", "\"${getProperty('shronq.firebase_database_url')}\""
     resValue "string", "google_api_key", "\"${getProperty('shronq.firebase_api_key')}\""
     resValue "string", "google_app_id", "\"${getProperty('shronq.firebase_application_id')}\""
@@ -107,6 +111,8 @@ dependencies {
   implementation deps.android.support.appCompat
   implementation deps.android.support.constraintLayout
 
+  implementation deps.android.material.material
+
   implementation deps.android.arch.navigation.fragment
   implementation deps.android.arch.navigation.ui
 
@@ -141,5 +147,7 @@ dependencies {
   implementation deps.bugsnag.sdk
 
   implementation deps.processphoenix
+
+  implementation 'com.amazonaws:aws-android-sdk-s3:2.13.2'
 }
 

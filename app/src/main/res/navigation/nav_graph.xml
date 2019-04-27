@@ -2,7 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
             xmlns:tools="http://schemas.android.com/tools"
-            app:startDestination="@id/homeFragment">
+            app:startDestination="@id/s3SettingsFragment">
 
   <fragment android:id="@+id/logWeightFragment"
             android:name="de.hannesstruss.shronq.ui.logweight.LogWeightFragment"
@@ -21,5 +21,10 @@
             android:name="de.hannesstruss.shronq.ui.settings.SettingsFragment"
             android:label="SettingsFragment"
             tools:layout="@layout/settings_fragment"
+  />
+  <fragment android:id="@+id/s3SettingsFragment"
+            android:name="de.hannesstruss.shronq.ui.s3settings.S3SettingsFragment"
+            android:label="S3SettingsFragment"
+            tools:layout="@layout/s3settings_fragment"
   />
 </navigation>
