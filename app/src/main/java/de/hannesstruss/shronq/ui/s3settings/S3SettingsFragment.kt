@@ -60,7 +60,7 @@ class S3SettingsFragment : BaseFragment<S3SettingsState, S3SettingsIntent, S3Set
     edit_access_key.setTextIfChanged(state.accessKey)
     edit_secret_key.setTextIfChanged(state.secretKey)
     edit_bucket.setTextIfChanged(state.bucket)
-    switch_sync_enabled.setEnabledIfChanged(state.syncEnabled)
+    switch_sync_enabled.setCheckedIfChanged(state.syncEnabled)
     txt_last_run.setTextIfChanged(state.lastSyncRunText)
     btn_run_sync.isEnabled = state.runSyncButtonEnabled
   }
@@ -71,9 +71,9 @@ class S3SettingsFragment : BaseFragment<S3SettingsState, S3SettingsIntent, S3Set
     }
   }
 
-  private fun CompoundButton.setEnabledIfChanged(enabled: Boolean) {
-    if (isEnabled != enabled) {
-      isEnabled = enabled
+  private fun CompoundButton.setCheckedIfChanged(checked: Boolean) {
+    if (isChecked != checked) {
+      isChecked = checked
     }
   }
 }
