@@ -3,7 +3,6 @@ package de.hannesstruss.shronq.data
 import de.hannesstruss.kotlin.extensions.toFlow
 import de.hannesstruss.shronq.data.db.DbMeasurement
 import de.hannesstruss.shronq.data.db.DbMeasurementDao
-import de.hannesstruss.shronq.data.sync.SyncUpWorker
 import kotlinx.coroutines.flow.Flow
 import java.time.Instant
 import java.time.ZoneId
@@ -47,8 +46,6 @@ class MeasurementRepository @Inject constructor(
     )
 
     dao.insertAll(dbMeasurement)
-
-    SyncUpWorker.runOnce()
   }
 
   suspend fun getAverageWeightBetween(from: Instant, to: Instant): Weight? {
