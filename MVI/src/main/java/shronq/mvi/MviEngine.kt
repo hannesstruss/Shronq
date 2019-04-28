@@ -160,12 +160,11 @@ class MviEngine<StateT : Any, IntentT : Any>(
 }
 
 class EngineContext<StateT, IntentT> internal constructor() {
-  // TODO: make these as invisible as possible for client code
-  val intentBindings = mutableListOf<ListenerBinding<StateT, out IntentT>>()
-  val firstIntentBindings = mutableListOf<ListenerBinding<StateT, out IntentT>>()
-  val streamBindings = mutableListOf<StreamBinding<StateT, out IntentT>>()
-  val externalStreamBindings = mutableListOf<ExternalBinding<StateT>>()
-  val externalFlowBindings = mutableListOf<FlowBinding<StateT>>()
+  @PublishedApi internal val intentBindings = mutableListOf<ListenerBinding<StateT, out IntentT>>()
+  @PublishedApi internal val firstIntentBindings = mutableListOf<ListenerBinding<StateT, out IntentT>>()
+  @PublishedApi internal val streamBindings = mutableListOf<StreamBinding<StateT, out IntentT>>()
+  @PublishedApi internal val externalStreamBindings = mutableListOf<ExternalBinding<StateT>>()
+  @PublishedApi internal val externalFlowBindings = mutableListOf<FlowBinding<StateT>>()
 
   internal var onInitCallback: (suspend IntentContext<StateT>.() -> Unit)? = null
 
