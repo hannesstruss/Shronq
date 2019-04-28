@@ -107,6 +107,8 @@ dependencies {
   implementation deps.android.support.appCompat
   implementation deps.android.support.constraintLayout
 
+  implementation deps.android.material.material
+
   implementation deps.android.arch.navigation.fragment
   implementation deps.android.arch.navigation.ui
 
@@ -118,6 +120,7 @@ dependencies {
   implementation deps.android.arch.room.rx2
   kapt deps.android.arch.room.compiler
 
+  implementation deps.android.ktx.core
   implementation deps.android.ktx.sqlite
 
   implementation(deps.android.arch.work) {
@@ -136,10 +139,14 @@ dependencies {
   implementation deps.rx.android
 
   implementation deps.rx.binding.main
+  implementation deps.rx.binding.material
+  implementation deps.rx.binding.appcompat
 
   implementation deps.timber
   implementation deps.bugsnag.sdk
 
   implementation deps.processphoenix
+
+  implementation 'com.amazonaws:aws-android-sdk-s3:2.13.2'
 }
 

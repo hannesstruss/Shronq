@@ -3,7 +3,7 @@ package de.hannesstruss.shronq.ui.debugdrawer
 import android.view.View
 import android.widget.Button
 import androidx.annotation.IdRes
-import com.jakewharton.rxbinding2.view.clicks
+import com.jakewharton.rxbinding3.view.clicks
 import de.hannesstruss.shronq.R
 import de.hannesstruss.shronq.ui.base.BaseFragment
 import io.reactivex.Observable

@@ -32,6 +32,8 @@ import kotlinx.coroutines.rx2.openSubscription
  * Another middle ground might be allowing a special `EnterState(val state: State)` action
  * for certain engines. This encodes the state at the time of action creation though, so
  * instead we should use `typealias MyAction = (State) -> State`
+ *
+ * TODO: Nested engines?
  */
 
 class MviEngine<StateT : Any, IntentT : Any>(
@@ -73,14 +75,16 @@ class MviEngine<StateT : Any, IntentT : Any>(
     val ctx = EngineContext<StateT, IntentT>()
     ctx.initializer()
 
-    coroutineScope.launch {
-      intents.openSubscription().consumeEach { intent ->
-        for (binding in ctx.intentBindings) {
-          if (binding.intentClass == intent.javaClass) {
-            @Suppress("UNCHECKED_CAST")
-            val casted = binding as ListenerBinding<StateT, IntentT>
-            casted.listener(intentContext, intent)
-          }
+    for (binding in ctx.intentBindings) {
+      @Suppress("UNCHECKED_CAST")
+      val casted = binding as ListenerBinding<StateT, IntentT>
+      coroutineScope.launch {
+        var filtered = intents.filter { it.javaClass == casted.intentClass }
+        if (casted.distinct) {
+          filtered = filtered.distinctUntilChanged()
+        }
+        filtered.openSubscription().consumeEach { intent ->
+          casted.listener(intentContext, intent)
         }
       }
     }
@@ -156,11 +160,11 @@ class MviEngine<StateT : Any, IntentT : Any>(
 }
 
 class EngineContext<StateT, IntentT> internal constructor() {
-  val intentBindings = mutableListOf<ListenerBinding<StateT, out IntentT>>()
-  val firstIntentBindings = mutableListOf<ListenerBinding<StateT, out IntentT>>()
-  val streamBindings = mutableListOf<StreamBinding<StateT, out IntentT>>()
-  val externalStreamBindings = mutableListOf<ExternalBinding<StateT>>()
-  val externalFlowBindings = mutableListOf<FlowBinding<StateT>>()
+  @PublishedApi internal val intentBindings = mutableListOf<ListenerBinding<StateT, out IntentT>>()
+  @PublishedApi internal val firstIntentBindings = mutableListOf<ListenerBinding<StateT, out IntentT>>()
+  @PublishedApi internal val streamBindings = mutableListOf<StreamBinding<StateT, out IntentT>>()
+  @PublishedApi internal val externalStreamBindings = mutableListOf<ExternalBinding<StateT>>()
+  @PublishedApi internal val externalFlowBindings = mutableListOf<FlowBinding<StateT>>()
 
   internal var onInitCallback: (suspend IntentContext<StateT>.() -> Unit)? = null
 
@@ -170,6 +174,11 @@ class EngineContext<StateT, IntentT> internal constructor() {
 
   inline fun <reified T : IntentT> on(noinline block: suspend IntentContext<StateT>.(T) -> Unit) {
     val binding = ListenerBinding(T::class.java, block)
+    intentBindings.add(binding)
+  }
+
+  inline fun <reified T : IntentT> onDistinct(noinline block: suspend IntentContext<StateT>.(T) -> Unit) {
+    val binding = ListenerBinding(T::class.java, block, distinct = true)
     intentBindings.add(binding)
   }
 
@@ -198,7 +207,8 @@ typealias StateTransition<StateT> = StateEditorContext<StateT>.() -> StateT
 
 class ListenerBinding<StateT, SpecificIntentT>(
     val intentClass: Class<out SpecificIntentT>,
-    val listener: suspend IntentContext<StateT>.(SpecificIntentT) -> Unit
+    val listener: suspend IntentContext<StateT>.(SpecificIntentT) -> Unit,
+    val distinct: Boolean = false
 )
 
 class StreamBinding<StateT, SpecificIntentT>(

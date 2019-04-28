@@ -1,6 +1,6 @@
 package de.hannesstruss.shronq.ui.home
 
-import com.jakewharton.rxbinding2.view.clicks
+import com.jakewharton.rxbinding3.view.clicks
 import de.hannesstruss.shronq.R
 import de.hannesstruss.shronq.ui.base.BaseFragment
 import io.reactivex.Observable
