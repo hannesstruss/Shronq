@@ -26,16 +26,5 @@ class ShronqApp : Application() {
       SyncDownWorker.schedulePeriodically()
       LunchNotificationScheduler(this).schedule()
     }
-
-//    val credentials = BasicAWSCredentials(BuildConfig.AWS_ACCESS_KEY, BuildConfig.AWS_SECRET_KEY)
-//    val s3client = AmazonS3Client(credentials, Region.getRegion(Regions.EU_CENTRAL_1))
-//    val file = File(dataDir.path + "/databases/shronq.sqlite")
-//    val putRequest = PutObjectRequest(BuildConfig.AWS_S3_BUCKET, "dump-${Instant.now()}.sqlite", file)
-//    GlobalScope.launch {
-//      withContext(Dispatchers.IO) {
-//        val response = s3client.putObject(putRequest)
-//        Timber.d(response.toString())
-//      }
-//    }
   }
 }

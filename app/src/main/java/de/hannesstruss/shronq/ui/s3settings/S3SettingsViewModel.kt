@@ -1,39 +1,47 @@
 package de.hannesstruss.shronq.ui.s3settings
 
-import android.content.SharedPreferences
-import androidx.core.content.edit
 import de.hannesstruss.android.KeyboardHider
+import de.hannesstruss.shronq.data.s3sync.BackupToS3Worker
+import de.hannesstruss.shronq.data.s3sync.S3Backupper
+import de.hannesstruss.shronq.data.s3sync.S3CredentialsStore
 import de.hannesstruss.shronq.ui.base.MviViewModel
 import de.hannesstruss.shronq.ui.navigation.Navigator
 import de.hannesstruss.shronq.ui.s3settings.S3SettingsIntent.AccessKeyChanged
 import de.hannesstruss.shronq.ui.s3settings.S3SettingsIntent.BucketChanged
+import de.hannesstruss.shronq.ui.s3settings.S3SettingsIntent.EnableSync
+import de.hannesstruss.shronq.ui.s3settings.S3SettingsIntent.RunSync
 import de.hannesstruss.shronq.ui.s3settings.S3SettingsIntent.Save
 import de.hannesstruss.shronq.ui.s3settings.S3SettingsIntent.SecretKeyChanged
 import javax.inject.Inject
 
 class S3SettingsViewModel
 @Inject constructor(
-    private val prefs: SharedPreferences,
+    private val s3CredentialsStore: S3CredentialsStore,
     private val navigator: Navigator,
-    private val keyboardHider: KeyboardHider
+    private val keyboardHider: KeyboardHider,
+    private val s3Backupper: S3Backupper
 ) : MviViewModel<S3SettingsState, S3SettingsIntent>() {
-  companion object {
-    private const val KeyAccessKey = "s3_access_key"
-    private const val KeySecretKey = "s3_secret_key"
-    private const val KeyBucket = "s3_bucket"
-  }
+
 
   override val initialState = S3SettingsState.initial()
 
   override val engine = createEngine {
     onInit {
+      val isScheduled = BackupToS3Worker.isScheduled()
       enterState {
         state.copy(
-            accessKey = prefs.getString(KeyAccessKey, "") ?: "",
-            secretKey = prefs.getString(KeySecretKey, "") ?: "",
-            bucket = prefs.getString(KeyBucket, "") ?: ""
+            deviceName = s3CredentialsStore.deviceName,
+            accessKey = s3CredentialsStore.accessKey,
+            secretKey = s3CredentialsStore.secretKey,
+            bucket = s3CredentialsStore.bucket,
+            syncEnabled = isScheduled,
+            lastSyncRun = s3Backupper.lastRun
         )
       }
+    }
+
+    onDistinct<S3SettingsIntent.DeviceNameChanged> {
+      enterState { state.copy(deviceName = it.deviceName) }
     }
 
     onDistinct<BucketChanged> {
@@ -48,15 +56,30 @@ class S3SettingsViewModel
       enterState { state.copy(secretKey = it.secretKey) }
     }
 
+    onDistinct<EnableSync> {
+      if (it.enable && !BackupToS3Worker.isScheduled()) {
+        BackupToS3Worker.schedulePeriodically()
+      } else if (!it.enable && BackupToS3Worker.isScheduled()) {
+        BackupToS3Worker.unschedule()
+      }
+    }
+
+    on<RunSync> {
+      enterState { state.copy(manualSyncRunning = true) }
+      s3Backupper.backup()
+      enterState { state.copy(manualSyncRunning = false, lastSyncRun = s3Backupper.lastRun) }
+    }
+
     on<Save> {
       keyboardHider.hideKeyboard()
 
       val state = getLatestState()
-      prefs.edit {
-        putString(KeyAccessKey, state.accessKey)
-        putString(KeySecretKey, state.secretKey)
-        putString(KeyBucket, state.bucket)
-      }
+      s3CredentialsStore.setCredentials(
+          deviceName = state.deviceName,
+          accessKey = state.accessKey,
+          secretKey = state.secretKey,
+          bucket = state.bucket
+      )
 
       navigator.back()
     }

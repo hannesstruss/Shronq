@@ -7,6 +7,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import de.hannesstruss.shronq.ShronqApp
 import de.hannesstruss.shronq.data.Clock
 import de.hannesstruss.shronq.data.db.DbMeasurementDao
+import de.hannesstruss.shronq.data.s3sync.BackupToS3Worker
 import de.hannesstruss.shronq.data.sync.SyncDownWorker
 import de.hannesstruss.shronq.data.sync.SyncUpWorker
 import de.hannesstruss.shronq.data.sync.Syncer
@@ -38,6 +39,7 @@ interface AppGraph {
 
   fun inject(syncUpWorker: SyncUpWorker)
   fun inject(syncDownWorker: SyncDownWorker)
+  fun inject(backupToS3Worker: BackupToS3Worker)
   fun inject(lunchNotificationPublisher: LunchNotificationPublisher)
   fun inject(shronqWidgetProvider: ShronqWidgetProvider)
 }
