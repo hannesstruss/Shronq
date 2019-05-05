@@ -2,7 +2,6 @@ package de.hannesstruss.shronq.ui.home
 
 import de.hannesstruss.shronq.R
 import de.hannesstruss.shronq.data.MeasurementRepository
-import de.hannesstruss.shronq.data.sync.Syncer
 import de.hannesstruss.shronq.ui.base.MviViewModel
 import de.hannesstruss.shronq.ui.home.HomeIntent.EditSettings
 import de.hannesstruss.shronq.ui.home.HomeIntent.InsertWeight
@@ -16,8 +15,7 @@ class HomeViewModel
 @Inject constructor(
     private val measurementRepository: MeasurementRepository,
     private val logWeightNotification: LogWeightNotification,
-    private val navigator: Navigator,
-    private val syncer: Syncer
+    private val navigator: Navigator
 ) : MviViewModel<HomeState, HomeIntent>() {
   override val initialState = HomeState.initial()
 
