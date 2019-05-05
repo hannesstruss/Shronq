@@ -40,14 +40,14 @@ import kotlinx.coroutines.rx2.openSubscription
 
 @FlowPreview
 @ObsoleteCoroutinesApi
-class StateMachine<StateT : Any, IntentT : Any>(
+class StateMachine<StateT : Any, EventT : Any>(
     private val coroutineScope: CoroutineScope,
     initialState: StateT,
-    private val intents: Observable<out IntentT>,
-    private val initializer: EngineContext<StateT, IntentT>.() -> Unit
+    private val events: Observable<out EventT>,
+    private val initializer: EngineContext<StateT, EventT>.() -> Unit
 ) {
   private val transitions = PublishRelay.create<StateTransition<StateT>>().toSerialized()
-  private val intentContext = object : IntentContext<StateT> {
+  private val eventContext = object : EventContext<StateT> {
     override fun enterState(block: StateTransition<StateT>) {
       transitions.accept(block)
     }
@@ -76,33 +76,33 @@ class StateMachine<StateT : Any, IntentT : Any>(
   }
 
   fun start() {
-    val ctx = EngineContext<StateT, IntentT>()
+    val ctx = EngineContext<StateT, EventT>()
     ctx.initializer()
 
-    for (binding in ctx.intentBindings) {
+    for (binding in ctx.eventBindings) {
       @Suppress("UNCHECKED_CAST")
-      val casted = binding as ListenerBinding<StateT, IntentT>
+      val casted = binding as ListenerBinding<StateT, EventT>
       coroutineScope.launch {
-        var filtered = intents.filter { it.javaClass == casted.intentClass }
+        var filtered = events.filter { it.javaClass == casted.eventClass }
         if (casted.distinct) {
           filtered = filtered.distinctUntilChanged()
         }
-        filtered.openSubscription().consumeEach { intent ->
-          casted.listener(intentContext, intent)
+        filtered.openSubscription().consumeEach { event ->
+          casted.listener(eventContext, event)
         }
       }
     }
 
-    for (binding in ctx.firstIntentBindings) {
+    for (binding in ctx.firstEventBindings) {
       coroutineScope.launch {
-        intents
-            .filter { it.javaClass == binding.intentClass }
+        events
+            .filter { it.javaClass == binding.eventClass }
             .firstElement()
             .openSubscription()
-            .consumeEach { intent ->
+            .consumeEach { event ->
               @Suppress("UNCHECKED_CAST")
-              val casted = binding as ListenerBinding<StateT, IntentT>
-              casted.listener(intentContext, intent)
+              val casted = binding as ListenerBinding<StateT, EventT>
+              casted.listener(eventContext, event)
             }
       }
     }
@@ -112,25 +112,25 @@ class StateMachine<StateT : Any, IntentT : Any>(
         return hookUpInternal(null)
       }
 
-      override fun <T> Observable<T>.hookUp(block: IntentContext<StateT>.(T) -> Unit): HookedUpSubscription {
+      override fun <T> Observable<T>.hookUp(block: EventContext<StateT>.(T) -> Unit): HookedUpSubscription {
         return hookUpInternal(block)
       }
 
-      private fun <T> Observable<T>.hookUpInternal(block: (IntentContext<StateT>.(T) -> Unit)?): HookedUpSubscription {
+      private fun <T> Observable<T>.hookUpInternal(block: (EventContext<StateT>.(T) -> Unit)?): HookedUpSubscription {
         coroutineScope.launch {
           this@hookUpInternal
               .openSubscription()
-              .consumeEach { block?.invoke(intentContext, it) }
+              .consumeEach { block?.invoke(eventContext, it) }
         }
         return HookedUpSubscription()
       }
     }
 
     for (binding in ctx.streamBindings) {
-      val filteredIntentions = intents.filter { it.javaClass == binding.intentClass }
+      val filteredEvents = events.filter { it.javaClass == binding.eventClass }
       @Suppress("UNCHECKED_CAST")
-      val casted = binding as StreamBinding<StateT, IntentT>
-      casted.block(streamContext, filteredIntentions)
+      val casted = binding as StreamBinding<StateT, EventT>
+      casted.block(streamContext, filteredEvents)
     }
 
     for (binding in ctx.externalStreamBindings) {
@@ -145,9 +145,9 @@ class StateMachine<StateT : Any, IntentT : Any>(
         return HookedUpSubscription()
       }
 
-      override fun <T> Flow<T>.hookUp(block: IntentContext<StateT>.(T) -> Unit): HookedUpSubscription {
+      override fun <T> Flow<T>.hookUp(block: EventContext<StateT>.(T) -> Unit): HookedUpSubscription {
         coroutineScope.launch {
-          collect { block(intentContext, it) }
+          collect { block(eventContext, it) }
         }
         return HookedUpSubscription()
       }
@@ -158,41 +158,41 @@ class StateMachine<StateT : Any, IntentT : Any>(
     }
 
     coroutineScope.launch {
-      ctx.onInitCallback?.invoke(intentContext)
+      ctx.onInitCallback?.invoke(eventContext)
     }
   }
 }
 
 @FlowPreview
-class EngineContext<StateT, IntentT> internal constructor() {
-  @PublishedApi internal val intentBindings = mutableListOf<ListenerBinding<StateT, out IntentT>>()
-  @PublishedApi internal val firstIntentBindings = mutableListOf<ListenerBinding<StateT, out IntentT>>()
-  @PublishedApi internal val streamBindings = mutableListOf<StreamBinding<StateT, out IntentT>>()
+class EngineContext<StateT, EventT> internal constructor() {
+  @PublishedApi internal val eventBindings = mutableListOf<ListenerBinding<StateT, out EventT>>()
+  @PublishedApi internal val firstEventBindings = mutableListOf<ListenerBinding<StateT, out EventT>>()
+  @PublishedApi internal val streamBindings = mutableListOf<StreamBinding<StateT, out EventT>>()
   @PublishedApi internal val externalStreamBindings = mutableListOf<ExternalBinding<StateT>>()
   @PublishedApi internal val externalFlowBindings = mutableListOf<FlowBinding<StateT>>()
 
-  internal var onInitCallback: (suspend IntentContext<StateT>.() -> Unit)? = null
+  internal var onInitCallback: (suspend EventContext<StateT>.() -> Unit)? = null
 
-  fun onInit(block: suspend IntentContext<StateT>.() -> Unit) {
+  fun onInit(block: suspend EventContext<StateT>.() -> Unit) {
     onInitCallback = block
   }
 
-  inline fun <reified T : IntentT> on(noinline block: suspend IntentContext<StateT>.(T) -> Unit) {
+  inline fun <reified T : EventT> on(noinline block: suspend EventContext<StateT>.(T) -> Unit) {
     val binding = ListenerBinding(T::class.java, block)
-    intentBindings.add(binding)
+    eventBindings.add(binding)
   }
 
-  inline fun <reified T : IntentT> onDistinct(noinline block: suspend IntentContext<StateT>.(T) -> Unit) {
+  inline fun <reified T : EventT> onDistinct(noinline block: suspend EventContext<StateT>.(T) -> Unit) {
     val binding = ListenerBinding(T::class.java, block, distinct = true)
-    intentBindings.add(binding)
+    eventBindings.add(binding)
   }
 
-  inline fun <reified T : IntentT> onFirst(noinline block: suspend IntentContext<StateT>.(T) -> Unit) {
+  inline fun <reified T : EventT> onFirst(noinline block: suspend EventContext<StateT>.(T) -> Unit) {
     val binding = ListenerBinding(T::class.java, block)
-    firstIntentBindings.add(binding)
+    firstEventBindings.add(binding)
   }
 
-  inline fun <reified T : IntentT> streamOf(noinline block: StreamContext<StateT>.(Observable<out T>) -> HookedUpSubscription) {
+  inline fun <reified T : EventT> streamOf(noinline block: StreamContext<StateT>.(Observable<out T>) -> HookedUpSubscription) {
     val binding = StreamBinding(T::class.java, block)
     streamBindings.add(binding)
   }
@@ -211,17 +211,17 @@ class EngineContext<StateT, IntentT> internal constructor() {
 typealias StateTransition<StateT> = StateEditorContext<StateT>.() -> StateT
 
 class ListenerBinding<StateT, SpecificIntentT>(
-    val intentClass: Class<out SpecificIntentT>,
-    val listener: suspend IntentContext<StateT>.(SpecificIntentT) -> Unit,
+    val eventClass: Class<out SpecificIntentT>,
+    val listener: suspend EventContext<StateT>.(SpecificIntentT) -> Unit,
     val distinct: Boolean = false
 )
 
 class StreamBinding<StateT, SpecificIntentT>(
-    val intentClass: Class<out SpecificIntentT>,
+    val eventClass: Class<out SpecificIntentT>,
     val block: StreamContext<StateT>.(Observable<out SpecificIntentT>) -> HookedUpSubscription
 )
 
-interface IntentContext<StateT> {
+interface EventContext<StateT> {
   fun enterState(block: StateTransition<StateT>)
   suspend fun getLatestState(): StateT
 }
@@ -232,13 +232,13 @@ interface StateEditorContext<StateT> {
 
 interface StreamContext<StateT> {
   fun <T> Observable<T>.hookUp(): HookedUpSubscription
-  fun <T> Observable<T>.hookUp(block: IntentContext<StateT>.(T) -> Unit): HookedUpSubscription
+  fun <T> Observable<T>.hookUp(block: EventContext<StateT>.(T) -> Unit): HookedUpSubscription
 }
 
 @FlowPreview
 interface FlowContext<StateT> {
   fun <T> Flow<T>.hookUp(): HookedUpSubscription
-  fun <T> Flow<T>.hookUp(block: IntentContext<StateT>.(T) -> Unit): HookedUpSubscription
+  fun <T> Flow<T>.hookUp(block: EventContext<StateT>.(T) -> Unit): HookedUpSubscription
 }
 
 /** Enforces usage of `StreamContext.hookUp`. */

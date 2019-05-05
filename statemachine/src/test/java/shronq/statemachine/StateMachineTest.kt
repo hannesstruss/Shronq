@@ -12,20 +12,20 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineContext
 import org.junit.Ignore
 import org.junit.Test
-import shronq.statemachine.TestIntent.CountDown
-import shronq.statemachine.TestIntent.CountUp
+import shronq.statemachine.TestEvent.CountDown
+import shronq.statemachine.TestEvent.CountUp
 
 @FlowPreview
 @ObsoleteCoroutinesApi
 class StateMachineTest {
-  val intents = PublishSubject.create<TestIntent>()
+  val events = PublishSubject.create<TestEvent>()
 
   val testCoroutineContext = TestCoroutineContext()
   val job = Job()
   val scope = CoroutineScope(testCoroutineContext + job)
 
-  private fun engine(initializer: EngineContext<TestState, TestIntent>.() -> Unit): TestObserver<TestState> {
-    val engine = StateMachine(scope, TestState.initial(), intents, initializer)
+  private fun engine(initializer: EngineContext<TestState, TestEvent>.() -> Unit): TestObserver<TestState> {
+    val engine = StateMachine(scope, TestState.initial(), events, initializer)
     val test = engine.states.test()
     engine.start()
     testCoroutineContext.triggerActions()
@@ -48,7 +48,7 @@ class StateMachineTest {
     assertThat(onInitCalled).isEqualTo(1)
   }
 
-  @Test fun `intents are unsubscribed from when job is cancelled`() {
+  @Test fun `events are unsubscribed from when job is cancelled`() {
     runBlocking {
       engine {
         on<CountUp> {
@@ -59,14 +59,14 @@ class StateMachineTest {
           // nothing
         }
       }
-      assertThat(intents.hasObservers()).isTrue()
+      assertThat(events.hasObservers()).isTrue()
       job.cancel()
       testCoroutineContext.triggerActions()
-      assertThat(intents.hasObservers()).isFalse()
+      assertThat(events.hasObservers()).isFalse()
     }
   }
 
-  @Test fun `intent triggers new state`() {
+  @Test fun `event triggers new state`() {
     runBlocking {
       val states = engine {
         on<CountUp> {
@@ -77,17 +77,17 @@ class StateMachineTest {
           enterState { state.decrementCounter() }
         }
       }
-      intents.onNext(CountUp)
-      intents.onNext(CountUp)
-      intents.onNext(CountUp)
-      intents.onNext(CountDown)
+      events.onNext(CountUp)
+      events.onNext(CountUp)
+      events.onNext(CountUp)
+      events.onNext(CountDown)
       testCoroutineContext.triggerActions()
       states.assertValueCount(5)
       assertThat(states.values().last()).isEqualTo(TestState(2, 0))
     }
   }
 
-  @Test fun `errors from intention handlers are relayed`() {
+  @Test fun `errors from event handlers are relayed`() {
     val e = RuntimeException("Hello")
 
     engine {
@@ -95,7 +95,7 @@ class StateMachineTest {
         throw e
       }
     }
-    intents.onNext(CountUp)
+    events.onNext(CountUp)
     testCoroutineContext.triggerActions()
 
     assertThat(testCoroutineContext.exceptions).containsExactly(e)
@@ -109,8 +109,8 @@ class StateMachineTest {
           countUpReceivedFromOnFirst++
         }
       }
-      intents.onNext(CountUp)
-      intents.onNext(CountUp)
+      events.onNext(CountUp)
+      events.onNext(CountUp)
       testCoroutineContext.triggerActions()
       assertThat(countUpReceivedFromOnFirst).isEqualTo(1)
     }
@@ -120,16 +120,16 @@ class StateMachineTest {
     runBlocking {
       var setReceived = 0
       engine {
-        onDistinct<TestIntent.Set> {
+        onDistinct<TestEvent.Set> {
           setReceived++
         }
       }
-      intents.onNext(TestIntent.Set(1))
-      intents.onNext(TestIntent.Set(1))
-      intents.onNext(TestIntent.Set(2))
-      intents.onNext(TestIntent.Set(2))
-      intents.onNext(TestIntent.Set(3))
-      intents.onNext(TestIntent.Set(4))
+      events.onNext(TestEvent.Set(1))
+      events.onNext(TestEvent.Set(1))
+      events.onNext(TestEvent.Set(2))
+      events.onNext(TestEvent.Set(2))
+      events.onNext(TestEvent.Set(3))
+      events.onNext(TestEvent.Set(4))
       testCoroutineContext.triggerActions()
       assertThat(setReceived).isEqualTo(4)
     }
@@ -140,8 +140,8 @@ class StateMachineTest {
       var countUpReceivedFromStreamOf = 0
       var hookUpBlockCalled = 0
       engine {
-        streamOf<CountUp> { intents ->
-          intents
+        streamOf<CountUp> { events ->
+          events
               .doOnNext { countUpReceivedFromStreamOf++ }
               .hookUp {
                 hookUpBlockCalled++
@@ -149,8 +149,8 @@ class StateMachineTest {
         }
       }
 
-      intents.onNext(CountUp)
-      intents.onNext(CountUp)
+      events.onNext(CountUp)
+      events.onNext(CountUp)
       testCoroutineContext.triggerActions()
 
       assertThat(countUpReceivedFromStreamOf).isEqualTo(2)

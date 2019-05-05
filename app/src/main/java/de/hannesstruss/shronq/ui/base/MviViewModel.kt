@@ -40,7 +40,7 @@ abstract class MviViewModel<StateT : Any, IntentT : Any> : ViewModel(), Coroutin
     return StateMachine(
         coroutineScope = this,
         initialState = initialState,
-        intents = intents,
+        events = intents,
         initializer = block
     )
   }
