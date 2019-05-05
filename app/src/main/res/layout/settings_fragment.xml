@@ -2,9 +2,9 @@
 <androidx.constraintlayout.widget.ConstraintLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  xmlns:tools="http://schemas.android.com/tools"
   tools:context=".ui.settings.SettingsFragment"
 >
 
@@ -12,8 +12,9 @@
     android:id="@+id/switch_connect_google_fit"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:text="Share weight with Google Fit"
     android:padding="16dp"
+    android:text="Share weight with Google Fit"
+    app:layout_constraintTop_toTopOf="parent"
   />
   <Button
     android:id="@+id/btn_s3_settings"
