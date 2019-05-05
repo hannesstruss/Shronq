@@ -7,8 +7,10 @@ import android.content.Intent
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.OffsetDateTime
+import javax.inject.Inject
 
-class LunchNotificationScheduler(private val context: Context) {
+class LunchNotificationScheduler
+@Inject constructor(private val context: Context) {
   companion object {
     private const val REQUEST_CODE = 3
     private val scheduledTime = LocalTime.of(12, 0)
