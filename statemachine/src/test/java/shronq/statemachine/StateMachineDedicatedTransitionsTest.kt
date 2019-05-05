@@ -28,7 +28,7 @@ class StateMachineDedicatedTransitionsTest {
           is DedicatedTransition.Add -> state.copy(counter = state.counter + transition.i)
         }
       }
-      val machine = StateMachine<TestState, TestEvent, DedicatedTransition>(
+      val machine = StateMachine.create<TestState, TestEvent, DedicatedTransition>(
           coroutineScope = scope,
           initialState = TestState.initial(),
           events = events,

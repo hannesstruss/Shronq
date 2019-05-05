@@ -16,13 +16,43 @@ import kotlinx.coroutines.rx2.openSubscription
 
 @FlowPreview
 @ObsoleteCoroutinesApi
-class StateMachine<StateT : Any, EventT : Any, TransitionT : Any>(
+class StateMachine<StateT : Any, EventT : Any, TransitionT : Any>
+private constructor(
     private val coroutineScope: CoroutineScope,
     initialState: StateT,
     private val events: Observable<out EventT>,
     private val applyTransition: (StateT, TransitionT) -> StateT,
     private val initializer: EngineContext<StateT, EventT, TransitionT>.() -> Unit
 ) {
+  companion object {
+    fun <StateT : Any, EventT : Any, TransitionT : Any> create(
+        coroutineScope: CoroutineScope,
+        initialState: StateT,
+        events: Observable<out EventT>,
+        applyTransition: (StateT, TransitionT) -> StateT,
+        initializer: EngineContext<StateT, EventT, TransitionT>.() -> Unit
+    ): StateMachine<StateT, EventT, TransitionT> = StateMachine(
+        coroutineScope = coroutineScope,
+        initialState = initialState,
+        events = events,
+        applyTransition = applyTransition,
+        initializer = initializer
+    )
+
+    fun <StateT : Any, EventT : Any> createSimple(
+        coroutineScope: CoroutineScope,
+        initialState: StateT,
+        events: Observable<out EventT>,
+        initializer: EngineContext<StateT, EventT, StateT>.() -> Unit
+    ): StateMachine<StateT, EventT, StateT> = StateMachine(
+        coroutineScope = coroutineScope,
+        initialState = initialState,
+        events = events,
+        applyTransition = { _, nextState -> nextState },
+        initializer = initializer
+    )
+  }
+
   private val transitionProducers = PublishRelay.create<StateEditorContext<StateT>.() -> TransitionT>().toSerialized()
   private val eventContext = object : EventContext<StateT, TransitionT> {
     override fun enterState(block: StateEditorContext<StateT>.() -> TransitionT) {

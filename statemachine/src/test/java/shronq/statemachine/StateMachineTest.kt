@@ -28,11 +28,10 @@ class StateMachineTest {
   private val scope = CoroutineScope(testCoroutineContext + job)
 
   private fun engine(initializer: EngineContext<TestState, TestEvent, TestTransition>.() -> Unit): TestObserver<TestState> {
-    val engine = StateMachine(
+    val engine = StateMachine.createSimple(
         coroutineScope = scope,
         initialState = TestState.initial(),
         events = events,
-        applyTransition = { state, transition -> transition },
         initializer = initializer
     )
     val test = engine.states.test()

@@ -42,11 +42,10 @@ abstract class MviViewModel<StateT : Any, IntentT : Any> : ViewModel(), Coroutin
   }
 
   protected fun createEngine(block: EngineContext<StateT, IntentT, StateT>.() -> Unit): StateMachine<StateT, IntentT, StateT> {
-    return StateMachine(
+    return StateMachine.createSimple(
         coroutineScope = this,
         initialState = initialState,
         events = intents,
-        applyTransition = { _, targetState -> targetState },
         initializer = block
     )
   }
