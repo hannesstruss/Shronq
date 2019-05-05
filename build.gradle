@@ -109,6 +109,7 @@ buildscript {
 
   repositories {
     google()
+    mavenCentral()
     jcenter()
   }
 
@@ -139,6 +140,7 @@ dependencyUpdates.resolutionStrategy {
 allprojects {
   repositories {
     google()
+    mavenCentral()
     jcenter()
   }
 }
