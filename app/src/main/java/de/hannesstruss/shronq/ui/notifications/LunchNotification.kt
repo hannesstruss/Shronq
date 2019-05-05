@@ -18,7 +18,8 @@ class LunchNotification
 @Inject constructor(
     private val context: Context,
     private val clock: Clock,
-    private val measurementRepository: MeasurementRepository
+    private val measurementRepository: MeasurementRepository,
+    private val lunchNotificationScheduler: LunchNotificationScheduler
 ) {
   companion object {
     private const val ChannelId = "lunch_infos"
@@ -64,6 +65,8 @@ class LunchNotification
         .build()
 
     nm.notify(NotificationId, notification)
+
+    lunchNotificationScheduler.schedule()
   }
 
   private fun createNotificationChannel() {

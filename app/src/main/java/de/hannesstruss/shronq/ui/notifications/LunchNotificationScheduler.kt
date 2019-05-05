@@ -7,7 +7,6 @@ import android.content.Intent
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.OffsetDateTime
-import java.util.concurrent.TimeUnit
 
 class LunchNotificationScheduler(private val context: Context) {
   companion object {
@@ -22,6 +21,7 @@ class LunchNotificationScheduler(private val context: Context) {
 
     val offset = OffsetDateTime.now().offset
     val firstOccurrence = scheduledTime.atDate(LocalDate.now().plusDays(1)).toEpochSecond(offset) * 1000
-    alarmManager.setRepeating(AlarmManager.RTC, firstOccurrence, TimeUnit.DAYS.toMillis(1), pendingIntent)
+    alarmManager.cancel(pendingIntent)
+    alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC, firstOccurrence, pendingIntent)
   }
 }
