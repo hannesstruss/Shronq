@@ -30,6 +30,9 @@ interface DbMeasurementDao {
   @Query("select avg(weightGrams) from dbmeasurement where measuredAt >= :from and measuredAt < :to")
   suspend fun getAverageWeightBetween(from: Instant, to: Instant): Int?
 
+  @Query("delete from dbmeasurement where id = :id")
+  suspend fun deleteById(id: Int)
+
   @Insert
   suspend fun insertAll(vararg measurement: DbMeasurement)
 

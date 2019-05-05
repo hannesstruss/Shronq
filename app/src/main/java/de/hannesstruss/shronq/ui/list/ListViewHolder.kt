@@ -20,7 +20,19 @@ class ListViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
     private val ofLocalizedDateTime = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.LONG)
   }
 
+  var clickHandler: ((itemId: Int) -> Unit)? = null
+  var itemId: Int = -1
+    private set
+
+  init {
+    view.setOnLongClickListener {
+      clickHandler?.invoke(itemId)
+      true
+    }
+  }
+
   fun bind(measurement: Measurement) {
+    itemId = measurement.dbId
     view.txt_measured_at.text = measurement.measuredAt.format(ofLocalizedDateTime)
     view.txt_weight.text = String.format("%.1f", measurement.weight.kilograms)
   }

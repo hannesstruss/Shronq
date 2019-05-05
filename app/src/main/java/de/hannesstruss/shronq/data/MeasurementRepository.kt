@@ -34,19 +34,10 @@ class MeasurementRepository @Inject constructor(
   }
 
   suspend fun insertMeasurement(weight: Weight) {
-    val measurement = Measurement(
-        weight = weight,
-        measuredAt = clock.nowWithZone()
-    )
-
-    insertMeasurement(measurement)
-  }
-
-  suspend fun insertMeasurement(measurement: Measurement) {
     val dbMeasurement = DbMeasurement(
-        weightGrams = measurement.weight.grams,
-        measuredAt = measurement.measuredAt.toInstant(),
-        timezone = measurement.measuredAt.zone.toString(),
+        weightGrams = weight.grams,
+        measuredAt = clock.now(),
+        timezone = clock.nowWithZone().zone.toString(),
         firebaseId = null,
         isSynced = false
     )
@@ -58,7 +49,12 @@ class MeasurementRepository @Inject constructor(
     return dao.getAverageWeightBetween(from, to)?.let { Weight.fromGrams(it) }
   }
 
+  suspend fun deleteById(id: Int) {
+    dao.deleteById(id)
+  }
+
   private fun DbMeasurement.toMeasurement() = Measurement(
+      dbId = id,
       weight = Weight.fromGrams(weightGrams),
       measuredAt = ZonedDateTime.ofInstant(measuredAt, ZoneId.of(timezone))
   )

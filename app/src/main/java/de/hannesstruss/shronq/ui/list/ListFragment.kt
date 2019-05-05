@@ -25,7 +25,7 @@ class ListFragment : BaseFragment<ListState, ListIntent, ListViewModel>() {
   }
 
   override fun intents(): Observable<ListIntent> {
-    return Observable.never()
+    return adapter.itemIdLongClicks.map { ListIntent.DeleteItem(it) }
   }
 
   override fun render(state: ListState) {
