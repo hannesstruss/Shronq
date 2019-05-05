@@ -21,7 +21,8 @@ abstract class MviViewModel<StateT : Any, IntentT : Any> : ViewModel(), Coroutin
     get() = Dispatchers.Main + job
 
   abstract val initialState: StateT
-  abstract val engine: StateMachine<StateT, IntentT>
+  // Use StateT as transition type to only describe a transition as its target state:
+  abstract val engine: StateMachine<StateT, IntentT, StateT>
 
   private val views = BehaviorRelay.create<Observable<IntentT>>()
 
@@ -40,11 +41,12 @@ abstract class MviViewModel<StateT : Any, IntentT : Any> : ViewModel(), Coroutin
     views.accept(Observable.never())
   }
 
-  protected fun createEngine(block: EngineContext<StateT, IntentT>.() -> Unit): StateMachine<StateT, IntentT> {
+  protected fun createEngine(block: EngineContext<StateT, IntentT, StateT>.() -> Unit): StateMachine<StateT, IntentT, StateT> {
     return StateMachine(
         coroutineScope = this,
         initialState = initialState,
         events = intents,
+        applyTransition = { _, targetState -> targetState },
         initializer = block
     )
   }
