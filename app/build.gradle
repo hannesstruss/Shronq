@@ -112,9 +112,7 @@ dependencies {
   implementation deps.android.ktx.core
   implementation deps.android.ktx.sqlite
 
-  implementation(deps.android.arch.work) {
-    exclude group: 'com.google.guava', module: 'listenablefuture'
-  }
+  implementation(deps.android.arch.work)
 
   implementation deps.playservices.fit
   implementation deps.playservices.auth
