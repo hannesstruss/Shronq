@@ -15,17 +15,26 @@ import org.junit.Test
 import shronq.statemachine.TestEvent.CountDown
 import shronq.statemachine.TestEvent.CountUp
 
+// Instead of modeling a distinct transition, we just describe the target state.
+private typealias TestTransition = TestState
+
 @FlowPreview
 @ObsoleteCoroutinesApi
 class StateMachineTest {
-  val events = PublishSubject.create<TestEvent>()
 
-  val testCoroutineContext = TestCoroutineContext()
-  val job = Job()
-  val scope = CoroutineScope(testCoroutineContext + job)
+  private val events = PublishSubject.create<TestEvent>()
+  private val testCoroutineContext = TestCoroutineContext()
+  private val job = Job()
+  private val scope = CoroutineScope(testCoroutineContext + job)
 
-  private fun engine(initializer: EngineContext<TestState, TestEvent>.() -> Unit): TestObserver<TestState> {
-    val engine = StateMachine(scope, TestState.initial(), events, initializer)
+  private fun engine(initializer: EngineContext<TestState, TestEvent, TestTransition>.() -> Unit): TestObserver<TestState> {
+    val engine = StateMachine(
+        coroutineScope = scope,
+        initialState = TestState.initial(),
+        events = events,
+        applyTransition = { state, transition -> transition },
+        initializer = initializer
+    )
     val test = engine.states.test()
     engine.start()
     testCoroutineContext.triggerActions()
@@ -229,7 +238,7 @@ class StateMachineTest {
   // TODO
   @Ignore("Implement") @Test fun `state transitions`() {
     engine {
-//      onTransition<PrefState, NextState> {
+      //      onTransition<PrefState, NextState> {
 //
 //      }
     }
@@ -238,7 +247,7 @@ class StateMachineTest {
   // TODO
   @Ignore("Implement") @Test fun `on enter state`() {
     engine {
-//      onEnterState<NextState>() {
+      //      onEnterState<NextState>() {
 //        call repeatedly on same state class?
 //      }
 
