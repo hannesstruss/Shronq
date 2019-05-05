@@ -8,13 +8,24 @@
   tools:context=".ui.home.HomeFragment"
 >
 
+  <androidx.appcompat.widget.Toolbar
+    android:id="@+id/toolbar"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:title="Shronq"
+  />
+
   <de.hannesstruss.shronq.ui.home.HomeChart
     android:id="@+id/chart"
     android:layout_width="0dp"
     android:layout_height="200dp"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"/>
+    app:layout_constraintTop_toBottomOf="@id/toolbar"
+  />
 
   <Button
     android:id="@+id/btn_range_all"
@@ -56,8 +67,8 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:text="@string/date_range_2m"
-    app:layout_constraintStart_toEndOf="@+id/btn_range_6m"
     app:layout_constraintEnd_toStartOf="@+id/btn_range_1m"
+    app:layout_constraintStart_toEndOf="@+id/btn_range_6m"
     app:layout_constraintTop_toBottomOf="@+id/chart"
   />
 

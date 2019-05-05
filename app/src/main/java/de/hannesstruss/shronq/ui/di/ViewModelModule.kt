@@ -6,6 +6,7 @@ import dagger.MapKey
 import dagger.Module
 import dagger.multibindings.IntoMap
 import de.hannesstruss.shronq.ui.home.HomeViewModel
+import de.hannesstruss.shronq.ui.list.ListViewModel
 import de.hannesstruss.shronq.ui.logweight.LogWeightViewModel
 import de.hannesstruss.shronq.ui.s3settings.S3SettingsViewModel
 import de.hannesstruss.shronq.ui.settings.SettingsViewModel
@@ -30,4 +31,7 @@ abstract class ViewModelModule {
 
   @Binds @IntoMap @ViewModelKey(S3SettingsViewModel::class)
   abstract fun bindS3SettingsViewModel(viewModel: S3SettingsViewModel): ViewModel
+
+  @Binds @IntoMap @ViewModelKey(ListViewModel::class)
+  abstract fun bindListViewModel(viewModel: ListViewModel): ViewModel
 }

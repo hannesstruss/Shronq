@@ -5,6 +5,7 @@ import de.hannesstruss.shronq.data.MeasurementRepository
 import de.hannesstruss.shronq.ui.base.MviViewModel
 import de.hannesstruss.shronq.ui.home.HomeIntent.EditSettings
 import de.hannesstruss.shronq.ui.home.HomeIntent.InsertWeight
+import de.hannesstruss.shronq.ui.home.HomeIntent.ShowList
 import de.hannesstruss.shronq.ui.home.HomeIntent.UpdateVisiblePeriod
 import de.hannesstruss.shronq.ui.navigation.Navigator
 import de.hannesstruss.shronq.ui.notifications.LogWeightNotification
@@ -35,6 +36,10 @@ class HomeViewModel
 
     on<UpdateVisiblePeriod> {
       enterState { state.copy(visiblePeriod = it.period) }
+    }
+
+    on<ShowList> {
+      navigator.navigate(R.id.action_homeFragment_to_listFragment)
     }
 
     externalFlow {

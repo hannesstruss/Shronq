@@ -16,6 +16,8 @@
             app:destination="@id/logWeightFragment"/>
     <action android:id="@+id/action_homeFragment_to_settingsFragment"
             app:destination="@id/settingsFragment"/>
+    <action android:id="@+id/action_homeFragment_to_listFragment"
+            app:destination="@id/listFragment"/>
   </fragment>
   <fragment android:id="@+id/settingsFragment"
             android:name="de.hannesstruss.shronq.ui.settings.SettingsFragment"
@@ -30,4 +32,8 @@
             android:label="S3SettingsFragment"
             tools:layout="@layout/s3settings_fragment"
   />
+  <fragment android:id="@+id/listFragment"
+            android:name="de.hannesstruss.shronq.ui.list.ListFragment"
+            tools:layout="@layout/list_fragment"
+            android:label="ListFragment"/>
 </navigation>

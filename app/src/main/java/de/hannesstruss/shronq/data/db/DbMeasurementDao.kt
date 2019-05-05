@@ -12,6 +12,9 @@ interface DbMeasurementDao {
   @Query("select * from dbmeasurement order by measuredAt asc")
   fun selectAll(): Flowable<List<DbMeasurement>>
 
+  @Query("select * from dbmeasurement order by measuredAt desc")
+  fun selectAllNewestFirst(): Flowable<List<DbMeasurement>>
+
   @Query("select * from dbmeasurement order by measuredAt desc limit 1")
   fun selectLatest(): Flowable<DbMeasurement>
 

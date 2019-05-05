@@ -21,6 +21,12 @@ class MeasurementRepository @Inject constructor(
         .toFlow()
   }
 
+  fun getMeasurementsNewestFirst(): Flow<List<Measurement>> {
+    return dao.selectAllNewestFirst()
+        .map { all -> all.map { it.toMeasurement() } }
+        .toFlow()
+  }
+
   fun getLatestMeasurement(): Flow<Measurement> {
     return dao.selectLatest()
         .map { it.toMeasurement() }
