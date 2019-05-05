@@ -4,15 +4,18 @@ import com.google.common.truth.Truth.assertThat
 import io.reactivex.observers.TestObserver
 import io.reactivex.subjects.PublishSubject
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineContext
+import org.junit.Ignore
 import org.junit.Test
 import shronq.mvi.TestIntent.CountDown
 import shronq.mvi.TestIntent.CountUp
 
+@FlowPreview
 @ObsoleteCoroutinesApi
 class MviEngineTest {
   val intents = PublishSubject.create<TestIntent>()
@@ -220,6 +223,28 @@ class MviEngineTest {
           TestState(counter = 2),
           TestState(counter = 3)
       )
+    }
+  }
+
+  // TODO
+  @Ignore("Implement") @Test fun `state transitions`() {
+    engine {
+//      onTransition<PrefState, NextState> {
+//
+//      }
+    }
+  }
+
+  // TODO
+  @Ignore("Implement") @Test fun `on enter state`() {
+    engine {
+//      onEnterState<NextState>() {
+//        call repeatedly on same state class?
+//      }
+
+//      onEnterState {
+//        any state
+//      }
     }
   }
 }
