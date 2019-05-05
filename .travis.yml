@@ -23,6 +23,7 @@ notifications:
 sudo: false
 
 script:
+  - echo "shronq.bugsnag_key=null" >> $HOME/.gradle/gradle.properties
   - ./gradlew lintDebug testDebug assembleDebug
 
 cache:
