@@ -6,8 +6,8 @@ import io.reactivex.Observable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import shronq.mvi.EngineContext
-import shronq.mvi.MviEngine
+import shronq.statemachine.EngineContext
+import shronq.statemachine.StateMachine
 import kotlin.coroutines.CoroutineContext
 
 abstract class MviViewModel<StateT : Any, IntentT : Any> : ViewModel(), CoroutineScope {
@@ -17,7 +17,7 @@ abstract class MviViewModel<StateT : Any, IntentT : Any> : ViewModel(), Coroutin
     get() = Dispatchers.Main + job
 
   abstract val initialState: StateT
-  abstract val engine: MviEngine<StateT, IntentT>
+  abstract val engine: StateMachine<StateT, IntentT>
 
   private val views = BehaviorRelay.create<Observable<IntentT>>()
 
@@ -36,8 +36,8 @@ abstract class MviViewModel<StateT : Any, IntentT : Any> : ViewModel(), Coroutin
     views.accept(Observable.never())
   }
 
-  protected fun createEngine(block: EngineContext<StateT, IntentT>.() -> Unit): MviEngine<StateT, IntentT> {
-    return MviEngine(
+  protected fun createEngine(block: EngineContext<StateT, IntentT>.() -> Unit): StateMachine<StateT, IntentT> {
+    return StateMachine(
         coroutineScope = this,
         initialState = initialState,
         intents = intents,

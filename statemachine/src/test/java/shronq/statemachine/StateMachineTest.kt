@@ -1,4 +1,4 @@
-package shronq.mvi
+package shronq.statemachine
 
 import com.google.common.truth.Truth.assertThat
 import io.reactivex.observers.TestObserver
@@ -12,12 +12,12 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineContext
 import org.junit.Ignore
 import org.junit.Test
-import shronq.mvi.TestIntent.CountDown
-import shronq.mvi.TestIntent.CountUp
+import shronq.statemachine.TestIntent.CountDown
+import shronq.statemachine.TestIntent.CountUp
 
 @FlowPreview
 @ObsoleteCoroutinesApi
-class MviEngineTest {
+class StateMachineTest {
   val intents = PublishSubject.create<TestIntent>()
 
   val testCoroutineContext = TestCoroutineContext()
@@ -25,7 +25,7 @@ class MviEngineTest {
   val scope = CoroutineScope(testCoroutineContext + job)
 
   private fun engine(initializer: EngineContext<TestState, TestIntent>.() -> Unit): TestObserver<TestState> {
-    val engine = MviEngine(scope, TestState.initial(), intents, initializer)
+    val engine = StateMachine(scope, TestState.initial(), intents, initializer)
     val test = engine.states.test()
     engine.start()
     testCoroutineContext.triggerActions()

@@ -1,4 +1,4 @@
-package shronq.mvi
+package shronq.statemachine
 
 data class TestState(val counter: Int = 0, val secondsSum: Int = 0) {
   companion object {

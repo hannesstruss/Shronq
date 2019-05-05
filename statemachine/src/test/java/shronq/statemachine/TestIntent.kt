@@ -1,4 +1,4 @@
-package shronq.mvi
+package shronq.statemachine
 
 sealed class TestIntent {
   data class Set(val i: Int) : TestIntent()

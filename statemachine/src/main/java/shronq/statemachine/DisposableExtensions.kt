@@ -1,4 +1,4 @@
-package shronq.mvi
+package shronq.statemachine
 
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable

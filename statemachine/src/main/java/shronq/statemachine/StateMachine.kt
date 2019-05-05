@@ -1,4 +1,4 @@
-package shronq.mvi
+package shronq.statemachine
 
 import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.Observable
@@ -40,7 +40,7 @@ import kotlinx.coroutines.rx2.openSubscription
 
 @FlowPreview
 @ObsoleteCoroutinesApi
-class MviEngine<StateT : Any, IntentT : Any>(
+class StateMachine<StateT : Any, IntentT : Any>(
     private val coroutineScope: CoroutineScope,
     initialState: StateT,
     private val intents: Observable<out IntentT>,
