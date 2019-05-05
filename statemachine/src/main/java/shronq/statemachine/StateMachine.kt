@@ -4,7 +4,6 @@ import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.Observable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
@@ -14,8 +13,6 @@ import kotlinx.coroutines.rx2.openSubscription
 
 // TODO: Nested engines?
 
-@FlowPreview
-@ObsoleteCoroutinesApi
 class StateMachine<StateT : Any, EventT : Any, TransitionT : Any>
 private constructor(
     private val coroutineScope: CoroutineScope,

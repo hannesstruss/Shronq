@@ -1,18 +1,10 @@
 apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
-apply plugin: 'kotlin-kapt'
 apply plugin: 'com.github.triplet.play'
 
 android {
-  compileSdkVersion buildConfig.compileSdk
-
   defaultConfig {
     applicationId = "de.hannesstruss.shronq"
-    minSdkVersion buildConfig.minSdk
-    targetSdkVersion buildConfig.targetSdk
-    versionCode = buildConfig.version.code
-    versionName = buildConfig.version.name
 
     resValue "string", "bugsnag_key", getProperty('shronq.bugsnag_key')
 
@@ -59,22 +51,8 @@ android {
     }
   }
 
-  compileOptions {
-    sourceCompatibility JavaVersion.VERSION_1_8
-    targetCompatibility JavaVersion.VERSION_1_8
-  }
-
   packagingOptions {
     pickFirst "META-INF/atomicfu.kotlin_module"
-  }
-}
-
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
-  sourceCompatibility = JavaVersion.VERSION_1_8
-  targetCompatibility = JavaVersion.VERSION_1_8
-
-  kotlinOptions {
-    freeCompilerArgs = ["-XXLanguage:+InlineClasses"]
   }
 }
 
@@ -86,12 +64,8 @@ play {
 dependencies {
   implementation project(':statemachine')
 
-  implementation deps.kotlin.stdlib
   implementation deps.kotlin.coroutines.rx2
   implementation deps.kotlin.coroutines.playservices
-
-  implementation deps.dagger.runtime
-  kapt deps.dagger.compiler
 
   implementation deps.android.support.appCompat
   implementation deps.android.support.constraintLayout
@@ -112,7 +86,7 @@ dependencies {
   implementation deps.android.ktx.core
   implementation deps.android.ktx.sqlite
 
-  implementation(deps.android.arch.work)
+  implementation deps.android.arch.work
 
   implementation deps.playservices.fit
   implementation deps.playservices.auth
@@ -126,11 +100,10 @@ dependencies {
   implementation deps.rx.binding.material
   implementation deps.rx.binding.appcompat
 
-  implementation deps.timber
   implementation deps.bugsnag.sdk
 
   implementation deps.processphoenix
 
-  implementation 'com.amazonaws:aws-android-sdk-s3:2.13.2'
+  implementation deps.s3
 }
 

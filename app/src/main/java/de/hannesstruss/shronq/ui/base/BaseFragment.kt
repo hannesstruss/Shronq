@@ -12,11 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.ObsoleteCoroutinesApi
 
-@ObsoleteCoroutinesApi
-@FlowPreview
 abstract class BaseFragment<StateT : Any, IntentT : Any, ViewModelT : MviViewModel<StateT, IntentT>> : Fragment() {
   @get:LayoutRes abstract val layout: Int
   abstract val viewModelClass: Class<ViewModelT>

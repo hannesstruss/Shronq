@@ -99,6 +99,7 @@ buildscript {
           'fit': "com.google.android.gms:play-services-fitness:${versions.playservices.fit}",
           'auth': "com.google.android.gms:play-services-auth:${versions.playservices.auth}"
       ],
+      's3': 'com.amazonaws:aws-android-sdk-s3:2.13.4',
       'junit': 'junit:junit:4.12',
       'truth': 'com.google.truth:truth:0.43'
   ]
@@ -133,11 +134,29 @@ dependencyUpdates.resolutionStrategy {
   }
 }
 
-allprojects {
+subprojects { subproject ->
   repositories {
     google()
     mavenCentral()
     jcenter()
+  }
+
+  plugins.withId("com.android.application") {
+    subproject.apply from: rootProject.file("setup_android_module.gradle")
+  }
+
+  tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+
+    kotlinOptions {
+      freeCompilerArgs = [
+          "-XXLanguage:+InlineClasses",
+          '-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi',
+          '-Xuse-experimental=kotlinx.coroutines.ObsoleteCoroutinesApi',
+          '-Xuse-experimental=kotlinx.coroutines.FlowPreview',
+      ]
+    }
   }
 }
 

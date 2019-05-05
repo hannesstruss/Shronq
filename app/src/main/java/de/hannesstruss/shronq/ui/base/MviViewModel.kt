@@ -5,15 +5,11 @@ import com.jakewharton.rxrelay2.BehaviorRelay
 import io.reactivex.Observable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.ObsoleteCoroutinesApi
 import shronq.statemachine.EngineContext
 import shronq.statemachine.StateMachine
 import kotlin.coroutines.CoroutineContext
 
-@FlowPreview
-@ObsoleteCoroutinesApi
 abstract class MviViewModel<StateT : Any, IntentT : Any> : ViewModel(), CoroutineScope {
   private val job = Job()
 
@@ -28,7 +24,7 @@ abstract class MviViewModel<StateT : Any, IntentT : Any> : ViewModel(), Coroutin
 
   val intents: Observable<IntentT> = views.switchMap { it }
   val states: Observable<StateT> by lazy {
-    // TODO: Start engine only on subscription.
+    // TODO: Start engine only on subscription?
     engine.start()
     engine.states
   }
