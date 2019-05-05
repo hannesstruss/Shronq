@@ -3,6 +3,8 @@ package shronq.mvi
 import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.Observable
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
@@ -36,6 +38,8 @@ import kotlinx.coroutines.rx2.openSubscription
  * TODO: Nested engines?
  */
 
+@FlowPreview
+@ObsoleteCoroutinesApi
 class MviEngine<StateT : Any, IntentT : Any>(
     private val coroutineScope: CoroutineScope,
     initialState: StateT,
@@ -159,6 +163,7 @@ class MviEngine<StateT : Any, IntentT : Any>(
   }
 }
 
+@FlowPreview
 class EngineContext<StateT, IntentT> internal constructor() {
   @PublishedApi internal val intentBindings = mutableListOf<ListenerBinding<StateT, out IntentT>>()
   @PublishedApi internal val firstIntentBindings = mutableListOf<ListenerBinding<StateT, out IntentT>>()
@@ -230,6 +235,7 @@ interface StreamContext<StateT> {
   fun <T> Observable<T>.hookUp(block: IntentContext<StateT>.(T) -> Unit): HookedUpSubscription
 }
 
+@FlowPreview
 interface FlowContext<StateT> {
   fun <T> Flow<T>.hookUp(): HookedUpSubscription
   fun <T> Flow<T>.hookUp(block: IntentContext<StateT>.(T) -> Unit): HookedUpSubscription
@@ -242,6 +248,7 @@ class ExternalBinding<StateT>(
     val block: StreamContext<StateT>.() -> HookedUpSubscription
 )
 
+@FlowPreview
 class FlowBinding<StateT>(
     val block: FlowContext<StateT>.() -> HookedUpSubscription
 )
