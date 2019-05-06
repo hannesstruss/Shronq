@@ -41,9 +41,10 @@ class S3Syncer
   suspend fun backup() {
     Timber.d("Starting backup")
 
+    val now = Instant.now()
     for (suffix in SQLITE_SUFFIXES) {
       val file = File(dbFile().path + suffix)
-      uploadFile(file, "${DUMP_PREFIX}${creds.deviceName}-${Instant.now()}.sqlite" + suffix)
+      uploadFile(file, "${DUMP_PREFIX}${creds.deviceName}-$now.sqlite" + suffix)
     }
 
     prefs.edit {
