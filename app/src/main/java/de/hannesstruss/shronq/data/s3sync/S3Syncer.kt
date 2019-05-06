@@ -32,17 +32,18 @@ class S3Syncer
   companion object {
     private const val KeyLastRun = "s3_backupper_last_run"
     private const val DUMP_PREFIX = "dump-"
+    private const val OBSOLETE_SUFFIX = "-obsolete"
+    private val SQLITE_SUFFIXES = listOf("", "-wal", "-shm")
   }
 
   val lastRun: String? get() = prefs.getString(KeyLastRun, null)
 
   suspend fun backup() {
     Timber.d("Starting backup")
-    val s3client = s3clientProvider.get()
-    val putRequest = PutObjectRequest(creds.bucket, "${DUMP_PREFIX}${creds.deviceName}-${Instant.now()}.sqlite", dbFile())
-    withContext(Dispatchers.IO) {
-      val response = s3client.putObject(putRequest)
-      Timber.d(response.toString())
+
+    for (suffix in SQLITE_SUFFIXES) {
+      val file = File(dbFile().path + suffix)
+      uploadFile(file, "${DUMP_PREFIX}${creds.deviceName}-${Instant.now()}.sqlite" + suffix)
     }
 
     prefs.edit {
@@ -50,6 +51,14 @@ class S3Syncer
     }
 
     Timber.d("Backup done")
+  }
+
+  private suspend fun uploadFile(file: File, uploadedName: String) {
+    val putRequest = PutObjectRequest(creds.bucket, uploadedName, file)
+    val s3client = s3clientProvider.get()
+    withContext(Dispatchers.IO) {
+      s3client.putObject(putRequest)
+    }
   }
 
   suspend fun getDumps(): List<String> {
@@ -78,7 +87,6 @@ class S3Syncer
 
   private fun restoreFromStream(backupName: String, inputStream: InputStream) {
     val tempFile = File(context.cacheDir.path + "/" + backupName)
-    val targetFile = File(context.dataDir.path + "/databases/" + AppDatabase.NAME)
     val source = inputStream.source().buffer()
     val sink = tempFile.sink().buffer()
 
@@ -90,13 +98,15 @@ class S3Syncer
 
     val databaseDir = File(context.dataDir.path + "/databases")
     databaseDir.listFiles()
-        .filter { it.name.startsWith(AppDatabase.NAME) }
+        .filter {
+          it.name.startsWith(AppDatabase.NAME) && !it.name.endsWith(OBSOLETE_SUFFIX)
+        }
         .forEach {
-          it.renameTo(File(it.path + "-obsolete"))
+          it.renameTo(File(it.path + OBSOLETE_SUFFIX))
         }
 
-    tempFile.renameTo(targetFile)
+    tempFile.renameTo(dbFile())
   }
 
-  private fun dbFile() = File(context.dataDir.path + "/databases/shronq.sqlite")
+  private fun dbFile() = File(context.dataDir.path + "/databases/" + AppDatabase.NAME)
 }
