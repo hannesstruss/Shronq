@@ -3,6 +3,7 @@ package de.hannesstruss.shronq.di
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
+import com.amazonaws.services.s3.AmazonS3Client
 import de.hannesstruss.shronq.ShronqApp
 import de.hannesstruss.shronq.data.Clock
 import de.hannesstruss.shronq.data.db.DbMeasurementDao
@@ -30,6 +31,7 @@ interface AppGraph {
   fun context(): Context
   fun widgetUpdater(): ShronqWidgetProvider.Updater
   fun sharedPreferences(): SharedPreferences
+  fun amazonS3Client(): AmazonS3Client
 
   fun inject(backupToS3Worker: BackupToS3Worker)
   fun inject(lunchNotificationPublisher: LunchNotificationPublisher)

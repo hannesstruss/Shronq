@@ -10,5 +10,8 @@ import androidx.room.TypeConverters
 )
 @TypeConverters(InstantConverter::class)
 abstract class AppDatabase : RoomDatabase() {
+  companion object {
+    const val NAME = "shronq.sqlite"
+  }
   abstract fun dbMeasurementDao(): DbMeasurementDao
 }

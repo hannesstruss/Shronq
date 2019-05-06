@@ -32,6 +32,8 @@ class S3SettingsFragment : BaseFragment<S3SettingsState, S3SettingsIntent, S3Set
   }
 
   override fun intents(): Observable<S3SettingsIntent> {
+    val itemClicks = toolbar.itemClicks()
+
     return Observable.mergeArray(
         edit_device_name.textChanges()
             .map { S3SettingsIntent.DeviceNameChanged(it.toString()) },
@@ -51,7 +53,13 @@ class S3SettingsFragment : BaseFragment<S3SettingsState, S3SettingsIntent, S3Set
         btn_run_sync.clicks()
             .map { S3SettingsIntent.RunSync },
 
-        toolbar.itemClicks().map { S3SettingsIntent.Save }
+        itemClicks
+            .filter { it.itemId == R.id.action_save }
+            .map { S3SettingsIntent.Save },
+
+        itemClicks
+            .filter { it.itemId == R.id.import_from_s3 }
+            .map { S3SettingsIntent.Import }
     )
   }
 

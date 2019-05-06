@@ -8,6 +8,7 @@ import dagger.multibindings.IntoMap
 import de.hannesstruss.shronq.ui.home.HomeViewModel
 import de.hannesstruss.shronq.ui.list.ListViewModel
 import de.hannesstruss.shronq.ui.logweight.LogWeightViewModel
+import de.hannesstruss.shronq.ui.s3import.S3ImportViewModel
 import de.hannesstruss.shronq.ui.s3settings.S3SettingsViewModel
 import de.hannesstruss.shronq.ui.settings.SettingsViewModel
 import kotlin.reflect.KClass
@@ -34,4 +35,7 @@ abstract class ViewModelModule {
 
   @Binds @IntoMap @ViewModelKey(ListViewModel::class)
   abstract fun bindListViewModel(viewModel: ListViewModel): ViewModel
+
+  @Binds @IntoMap @ViewModelKey(S3ImportViewModel::class)
+  abstract fun bindS3ImportViewModel(viewModel: S3ImportViewModel): ViewModel
 }

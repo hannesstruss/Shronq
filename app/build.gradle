@@ -100,6 +100,8 @@ dependencies {
   implementation deps.rx.binding.material
   implementation deps.rx.binding.appcompat
 
+  implementation deps.okio
+
   implementation deps.bugsnag.sdk
 
   implementation deps.processphoenix

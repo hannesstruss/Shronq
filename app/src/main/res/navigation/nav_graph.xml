@@ -4,36 +4,61 @@
             xmlns:tools="http://schemas.android.com/tools"
             app:startDestination="@id/homeFragment">
 
-  <fragment android:id="@+id/logWeightFragment"
-            android:name="de.hannesstruss.shronq.ui.logweight.LogWeightFragment"
-            android:label="LogWeightFragment"
-            tools:layout="@layout/log_weight_fragment"/>
-  <fragment android:id="@+id/homeFragment"
-            android:name="de.hannesstruss.shronq.ui.home.HomeFragment"
-            android:label="HomeFragment"
-            tools:layout="@layout/home_fragment">
-    <action android:id="@+id/action_homeFragment_to_logWeightFragment"
-            app:destination="@id/logWeightFragment"/>
-    <action android:id="@+id/action_homeFragment_to_settingsFragment"
-            app:destination="@id/settingsFragment"/>
-    <action android:id="@+id/action_homeFragment_to_listFragment"
-            app:destination="@id/listFragment"/>
+  <fragment
+    android:id="@+id/logWeightFragment"
+    android:name="de.hannesstruss.shronq.ui.logweight.LogWeightFragment"
+    android:label="LogWeightFragment"
+    tools:layout="@layout/log_weight_fragment"/>
+
+  <fragment
+    android:id="@+id/homeFragment"
+    android:name="de.hannesstruss.shronq.ui.home.HomeFragment"
+    android:label="HomeFragment"
+    tools:layout="@layout/home_fragment">
+    <action
+      android:id="@+id/action_homeFragment_to_logWeightFragment"
+      app:destination="@id/logWeightFragment"/>
+
+    <action
+      android:id="@+id/action_homeFragment_to_settingsFragment"
+      app:destination="@id/settingsFragment"/>
+
+    <action
+      android:id="@+id/action_homeFragment_to_listFragment"
+      app:destination="@id/listFragment"/>
   </fragment>
-  <fragment android:id="@+id/settingsFragment"
-            android:name="de.hannesstruss.shronq.ui.settings.SettingsFragment"
-            android:label="SettingsFragment"
-            tools:layout="@layout/settings_fragment"
+
+  <fragment
+    android:id="@+id/settingsFragment"
+    android:name="de.hannesstruss.shronq.ui.settings.SettingsFragment"
+    android:label="SettingsFragment"
+    tools:layout="@layout/settings_fragment"
   >
-    <action android:id="@+id/action_settingsFragment_to_s3SettingsFragment"
-            app:destination="@id/s3SettingsFragment"/>
+    <action
+      android:id="@+id/action_settingsFragment_to_s3SettingsFragment"
+      app:destination="@id/s3SettingsFragment"/>
   </fragment>
-  <fragment android:id="@+id/s3SettingsFragment"
-            android:name="de.hannesstruss.shronq.ui.s3settings.S3SettingsFragment"
-            android:label="S3SettingsFragment"
-            tools:layout="@layout/s3settings_fragment"
-  />
-  <fragment android:id="@+id/listFragment"
-            android:name="de.hannesstruss.shronq.ui.list.ListFragment"
-            tools:layout="@layout/list_fragment"
-            android:label="ListFragment"/>
+
+  <fragment
+    android:id="@+id/s3SettingsFragment"
+    android:name="de.hannesstruss.shronq.ui.s3settings.S3SettingsFragment"
+    android:label="S3SettingsFragment"
+    tools:layout="@layout/s3settings_fragment"
+  >
+    <action
+      android:id="@+id/action_s3SettingsFragment_to_s3ImportFragment"
+      app:destination="@id/s3ImportFragment"/>
+  </fragment>
+
+  <fragment
+    android:id="@+id/listFragment"
+    android:name="de.hannesstruss.shronq.ui.list.ListFragment"
+    android:label="ListFragment"
+    tools:layout="@layout/list_fragment"/>
+
+  <fragment
+    android:id="@+id/s3ImportFragment"
+    android:name="de.hannesstruss.shronq.ui.s3import.S3ImportFragment"
+    android:label="S3ImportFragment"
+    tools:layout="@layout/s3import_fragment"/>
 </navigation>

@@ -85,6 +85,7 @@ buildscript {
           ],
           'relay': 'com.jakewharton.rxrelay2:rxrelay:2.1.0'
       ],
+      'okio': 'com.squareup.okio:okio:2.2.2',
       'bugsnag': [
           'sdk': 'com.bugsnag:bugsnag-android:4.12.0'
       ],

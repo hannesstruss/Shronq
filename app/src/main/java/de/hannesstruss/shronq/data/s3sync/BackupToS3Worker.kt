@@ -86,13 +86,13 @@ class BackupToS3Worker(
     }
   }
 
-  @Inject lateinit var s3Backupper: S3Backupper
+  @Inject lateinit var s3Syncer: S3Syncer
 
   override suspend fun doWork(): Result {
     AppGraph.get(context).inject(this)
 
     return try {
-      s3Backupper.backup()
+      s3Syncer.backup()
       Result.success()
     } catch (e: IOException) {
       Result.retry()

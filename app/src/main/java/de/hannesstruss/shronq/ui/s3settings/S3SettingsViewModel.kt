@@ -1,14 +1,16 @@
 package de.hannesstruss.shronq.ui.s3settings
 
 import de.hannesstruss.android.KeyboardHider
+import de.hannesstruss.shronq.R
 import de.hannesstruss.shronq.data.s3sync.BackupToS3Worker
-import de.hannesstruss.shronq.data.s3sync.S3Backupper
+import de.hannesstruss.shronq.data.s3sync.S3Syncer
 import de.hannesstruss.shronq.data.s3sync.S3CredentialsStore
 import de.hannesstruss.shronq.ui.base.MviViewModel
 import de.hannesstruss.shronq.ui.navigation.Navigator
 import de.hannesstruss.shronq.ui.s3settings.S3SettingsIntent.AccessKeyChanged
 import de.hannesstruss.shronq.ui.s3settings.S3SettingsIntent.BucketChanged
 import de.hannesstruss.shronq.ui.s3settings.S3SettingsIntent.EnableSync
+import de.hannesstruss.shronq.ui.s3settings.S3SettingsIntent.Import
 import de.hannesstruss.shronq.ui.s3settings.S3SettingsIntent.RunSync
 import de.hannesstruss.shronq.ui.s3settings.S3SettingsIntent.Save
 import de.hannesstruss.shronq.ui.s3settings.S3SettingsIntent.SecretKeyChanged
@@ -19,7 +21,7 @@ class S3SettingsViewModel
     private val s3CredentialsStore: S3CredentialsStore,
     private val navigator: Navigator,
     private val keyboardHider: KeyboardHider,
-    private val s3Backupper: S3Backupper
+    private val s3Syncer: S3Syncer
 ) : MviViewModel<S3SettingsState, S3SettingsIntent>() {
 
 
@@ -35,7 +37,7 @@ class S3SettingsViewModel
             secretKey = s3CredentialsStore.secretKey,
             bucket = s3CredentialsStore.bucket,
             syncEnabled = isScheduled,
-            lastSyncRun = s3Backupper.lastRun
+            lastSyncRun = s3Syncer.lastRun
         )
       }
     }
@@ -66,8 +68,8 @@ class S3SettingsViewModel
 
     on<RunSync> {
       enterState { state.copy(manualSyncRunning = true) }
-      s3Backupper.backup()
-      enterState { state.copy(manualSyncRunning = false, lastSyncRun = s3Backupper.lastRun) }
+      s3Syncer.backup()
+      enterState { state.copy(manualSyncRunning = false, lastSyncRun = s3Syncer.lastRun) }
     }
 
     on<Save> {
@@ -82,6 +84,10 @@ class S3SettingsViewModel
       )
 
       navigator.back()
+    }
+
+    on<Import> {
+      navigator.navigate(R.id.action_s3SettingsFragment_to_s3ImportFragment)
     }
   }
 }
