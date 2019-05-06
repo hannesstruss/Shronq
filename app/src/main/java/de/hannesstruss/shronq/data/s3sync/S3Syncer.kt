@@ -2,6 +2,7 @@ package de.hannesstruss.shronq.data.s3sync
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.database.Cursor
 import androidx.core.content.edit
 import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.s3.model.GetObjectRequest
@@ -27,13 +28,13 @@ class S3Syncer
     private val context: Context,
     private val creds: S3CredentialsStore,
     private val prefs: SharedPreferences,
-    private val s3clientProvider: Provider<AmazonS3Client>
+    private val s3clientProvider: Provider<AmazonS3Client>,
+    private val appDatabase: AppDatabase
 ) {
   companion object {
     private const val KeyLastRun = "s3_backupper_last_run"
     private const val DUMP_PREFIX = "dump-"
     private const val OBSOLETE_SUFFIX = "-obsolete"
-    private val SQLITE_SUFFIXES = listOf("", "-wal", "-shm")
   }
 
   val lastRun: String? get() = prefs.getString(KeyLastRun, null)
@@ -42,9 +43,13 @@ class S3Syncer
     Timber.d("Starting backup")
 
     val now = Instant.now()
-    for (suffix in SQLITE_SUFFIXES) {
-      val file = File(dbFile().path + suffix)
-      uploadFile(file, "${DUMP_PREFIX}${creds.deviceName}-$now.sqlite" + suffix)
+    val remoteName = "${DUMP_PREFIX}${creds.deviceName}-$now.sqlite"
+    val putRequest = PutObjectRequest(creds.bucket, remoteName, dbFile())
+    val s3client = s3clientProvider.get()
+
+    withContext(Dispatchers.IO) {
+      walCheckpoint()
+      s3client.putObject(putRequest)
     }
 
     prefs.edit {
@@ -54,12 +59,14 @@ class S3Syncer
     Timber.d("Backup done")
   }
 
-  private suspend fun uploadFile(file: File, uploadedName: String) {
-    val putRequest = PutObjectRequest(creds.bucket, uploadedName, file)
-    val s3client = s3clientProvider.get()
-    withContext(Dispatchers.IO) {
-      s3client.putObject(putRequest)
-    }
+  private fun walCheckpoint() {
+    val cur: Cursor = appDatabase.query("PRAGMA wal_checkpoint(FULL);", emptyArray())
+    cur.moveToFirst()
+    val wasBlockedFromCompleting = cur.getInt(0)
+    val numberOfModifiedPages = cur.getInt(1)
+    val numberOfPagesMovedToDatabase = cur.getInt(2)
+
+    Timber.d("WAL Checkpoint terminated: wasBlockedFromCompleting=$wasBlockedFromCompleting numberOfModifiedPages=$numberOfModifiedPages numberOfPagesMovedToDb=$numberOfPagesMovedToDatabase")
   }
 
   suspend fun getDumps(): List<String> {
