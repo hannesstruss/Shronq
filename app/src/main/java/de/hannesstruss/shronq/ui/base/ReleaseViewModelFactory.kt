@@ -2,6 +2,7 @@ package de.hannesstruss.shronq.ui.base
 
 import androidx.lifecycle.ViewModel
 import de.hannesstruss.shronq.ui.di.PerActivity
+import shronq.statemachine.ViewModelFactory
 import javax.inject.Inject
 import javax.inject.Provider
 

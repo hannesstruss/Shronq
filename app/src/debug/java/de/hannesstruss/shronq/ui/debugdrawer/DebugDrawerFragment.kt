@@ -5,10 +5,10 @@ import android.widget.Button
 import androidx.annotation.IdRes
 import com.jakewharton.rxbinding3.view.clicks
 import de.hannesstruss.shronq.R
-import de.hannesstruss.shronq.ui.base.BaseFragment
+import shronq.statemachine.StateMachineFragment
 import io.reactivex.Observable
 
-class DebugDrawerFragment : BaseFragment<Unit, DebugDrawerIntent, DebugDrawerViewModel>() {
+class DebugDrawerFragment : StateMachineFragment<Unit, DebugDrawerIntent, DebugDrawerViewModel>() {
   override val layout = R.layout.debug_drawer_content
   override val viewModelClass = DebugDrawerViewModel::class.java
 

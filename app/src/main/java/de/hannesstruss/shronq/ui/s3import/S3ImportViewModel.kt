@@ -3,7 +3,7 @@ package de.hannesstruss.shronq.ui.s3import
 import android.content.Context
 import com.jakewharton.processphoenix.ProcessPhoenix
 import de.hannesstruss.shronq.data.s3sync.S3Syncer
-import de.hannesstruss.shronq.ui.base.MviViewModel
+import shronq.statemachine.StateMachineViewModel
 import de.hannesstruss.shronq.ui.s3import.S3ImportIntent.BackupSelected
 import de.hannesstruss.shronq.ui.s3import.S3ImportIntent.ConfirmationDialogDismissed
 import de.hannesstruss.shronq.ui.s3import.S3ImportIntent.RestoreConfirmed
@@ -13,7 +13,7 @@ class S3ImportViewModel
 @Inject constructor(
     private val context: Context,
     private val s3Syncer: S3Syncer
-) : MviViewModel<S3ImportState, S3ImportIntent>() {
+) : StateMachineViewModel<S3ImportState, S3ImportIntent>() {
   override val initialState = S3ImportState.initial()
 
   override val engine = createEngine {

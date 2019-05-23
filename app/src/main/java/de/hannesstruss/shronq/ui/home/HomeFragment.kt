@@ -5,7 +5,6 @@ import android.view.View
 import com.jakewharton.rxbinding3.appcompat.itemClicks
 import com.jakewharton.rxbinding3.view.clicks
 import de.hannesstruss.shronq.R
-import de.hannesstruss.shronq.ui.base.BaseFragment
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.home_fragment.btn_go_to_insert
 import kotlinx.android.synthetic.main.home_fragment.btn_go_to_settings
@@ -17,9 +16,10 @@ import kotlinx.android.synthetic.main.home_fragment.btn_range_all
 import kotlinx.android.synthetic.main.home_fragment.chart
 import kotlinx.android.synthetic.main.home_fragment.toolbar
 import kotlinx.android.synthetic.main.home_fragment.txt_latest_weight
+import shronq.statemachine.StateMachineFragment
 import java.time.Period
 
-class HomeFragment : BaseFragment<HomeState, HomeIntent, HomeViewModel>() {
+class HomeFragment : StateMachineFragment<HomeState, HomeIntent, HomeViewModel>() {
   override val layout = R.layout.home_fragment
   override val viewModelClass = HomeViewModel::class.java
 
@@ -35,7 +35,7 @@ class HomeFragment : BaseFragment<HomeState, HomeIntent, HomeViewModel>() {
       toolbar.itemClicks()
           .filter { it.itemId == R.id.show_list }
           .map { HomeIntent.ShowList }
-      ).startWith(HomeIntent.Init)
+  ).startWith(HomeIntent.Init)
 
   override fun render(state: HomeState) {
     chart.measurements = state.measurements

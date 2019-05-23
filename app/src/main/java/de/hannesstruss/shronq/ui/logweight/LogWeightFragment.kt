@@ -5,14 +5,14 @@ import android.view.View
 import com.jakewharton.rxbinding3.view.clicks
 import com.jakewharton.rxbinding3.widget.changes
 import de.hannesstruss.shronq.R
-import de.hannesstruss.shronq.ui.base.BaseFragment
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.log_weight_fragment.btn_insert
 import kotlinx.android.synthetic.main.log_weight_fragment.edit_weight
 import kotlinx.android.synthetic.main.log_weight_fragment.seekbar
 import kotlinx.android.synthetic.main.log_weight_fragment.txt_last_weight
+import shronq.statemachine.StateMachineFragment
 
-class LogWeightFragment : BaseFragment<LogWeightState, LogWeightIntent, LogWeightViewModel>() {
+class LogWeightFragment : StateMachineFragment<LogWeightState, LogWeightIntent, LogWeightViewModel>() {
   override val layout = R.layout.log_weight_fragment
   override val viewModelClass = LogWeightViewModel::class.java
 

@@ -1,10 +1,10 @@
-package de.hannesstruss.shronq.ui.base
+package shronq.statemachine
 
 import androidx.lifecycle.ViewModelProvider
 
 interface ViewModelFactory : ViewModelProvider.Factory {
   companion object {
-    const val SERVICE_NAME = "ViewModelFactory"
+    val SERVICE_NAME = "SHRONQ_STATE_VIEW_MODEL_FACTORY"
   }
 }
 

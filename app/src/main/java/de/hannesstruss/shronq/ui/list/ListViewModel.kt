@@ -1,14 +1,14 @@
 package de.hannesstruss.shronq.ui.list
 
 import de.hannesstruss.shronq.data.MeasurementRepository
-import de.hannesstruss.shronq.ui.base.MviViewModel
+import shronq.statemachine.StateMachineViewModel
 import de.hannesstruss.shronq.ui.list.ListIntent.DeleteItem
 import javax.inject.Inject
 
 class ListViewModel
 @Inject constructor(
     private val measurementRepository: MeasurementRepository
-) : MviViewModel<ListState, ListIntent>() {
+) : StateMachineViewModel<ListState, ListIntent>() {
   override val initialState = ListState.initial()
 
   override val engine = createEngine {

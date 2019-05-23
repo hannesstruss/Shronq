@@ -5,11 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import de.hannesstruss.shronq.R
-import de.hannesstruss.shronq.ui.base.BaseFragment
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.list_fragment.list
+import shronq.statemachine.StateMachineFragment
 
-class ListFragment : BaseFragment<ListState, ListIntent, ListViewModel>() {
+class ListFragment : StateMachineFragment<ListState, ListIntent, ListViewModel>() {
   override val layout = R.layout.list_fragment
   override val viewModelClass = ListViewModel::class.java
 

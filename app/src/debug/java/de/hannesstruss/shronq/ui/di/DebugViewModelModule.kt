@@ -3,7 +3,7 @@ package de.hannesstruss.shronq.ui.di
 import dagger.Binds
 import dagger.Module
 import de.hannesstruss.shronq.ui.DebugViewModelFactory
-import de.hannesstruss.shronq.ui.base.ViewModelFactory
+import shronq.statemachine.ViewModelFactory
 
 @Module(
     includes = [ViewModelModule::class]

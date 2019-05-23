@@ -2,7 +2,7 @@ package de.hannesstruss.shronq.ui
 
 import androidx.lifecycle.ViewModel
 import de.hannesstruss.shronq.ui.base.ReleaseViewModelFactory
-import de.hannesstruss.shronq.ui.base.ViewModelFactory
+import shronq.statemachine.ViewModelFactory
 import de.hannesstruss.shronq.ui.debugdrawer.DebugDrawerViewModel
 import javax.inject.Inject
 import javax.inject.Provider

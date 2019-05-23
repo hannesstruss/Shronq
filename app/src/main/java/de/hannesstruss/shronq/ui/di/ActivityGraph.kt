@@ -2,7 +2,7 @@ package de.hannesstruss.shronq.ui.di
 
 import de.hannesstruss.shronq.ShronqApp
 import de.hannesstruss.shronq.ui.MainActivity
-import de.hannesstruss.shronq.ui.base.ViewModelFactory
+import shronq.statemachine.ViewModelFactory
 
 interface ActivityGraph {
   companion object {

@@ -1,4 +1,4 @@
-package de.hannesstruss.shronq.ui.base
+package shronq.statemachine
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -13,7 +13,7 @@ import androidx.lifecycle.ViewModelProviders
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 
-abstract class BaseFragment<StateT : Any, IntentT : Any, ViewModelT : MviViewModel<StateT, IntentT>> : Fragment() {
+abstract class StateMachineFragment<StateT : Any, IntentT : Any, ViewModelT : StateMachineViewModel<StateT, IntentT>> : Fragment() {
   @get:LayoutRes abstract val layout: Int
   abstract val viewModelClass: Class<ViewModelT>
   abstract fun intents(): Observable<IntentT>

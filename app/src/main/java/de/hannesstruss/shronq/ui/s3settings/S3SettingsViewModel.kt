@@ -5,7 +5,7 @@ import de.hannesstruss.shronq.R
 import de.hannesstruss.shronq.data.s3sync.BackupToS3Worker
 import de.hannesstruss.shronq.data.s3sync.S3Syncer
 import de.hannesstruss.shronq.data.s3sync.S3CredentialsStore
-import de.hannesstruss.shronq.ui.base.MviViewModel
+import shronq.statemachine.StateMachineViewModel
 import de.hannesstruss.shronq.ui.navigation.Navigator
 import de.hannesstruss.shronq.ui.s3settings.S3SettingsIntent.AccessKeyChanged
 import de.hannesstruss.shronq.ui.s3settings.S3SettingsIntent.BucketChanged
@@ -22,7 +22,7 @@ class S3SettingsViewModel
     private val navigator: Navigator,
     private val keyboardHider: KeyboardHider,
     private val s3Syncer: S3Syncer
-) : MviViewModel<S3SettingsState, S3SettingsIntent>() {
+) : StateMachineViewModel<S3SettingsState, S3SettingsIntent>() {
 
 
   override val initialState = S3SettingsState.initial()

@@ -2,7 +2,7 @@ package de.hannesstruss.shronq.ui.home
 
 import de.hannesstruss.shronq.R
 import de.hannesstruss.shronq.data.MeasurementRepository
-import de.hannesstruss.shronq.ui.base.MviViewModel
+import shronq.statemachine.StateMachineViewModel
 import de.hannesstruss.shronq.ui.home.HomeIntent.EditSettings
 import de.hannesstruss.shronq.ui.home.HomeIntent.InsertWeight
 import de.hannesstruss.shronq.ui.home.HomeIntent.ShowList
@@ -17,7 +17,7 @@ class HomeViewModel
     private val measurementRepository: MeasurementRepository,
     private val logWeightNotification: LogWeightNotification,
     private val navigator: Navigator
-) : MviViewModel<HomeState, HomeIntent>() {
+) : StateMachineViewModel<HomeState, HomeIntent>() {
   override val initialState = HomeState.initial()
 
   override val engine = createEngine {

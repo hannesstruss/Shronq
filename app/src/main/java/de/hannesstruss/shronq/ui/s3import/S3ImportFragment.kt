@@ -8,12 +8,12 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jakewharton.rxrelay2.PublishRelay
 import de.hannesstruss.shronq.R
-import de.hannesstruss.shronq.ui.base.BaseFragment
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.s3import_fragment.backup_progress_bar
 import kotlinx.android.synthetic.main.s3import_fragment.backups_list
+import shronq.statemachine.StateMachineFragment
 
-class S3ImportFragment : BaseFragment<S3ImportState, S3ImportIntent, S3ImportViewModel>(), ConfirmationDialogFragment.Parent {
+class S3ImportFragment : StateMachineFragment<S3ImportState, S3ImportIntent, S3ImportViewModel>(), ConfirmationDialogFragment.Parent {
   companion object {
     private const val CONFIRMATION_DIALOG_TAG = "ConfirmationDialog"
   }

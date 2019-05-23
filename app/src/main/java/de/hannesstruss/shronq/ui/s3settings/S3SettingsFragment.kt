@@ -9,7 +9,6 @@ import com.jakewharton.rxbinding3.view.clicks
 import com.jakewharton.rxbinding3.widget.checkedChanges
 import com.jakewharton.rxbinding3.widget.textChanges
 import de.hannesstruss.shronq.R
-import de.hannesstruss.shronq.ui.base.BaseFragment
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.s3settings_fragment.btn_run_sync
 import kotlinx.android.synthetic.main.s3settings_fragment.edit_access_key
@@ -19,8 +18,9 @@ import kotlinx.android.synthetic.main.s3settings_fragment.edit_secret_key
 import kotlinx.android.synthetic.main.s3settings_fragment.switch_sync_enabled
 import kotlinx.android.synthetic.main.s3settings_fragment.toolbar
 import kotlinx.android.synthetic.main.s3settings_fragment.txt_last_run
+import shronq.statemachine.StateMachineFragment
 
-class S3SettingsFragment : BaseFragment<S3SettingsState, S3SettingsIntent, S3SettingsViewModel>() {
+class S3SettingsFragment : StateMachineFragment<S3SettingsState, S3SettingsIntent, S3SettingsViewModel>() {
   override val layout = R.layout.s3settings_fragment
 
   override val viewModelClass = S3SettingsViewModel::class.java

@@ -3,12 +3,12 @@ package de.hannesstruss.shronq.ui.settings
 import com.jakewharton.rxbinding3.view.clicks
 import com.jakewharton.rxbinding3.widget.checkedChanges
 import de.hannesstruss.shronq.R
-import de.hannesstruss.shronq.ui.base.BaseFragment
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.settings_fragment.btn_s3_settings
 import kotlinx.android.synthetic.main.settings_fragment.switch_connect_google_fit
+import shronq.statemachine.StateMachineFragment
 
-class SettingsFragment : BaseFragment<SettingsState, SettingsIntent, SettingsViewModel>() {
+class SettingsFragment : StateMachineFragment<SettingsState, SettingsIntent, SettingsViewModel>() {
   override val layout = R.layout.settings_fragment
   override val viewModelClass = SettingsViewModel::class.java
 

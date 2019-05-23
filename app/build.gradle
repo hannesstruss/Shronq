@@ -63,6 +63,7 @@ play {
 
 dependencies {
   implementation project(':statemachine')
+  implementation project(':statemachine-aac')
 
   implementation deps.kotlin.coroutines.rx2
   implementation deps.kotlin.coroutines.playservices

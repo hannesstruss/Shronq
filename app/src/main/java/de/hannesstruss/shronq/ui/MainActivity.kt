@@ -8,7 +8,7 @@ import androidx.navigation.findNavController
 import de.hannesstruss.android.activityholder.ActivityResult
 import de.hannesstruss.android.activityholder.ActivityResultsProvider
 import de.hannesstruss.shronq.R
-import de.hannesstruss.shronq.ui.base.ViewModelFactory
+import shronq.statemachine.ViewModelFactory
 import de.hannesstruss.shronq.ui.di.ActivityComponent
 import de.hannesstruss.shronq.ui.di.ActivityGraph
 import io.reactivex.Observable

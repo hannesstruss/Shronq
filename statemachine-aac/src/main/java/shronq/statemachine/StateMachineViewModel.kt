@@ -1,4 +1,4 @@
-package de.hannesstruss.shronq.ui.base
+package shronq.statemachine
 
 import androidx.lifecycle.ViewModel
 import com.jakewharton.rxrelay2.BehaviorRelay
@@ -6,11 +6,9 @@ import io.reactivex.Observable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import shronq.statemachine.EngineContext
-import shronq.statemachine.StateMachine
 import kotlin.coroutines.CoroutineContext
 
-abstract class MviViewModel<StateT : Any, IntentT : Any> : ViewModel(), CoroutineScope {
+abstract class StateMachineViewModel<StateT : Any, IntentT : Any> : ViewModel(), CoroutineScope {
   private val job = Job()
 
   override val coroutineContext: CoroutineContext

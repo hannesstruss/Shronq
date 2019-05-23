@@ -4,7 +4,7 @@ import de.hannesstruss.android.KeyboardHider
 import de.hannesstruss.kotlin.extensions.awaitFirst
 import de.hannesstruss.shronq.data.MeasurementRepository
 import de.hannesstruss.shronq.data.Weight
-import de.hannesstruss.shronq.ui.base.MviViewModel
+import shronq.statemachine.StateMachineViewModel
 import de.hannesstruss.shronq.ui.logweight.LogWeightIntent.LogWeight
 import de.hannesstruss.shronq.ui.logweight.LogWeightIntent.Seeked
 import de.hannesstruss.shronq.ui.navigation.Navigator
@@ -17,7 +17,7 @@ class LogWeightViewModel
     private val keyboardHider: KeyboardHider,
     private val logWeightUseCase: LogWeightUseCase,
     private val navigator: Navigator
-) : MviViewModel<LogWeightState, LogWeightIntent>() {
+) : StateMachineViewModel<LogWeightState, LogWeightIntent>() {
   override val initialState = LogWeightState.initial()
 
   override val engine = createEngine {

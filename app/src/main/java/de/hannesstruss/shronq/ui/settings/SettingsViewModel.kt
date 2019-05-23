@@ -3,7 +3,7 @@ package de.hannesstruss.shronq.ui.settings
 import de.hannesstruss.shronq.R
 import de.hannesstruss.shronq.data.fit.ConnectResult
 import de.hannesstruss.shronq.data.fit.FitClient
-import de.hannesstruss.shronq.ui.base.MviViewModel
+import shronq.statemachine.StateMachineViewModel
 import de.hannesstruss.shronq.ui.navigation.Navigator
 import de.hannesstruss.shronq.ui.settings.SettingsIntent.ConnectFit
 import de.hannesstruss.shronq.ui.settings.SettingsIntent.DisconnectFit
@@ -15,7 +15,7 @@ class SettingsViewModel
 @Inject constructor(
     private val fitClient: FitClient,
     private val navigator: Navigator
-) : MviViewModel<SettingsState, SettingsIntent>() {
+) : StateMachineViewModel<SettingsState, SettingsIntent>() {
   override val initialState = SettingsState.initial()
 
   override val engine = createEngine {
