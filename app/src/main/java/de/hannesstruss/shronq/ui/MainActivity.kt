@@ -8,11 +8,11 @@ import androidx.navigation.findNavController
 import de.hannesstruss.android.activityholder.ActivityResult
 import de.hannesstruss.android.activityholder.ActivityResultsProvider
 import de.hannesstruss.shronq.R
-import shronq.statemachine.ViewModelFactory
 import de.hannesstruss.shronq.ui.di.ActivityComponent
 import de.hannesstruss.shronq.ui.di.ActivityGraph
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
+import shronq.statemachine.ViewModelFactory
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), ActivityResultsProvider {
@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity(), ActivityResultsProvider {
     findNavController(R.id.nav_host_fragment).handleDeepLink(intent)
   }
 
-  override fun getSystemService(name: String): Any {
+  override fun getSystemService(name: String): Any? {
     if (name == ViewModelFactory.SERVICE_NAME) {
       return viewModelFactory
     }
